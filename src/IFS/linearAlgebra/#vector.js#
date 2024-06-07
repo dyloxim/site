@@ -1,0 +1,18 @@
+
+class Vector {
+
+  
+
+  scale = (a, v) => v.map((entry) => a * entry);
+
+  vAdd = (...vectors) => vectors.reduce((v, w) => [v[0] + w[0], v[1] + w[1]]);
+
+  vMinus = (v, w) => vAdd(v, vScale(-1, w));
+
+  vMod = v => Math.sqrt(v.reduce((e1, e2) => e1 * e1 + e2 * e2));
+
+  dot = (v, w) => zip(v, w).reduce((pair1, pair2) => pair1[0] * pair1[1] + pair2[0] * pair2[1]);
+
+  getTranslation = c => p => vAdd(p, c);
+
+}

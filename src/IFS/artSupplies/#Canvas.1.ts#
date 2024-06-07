@@ -1,0 +1,24 @@
+import Rect from "./rect";
+
+
+export default class Canvas extends Rect {
+    DOMElement: HTMLCanvasElement;
+    renderContext: CanvasRenderingContext2D;
+    imgData: ImageData;
+
+    constructor(width: number, height: number, element: HTMLCanvasElement) {
+        super(height, width);
+        this.DOMElement = element;
+        this.renderContext = this.DOMElement.getContext('2d')!;
+        this.imgData = new ImageData(width, height);
+    }
+
+    getImgData = (sx: number, sy: number, sw: number, sh: number): ImageData => {
+        return this.renderContext.getImageData(sx, sy, sw, sh);
+    };
+
+    redraw = (): void => {
+        this.renderContext.putImageData(this.imgData, 0, 0);
+    };
+
+}

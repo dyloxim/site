@@ -3,12 +3,11 @@ import Script from 'next/script'
 export default function IFSPage() {
   return (
     <div>
-      <Script src="scripts/IFS/program.js"/>
-      <Script src="scripts/IFS/slides.js"/>
-      <Script src="scripts/IFS/interactions.js"/>
+      <Script src="webpack/IFS.bundle.js"/>
       <div id="main" style={{backgroundColor: '#f5f5f5', padding: 20 + 'px', borderRadius: 2.1 + 'rem', border: 1 + 'px' + 'solid #4141ff'}}>
-        <div id="canvas-container" hidden={true}
-          style={{marginBottom: 0.5+ 'rem', imageRendering: "pixelated"}}> </div>
+        <div id="canvas-container"> </div>
+        <canvas style={{marginBottom: 0.5+ 'rem', imageRendering: "pixelated"}}
+          id="canvas" width="300" height="300"></canvas>
         <div id="report"></div>
       </div>
       <div id="presets">
