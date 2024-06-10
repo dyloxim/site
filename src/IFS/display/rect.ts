@@ -1,12 +1,12 @@
-import Vector from '../linearAlgebra/vector';
+import Vector from '@IFS/math/linearAlgebra/vector';
 
 export default class Rect {
-  height: number;
   width: number;
+  height: number;
 
   constructor(width: number, height: number) {
-    this.height = height;
     this.width = width;
+    this.height = height;
   }
 
   scale = (a: number): Rect => {

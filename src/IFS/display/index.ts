@@ -1,0 +1,5 @@
+export { default as Rect } from "./rect"
+export { default as Color } from "./color"
+export { default as Painter } from "./painter"
+export { default as Rig } from "./rig"
+export { default as WorkPiece } from "./workPiece"

@@ -12,10 +12,13 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      "@IFS": path.resolve(__dirname, "src/IFS"),
+    },
   },
 
-  entry: path.resolve(__dirname, './src/IFS/entry.ts'),
+  entry: path.resolve(__dirname, './src/IFS/bundle_entry.ts'),
 
   output: {
     path: path.resolve(__dirname, 'public/webpack/'),

@@ -1,12 +1,14 @@
 import Vector from './vector';
+import Transform from './transform'
 
-export default class Matrix {
+export default class Linear extends Transform {
 
   dimensions: number[];
 
   weights: number[][];
 
   constructor(...weights: number[][]) {
+    super();
     this.weights = weights;
     this.dimensions = [weights.length, weights[0].length];
   }
@@ -17,7 +19,7 @@ export default class Matrix {
     }));
   }
 
-  static identity(n: number): Matrix {
+  static identity(n: number): Linear {
     let id_mat = this.empty(n, n);
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
@@ -27,40 +29,37 @@ export default class Matrix {
     return id_mat;
   }
 
-  scale = (a: number): Matrix => {
-    return new Matrix(...this.weights.map(v => v.map(e => e*a)));
+  scale = (a: number): Linear => {
+    return new Linear(...this.weights.map(v => v.map(e => e * a)));
   }
 
-  apply = (v: Vector): Vector => {
-    if (this.dimensions[1] == v.weights.length) {
-
+  apply = (v: number[]): number[] => {
+    if (this.dimensions[1] == v.length) {
       let projected_basis = Array.from({ length: this.dimensions[0] }, () => {
-        return new Vector(...Array.from({ length: this.dimensions[1] }, () => 0));
+        return Array.from({ length: this.dimensions[1] }, () => 0);
       })
 
       for (let i = 0; i < this.dimensions[0]; i++) {
         for (let j = 0; j < this.dimensions[1]; j++) {
-          projected_basis[i].weights[j] = this.weights[i][j] * v.weights[i]
+          projected_basis[i][j] = this.weights[i][j] * v[i]
         }
       }
 
-      return projected_basis.reduce((p,q) => p.add(q));
+      return projected_basis.reduce((p, q) => Vector.add(p, q));
 
     } else {
       throw `Dimensions of '${JSON.stringify(v)}' incomensurable with '${JSON.stringify(this)}'`;
     }
   }
 
-  mult = (m: Matrix): Matrix => {
-    if (m.dimensions[1] == this.dimensions[0]) {
-      return new Matrix(...m.weights.map(v => this.apply(new Vector(...v)).weights));
-    } else {
-      throw `Dimensions of M and N incompatible; M:'${this.dimensions}' and N:'${m.dimensions}'`;
-    }
+  mult = (m: Linear): Linear => {
+    if (m.dimensions[1] == this.dimensions[0])
+      return new Linear(...m.weights.map(v => this.apply(v)));
+    else throw `Dimensions of M and N incompatible ('${this.dimensions}' and'${m.dimensions}')`;
   }
 
-  transpose = (): Matrix => {
-    let transpose_mat = Matrix.empty(this.dimensions[1], this.dimensions[0])
+  transpose = (): Linear => {
+    let transpose_mat = Linear.empty(this.dimensions[1], this.dimensions[0])
     for (let i = 0; i < transpose_mat.dimensions[0]; i++) {
       for (let j = 0; j < transpose_mat.dimensions[1]; j++) {
         transpose_mat.weights[i][j] = this.weights[j][i]
@@ -69,7 +68,7 @@ export default class Matrix {
     return transpose_mat
   }
 
-  submatrix = (i: number, j: number): Matrix => {
+  submatrix = (i: number, j: number): Linear => {
 
     if (i >= 0 && i < this.dimensions[0]
       && j >= 0 && j < this.dimensions[1]) {
@@ -85,7 +84,7 @@ export default class Matrix {
         }
       }
 
-      let result = new Matrix(...new_weights);
+      let result = new Linear(...new_weights);
 
       return result;
 
@@ -97,11 +96,11 @@ export default class Matrix {
   }
 
   first_minor = (i: number, j: number): number => {
-    return this.submatrix(i,j).det();
+    return this.submatrix(i, j).det();
   }
 
   cofactor = (i: number, j: number): number => {
-    return Math.pow(-1, i + j) * this.first_minor(i,j);
+    return Math.pow(-1, i + j) * this.first_minor(i, j);
   }
 
   det = (): number => {
@@ -125,20 +124,18 @@ export default class Matrix {
     }
   }
 
-  adjugate = (): Matrix => {
-    let cofactor_mat = Matrix.empty(this.dimensions[0], this.dimensions[1])
+  adjugate = (): Linear => {
+    let cofactor_mat = Linear.empty(this.dimensions[0], this.dimensions[1])
     for (let i = 0; i < this.dimensions[0]; i++) {
       for (let j = 0; j < this.dimensions[1]; j++) {
-        cofactor_mat.weights[i][j] = this.cofactor(i,j)
+        cofactor_mat.weights[i][j] = this.cofactor(i, j)
       }
     }
     return cofactor_mat;
   }
 
-  inverse = (): Matrix => {
-    return this.adjugate().transpose().scale(1/this.det())
+  inverse = (): Linear => {
+    return this.adjugate().transpose().scale(1 / this.det())
   }
 
 }
-
-Matrix.empty(2, 2)
