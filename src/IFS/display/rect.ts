@@ -4,9 +4,12 @@ export default class Rect {
   width: number;
   height: number;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+  constructor(...dims: number[]) {
+    if (dims.length !== 2) {
+      throw `Rect requires exactly two numerical arguments ('${dims}' supplied).`
+    }
+    this.width = dims[0];
+    this.height = dims[1];
   }
 
   scale = (a: number): Rect => {

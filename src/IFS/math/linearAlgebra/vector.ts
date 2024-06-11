@@ -9,7 +9,11 @@ export default class Vector {
     return v.map((entry) => a * entry);
   }
 
-  static add = (...vectors: number[][]): number[] => {
+  static add = (v: number[], w: number[]): number[] => {
+    return v.map((v_e, idx): number => v_e + w[idx]);
+  }
+
+  static sum = (...vectors: number[][]): number[] => {
     return vectors.reduce((v, w) => {
       if (v.length == w.length)
         return v.map((v_e, idx): number => v_e + w[idx]);
@@ -17,8 +21,8 @@ export default class Vector {
     });
   }
 
-  static minus = (v: number[], ...vectors: number[][]): number[] => {
-    return this.add(v, ...vectors.map(w => this.scale(w,-1)));
+  static minus = (v: number[], w: number[]): number[] => {
+    return this.add(v, this.scale(w,-1));
   }
 
   static dot = (v: number[], w: number[]): number => {

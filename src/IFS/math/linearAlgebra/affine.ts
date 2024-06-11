@@ -1,8 +1,6 @@
 import Linear from './linear'
-import Vector from './vector'
 import Translation from './translation'
 import Transform from './transform'
-
 
 export default class Affine extends Transform {
 
@@ -10,10 +8,10 @@ export default class Affine extends Transform {
 
   translation: Translation;
 
-  constructor(m: number[][], v: number[]) {
+  constructor(lin: Linear, trans: Translation) {
     super();
-    this.linear = new Linear(...m);
-    this.translation = new Translation(...v);
+    this.linear = lin;
+    this.translation = trans;
   }
 
   apply = (v: number[]): number[] => this.translation.apply(this.linear.apply(v));

@@ -1,68 +1,46 @@
-import Vector from '@IFS/math/linearAlgebra/vector';
+import Vec2 from '@IFS/math/linearAlgebra/vec2';
+import I_DisplayParams from '@IFS/types/I_displayParams';
 import Rect from "./rect";
 
 export default class Rig {
 
   displayRegion: IRegion;
 
-  outSpace: Rect;
-
-  pixPerUnit: number;
-
-  constructor(outSpace: Rect, subjectCenter: number[], subjectRadius: number) {
-    if (subjectCenter.length !== 2) {
-      throw `Subject center must be a two dimensional vector. ('${subjectCenter}' provided)`;
-    } else {
-      this.outSpace = outSpace;
-      let outRadius = Math.min(outSpace.height, outSpace.width) / 2;
-      this.pixPerUnit = outRadius / subjectRadius;
-    }
-    this.displayRegion = this.calculateNewRegion(subjectCenter, subjectRadius);
+  constructor(displayParams: I_DisplayParams, outSpace: Rect) {
+    this.displayRegion = this.calculateRegion(displayParams, outSpace);
   }
 
+  recalibrate = (displayParams: I_DisplayParams, outSpace: Rect): void => {
+    this.displayRegion = this.calculateRegion(displayParams, outSpace);
+  }
 
-
-  calculateNewRegion = (subjectCenter: number[], subjectRadius: number): IRegion => {
-    let outRadius = Math.min(this.outSpace.height, this.outSpace.width) / 2;
-    this.pixPerUnit = outRadius / subjectRadius;
-    let displayRect = this.outSpace.scale(1 / this.pixPerUnit);
-    return {
-      center: subjectCenter,
-      topLeft: Vector.add(
-        subjectCenter,
-        [-displayRect.width / 2, displayRect.height / 2]
+  calculateRegion = (displayParams: I_DisplayParams, outSpace: Rect): IRegion => {
+    let pixPerUnit = displayParams.pixPerUnit;
+    let displayDims = outSpace.scale(1 / pixPerUnit);
+    return this.displayRegion = {
+      topLeft: Vec2.add(
+        displayParams.displayRegion.origin,
+        [-displayDims.width / 2, displayDims.height / 2]
       ),
-      displayRadius: subjectRadius,
-      width: displayRect.width,
-      height: displayRect.height
+      width: displayDims.width,
+      height: displayDims.height
     };
   }
 
-  pan = (posChange: number[]): void => {
-    let newCenter = Vector.add(this.displayRegion.center, posChange);
-    this.displayRegion = this.calculateNewRegion(newCenter, this.displayRegion.displayRadius);
-  }
-
-  project = (refPos: number[]): number[] => {
-    let upsideDown = Vector.scale(
-      Vector.minus(refPos, this.displayRegion.topLeft),
-      this.pixPerUnit
+  project = (refPos: number[], pixPerUnit: number): number[] => {
+    let upsideDown = Vec2.scale(
+      Vec2.minus(refPos, this.displayRegion.topLeft),
+      pixPerUnit
     )
-    let canvasPos = [upsideDown[0], -upsideDown[1]];
-    // console.log(`projected point '${refPos}' to '${canvasPos}'`)
-    return canvasPos;
-  }
-
-  changeRadius = (newRad: number): void => {
-    this.displayRegion = this.calculateNewRegion(this.displayRegion.center, newRad);
+    // let newPos = [upsideDown[0], -upsideDown[1]]; 
+    // console.log(`point '${refPos}' projected to '${newPos}'`)
+    return [upsideDown[0], -upsideDown[1]];
   }
 
 }
 
 interface IRegion {
   topLeft: number[],
-  center: number[],
-  displayRadius: number,
   width: number,
-  height: number,
+  height: number
 }
