@@ -1,5 +1,6 @@
 import I_FunctionSystem from '@IFS/types/I_functionSystem';
 import Transform from '@IFS/math/linearAlgebra/transform';
+import TransformFactory from '@IFS/math/linearAlgebra/transformFactory';
 
 export default class FunctionSystem {
 
@@ -7,13 +8,10 @@ export default class FunctionSystem {
 
   weights: number[];
 
-  order: number;
-
   constructor(def: I_FunctionSystem) {
-    this.order = def.transforms.length;
-    this.transforms = def.transforms;
+    this.transforms = def.transforms.map((t) => TransformFactory.getInstance(t));
     if (def.weights == 'uniform') {
-      this.weights = Array.from({length: this.order}, ()=> 1/this.order);
+      this.weights = Array.from({length: this.order()}, ()=> 1/this.order());
     } else if (def.transforms.length !== def.weights.length) {
       throw `Number of transforms '${def.transforms}' does not correspond with number of weights; '${def.weights}'`;
     } else {
@@ -21,5 +19,7 @@ export default class FunctionSystem {
       this.weights = def.weights.map(a => a / weightSum);
     }
   }
+
+  order = (): number => this.transforms.length;
 
 }

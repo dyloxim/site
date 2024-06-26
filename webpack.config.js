@@ -18,7 +18,7 @@ module.exports = {
     },
   },
 
-  entry: path.resolve(__dirname, './src/IFS/bundle_entry.ts'),
+  entry: path.resolve(__dirname, './src/IFS/index.ts'),
 
   output: {
     path: path.resolve(__dirname, 'public/webpack/'),
@@ -28,4 +28,7 @@ module.exports = {
       type: 'umd'
     },
   },
+
+  mode: 'development'
+
 };

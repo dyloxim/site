@@ -1,45 +1,53 @@
 import Vec2 from '@IFS/math/linearAlgebra/vec2';
-import I_DisplayParams from '@IFS/types/I_displayParams';
+import I_displayConfig from '@IFS/types/I_displayConfig';
 import Rect from "./rect";
 
 export default class Rig {
 
-  displayRegion: IRegion;
-
-  constructor(displayParams: I_DisplayParams, outSpace: Rect) {
-    this.displayRegion = this.calculateRegion(displayParams, outSpace);
+  static calculateRange = (borderRect: Rect, upscaleFactor: number): Rect => {
+    return borderRect.scale(upscaleFactor)
+      .nearestWholeNumberDimensions();
   }
 
-  recalibrate = (displayParams: I_DisplayParams, outSpace: Rect): void => {
-    this.displayRegion = this.calculateRegion(displayParams, outSpace);
-  }
-
-  calculateRegion = (displayParams: I_DisplayParams, outSpace: Rect): IRegion => {
-    let pixPerUnit = displayParams.pixPerUnit;
-    let displayDims = outSpace.scale(1 / pixPerUnit);
-    return this.displayRegion = {
+  private static calculateDomain = (config: I_displayConfig, outSpace: Rect): I_domainIntern => {
+    let pixPerUnit = Math.min(...outSpace.scale(1 / 2).dims()) / config.domain.displayRadius;
+    let domainRect = outSpace.scale(1 / pixPerUnit);
+    return {
+      centre: config.domain.origin,
       topLeft: Vec2.add(
-        displayParams.displayRegion.origin,
-        [-displayDims.width / 2, displayDims.height / 2]
+        config.domain.origin,
+        [-domainRect.width / 2, domainRect.height / 2]
       ),
-      width: displayDims.width,
-      height: displayDims.height
+      width: domainRect.width,
+      height: domainRect.height
     };
+  };
+
+  domain: I_domainIntern;
+
+  constructor(config: I_displayConfig, printArea: Rect) {
+    this.domain = Rig.calculateDomain(config, printArea);
   }
 
-  project = (refPos: number[], pixPerUnit: number): number[] => {
-    let upsideDown = Vec2.scale(
-      Vec2.minus(refPos, this.displayRegion.topLeft),
-      pixPerUnit
-    )
-    // let newPos = [upsideDown[0], -upsideDown[1]]; 
-    // console.log(`point '${refPos}' projected to '${newPos}'`)
-    return [upsideDown[0], -upsideDown[1]];
+  reconstruct = (config: I_displayConfig, printArea: Rect) => {
+    this.domain = Rig.calculateDomain(config, printArea);
   }
+
+  project = (refPos: number[], printWidth: number): number[] => {
+
+    let pixPerUnit = printWidth / this.domain.width;
+
+    let upsideDown = Vec2.scale(
+      Vec2.minus(refPos, this.domain.topLeft),
+      pixPerUnit
+    );
+    return [upsideDown[0], -upsideDown[1]];
+  };
 
 }
 
-interface IRegion {
+interface I_domainIntern {
+  centre: number[],
   topLeft: number[],
   width: number,
   height: number

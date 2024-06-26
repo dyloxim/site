@@ -1,6 +1,7 @@
 
-export default class Transform {
-  apply = (v: number[]): number[] => {
-    return v;
-  }
+
+export default abstract class Transform {
+
+  apply = (v: number[]) => v;
+
 }

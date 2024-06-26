@@ -2,6 +2,7 @@ import Transform from './transform'
 import Vector from './vector'
 
 export default class Translation extends Transform {
+
   weights: number[];
 
   constructor(...weights: number[]) {

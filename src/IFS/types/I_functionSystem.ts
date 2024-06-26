@@ -1,6 +1,6 @@
-import Transform from '@IFS/math/linearAlgebra/transform'
+import { I_transform } from './I_transform'
 
 export default interface I_FunctionSystem {
-  transforms: Transform[],
+  transforms: I_transform[],
   weights: number[] | 'uniform'
 }

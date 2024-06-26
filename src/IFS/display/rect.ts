@@ -1,4 +1,4 @@
-import Vector from '@IFS/math/linearAlgebra/vector';
+import Vec2 from '@IFS/math/linearAlgebra/vec2';
 
 export default class Rect {
   width: number;
@@ -12,9 +12,12 @@ export default class Rect {
     this.height = dims[1];
   }
 
-  scale = (a: number): Rect => {
-    let newDims = Vector.scale([this.width, this.height], a);
-    return new Rect(newDims[0], newDims[1]);
+  scale = (a: number): Rect => new Rect(...Vec2.scale([this.width, this.height], a));
+
+  dims = () => [this.width, this.height]
+
+  nearestWholeNumberDimensions = (): Rect => {
+    return new Rect(Math.round(this.width), Math.round(this.height))
   }
 
 }

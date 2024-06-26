@@ -1,84 +1,135 @@
+import { I_session, I_settings, I_state } from "./types";
 import FunctionSystem from "@IFS/functionSystem";
-import State from "@IFS/process/state";
 import DisplayApperatus from "@IFS/display/displayApperatus";
-import I_Preset from "@IFS/types/I_preset";
 import Color from "@IFS/display/color";
+
 
 export default class App {
 
-  display: DisplayApperatus;
-  functionSystem: FunctionSystem;
-  lastChoice: number;
-  state: State;
-  animationStart: number | undefined;
-  lastFrameTime: number | undefined;
-  animationRate = 100;
+  settings: I_settings;
+  state: I_state;
 
-  constructor(canvas: HTMLCanvasElement, preset: I_Preset) {
-    this.lastChoice = -1;
-    this.display = new DisplayApperatus(canvas, preset.displayParams);
-    this.functionSystem = new FunctionSystem(preset.functionSystem);
-    this.state = new State(preset.firstPoint, preset.displayParams);
+  FS: FunctionSystem
+  display: DisplayApperatus | undefined;
+
+  constructor(settings: I_settings) {
+    this.settings = settings;
+    this.FS = new FunctionSystem(this.settings.program.FS);
+    this.state = App.getInitialState(this.settings.program.firstPoint);
   }
 
-  updateChoice = (): void => {
-    let probabilitySum = this.functionSystem.weights[0]
-    let regions = this.functionSystem.weights.slice();
-    for (let i = 1; i < this.functionSystem.order; i++) {
-      probabilitySum += this.functionSystem.weights[i]
+  static constructWithState = (session: I_session): App => {
+    let app = new App(session.settings)
+    app.state = session.state;
+    return app;
+  }
+
+  static getInitialState = (firstPoint: number[]): I_state => {
+    return {
+      program: {
+        thisTurn: {
+          position: firstPoint,
+          choice: -1,
+        },
+        lastTurn: {
+          position: firstPoint,
+          choice: -1,
+        }
+      },
+      animation: {
+        running: false,
+        frameTimes: {
+          first: null,
+          previous: null,
+        }
+      },
+      interaction: {
+        wantsRedraw: false,
+        updatePending: false
+      }
+    }
+  }
+
+  setupDisplay = (canvas: HTMLCanvasElement) => {
+    this.display = new DisplayApperatus(this.settings.display, canvas);
+  }
+
+  getRandomFunctionIndex = (): number => {
+    let probabilitySum = this.FS.weights[0]
+    let regions = this.FS.weights.slice();
+    for (let i = 1; i < this.FS.order(); i++) {
+      probabilitySum += this.FS.weights[i]
       regions[i] = probabilitySum;
     }
     let dart = Math.random()
     let choice = 0
-    for (let i = 0; i < this.functionSystem.order; i++) {
+    for (let i = 0; i < this.FS.order(); i++) {
       if (regions[i] > dart) { choice = i; break; }
     }
-    this.lastChoice = choice
+    return choice;
   }
 
-  updatePoint = (): void => {
-    this.updateChoice();
-    this.state.currentPoint = this.functionSystem.transforms[this.lastChoice]
-      .apply(this.state.currentPoint)
-  }
-
-  getColor = (): Color => {
-    if (this.state.displayParams.useColor) {
-      return this.state.displayParams.palette.colors[this.lastChoice];
+  getColor = (functionIndex: number): Color => {
+    if (this.settings.display.color.multi) {
+      return this.settings.display.color
+        .palette.colors[functionIndex];
     } else {
-      return this.state.displayParams.baseColor
+      return this.settings.display.color.base;
     }
   }
 
-  start = (): void => {
-    this.state.running = true;
-    this.display.addPoint(this.state.currentPoint, this.state.displayParams.baseColor);
-    this.display.update();
-    requestAnimationFrame(this.animateFn);
+  runItteration = (): void => {
+
+    let choice = this.getRandomFunctionIndex()
+
+    this.state.program.lastTurn = this.state.program.thisTurn
+
+    this.state.program.thisTurn = {
+      position: this.FS.transforms[choice]
+        .apply(this.state.program.thisTurn.position),
+      choice: choice
+    }
+
+    this.markCurrentPoint()
   }
 
-  stop = (): void => {
-    this.state.running = false;
+  markCurrentPoint = (): void => {
+    let thisTurn = this.state.program.thisTurn;
+    this.display?.addPoint(thisTurn.position, this.getColor(thisTurn.choice));
   }
 
   animateFn = (timeStamp: number): void => {
-    if (this.animationStart === undefined) { this.animationStart = timeStamp }
 
-    if (this.lastFrameTime !== timeStamp) {
-      for(let i = 0; i < this.animationRate; i++) {
-        this.updatePoint();
-        this.display.addPoint(this.state.currentPoint, this.getColor());
+    if (this.state.interaction.updatePending) {
+      if (this.state.interaction.wantsRedraw) {
+        this.display?.reconstruct(this.settings.display);
+        this.state.interaction.wantsRedraw = false;
       }
-      this.display.update();
+      this.state.interaction.updatePending = false;
     }
 
+    if (this.state.animation.running) {
 
-    this.lastFrameTime = timeStamp;
+      if (this.state.animation.frameTimes.first === undefined) {
+        this.state.animation.frameTimes.first = timeStamp
+      }
 
-    if (this.state.running) {
-      window.requestAnimationFrame(this.animateFn);
+      if (this.state.animation.frameTimes.previous !== timeStamp) {
+        Array.from({ length: this.settings.animation.rate }, _ => this.runItteration())
+        this.display!.update();
+      }
+
+      this.state.animation.frameTimes.previous = timeStamp;
+
     }
+
+    window.requestAnimationFrame(this.animateFn);
   }
 
+  start = (): void => {
+    this.state.animation.running = true;
+    this.display!.update();
+    requestAnimationFrame(this.animateFn);
+  }
 
 }
