@@ -1,4 +1,4 @@
-import I_FunctionSystem from '@IFS/types/I_functionSystem';
+import { I_functionSystem } from '@IFS/types/configTypes';
 import Transform from '@IFS/math/linearAlgebra/transform';
 import TransformFactory from '@IFS/math/linearAlgebra/transformFactory';
 
@@ -8,7 +8,7 @@ export default class FunctionSystem {
 
   weights: number[];
 
-  constructor(def: I_FunctionSystem) {
+  constructor(def: I_functionSystem) {
     this.transforms = def.transforms.map((t) => TransformFactory.getInstance(t));
     if (def.weights == 'uniform') {
       this.weights = Array.from({length: this.order()}, ()=> 1/this.order());

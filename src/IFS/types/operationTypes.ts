@@ -1,5 +1,6 @@
+import { I_settings } from "@IFS/types/configTypes"
 
-export default interface I_state {
+export interface I_state {
 
   program: {
 
@@ -28,4 +29,9 @@ export default interface I_state {
     updatePending: boolean
   }
 
+}
+
+export interface I_session {
+  settings: I_settings,
+  state: I_state,
 }

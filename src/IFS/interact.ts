@@ -1,5 +1,4 @@
-import I_session from '@IFS/types/I_session'
-// import Render from '@IFS/display/render';
+import { I_session } from '@IFS/types/operationTypes'
 import { Vector } from './math';
 
 export default class Interact {
@@ -34,7 +33,7 @@ export default class Interact {
   }
 
   static setAnimationRate(stepsPerFrame: number, session: I_session) {
-    session.settings.animation.rate = stepsPerFrame;
+    session.settings.display.animation.rate = stepsPerFrame;
     session.state.interaction.updatePending = true;
     return session
   }

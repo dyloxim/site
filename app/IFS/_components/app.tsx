@@ -1,28 +1,33 @@
 'use client'
 import { useState } from 'react';
-import I_session from '@IFS/types/I_session'
-import * as Presets from '@IFS/resources/presets'
-import Canvas from './canvas';
-import Controls from './controls';
-import IFSApp from '@IFS/app';
+
+import { default as Canvas } from './canvas';
+import { default as Controls } from './controls';
+import { default as IFSApp } from '@IFS/app';
+
+import { I_session } from '@IFS/types/operationTypes'
+import { defaultDisplay } from '@IFS/resources/presets/displayPresets'
+import * as FunctionSystems from '@IFS/resources/presets/FSPresets'
+
 
 export default function App() {
 
-  let preset = Presets.barnsleyFern;
+  let preset = { display: defaultDisplay, FS: FunctionSystems.barnsleyFern }
 
   const [session, updateSession] = useState<I_session>({
     settings: preset,
-    state: IFSApp.getInitialState(preset.program.firstPoint) 
+    state: IFSApp.getInitialState(preset.FS.firstPoint) 
   });
 
   const appEngine = IFSApp.constructWithState(session);
 
   return (
     <div>
-      <Canvas appEngine={appEngine}/>
       <Controls
         session={session}
         updateSession={updateSession}/>
+      <Canvas appEngine={appEngine}/>
     </div>
   )
+
 }

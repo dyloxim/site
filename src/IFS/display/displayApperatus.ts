@@ -1,54 +1,51 @@
-import Render from "./render";
-import Painter from "./painter";
-import Rig from './rig';
-import Color from "./color";
-import I_displayConfig from "@IFS/types/I_displayConfig";
+import { default as Color } from "@IFS/display/util/color";
+import { default as Rect } from "@IFS/display/util/rect";
+import { Renderer, Painter, Rig, PrintLayer } from "@IFS/display"
+
+import { I_displayConfig } from "@IFS/types/configTypes";
+
 
 export default class DisplayApperatus {
 
   config: I_displayConfig;
 
-  render: Render;
+  renderer: Renderer;
 
   rig: Rig;
 
 
-  constructor(config: I_displayConfig, canvas: HTMLCanvasElement) {
+  constructor(
+    config: I_displayConfig,
+    displayContainer: HTMLDivElement
+  ) {
     this.config = config;
-    this.render = new Render(this.config, canvas);
-    this.rig = new Rig(this.config, this.render.getPrintArea());
+    this.renderer = new Renderer(this.config, displayContainer);
+    this.rig = new Rig(this.config, this.renderer.getPrintArea());
   }
 
   reconstruct = (config: I_displayConfig): void => {
-    console.log("reconstructing")
-    console.log("config is:")
-    console.log(config)
     this.config = config;
-    this.render.reconstruct(this.config)
-    this.rig.reconstruct(this.config, this.render.getPrintArea())
-    console.log("render is:")
-    console.log(this.render)
-    console.log("rig is:")
-    console.log(this.rig)
+    this.renderer.reconstruct(this.config)
+    this.rig.reconstruct(this.config, this.renderer.getPrintArea())
   }
 
-  projectedPoint = (p: number[]): number[] => {
-    return this.rig.project(p, this.render.printArea.width);
+  projectedPoint = (p: number[], printArea: Rect): number[] => {
+    return this.rig.project(p, printArea.width);
   }
 
-  addPoint = (p: number[], color: Color): void => {
-    let _p = this.projectedPoint(p)
-    Painter.putPixel_quantize(this.render, _p, color)
+  addPoint = (print: PrintLayer, p: number[], color: Color): void => {
+    let _p = this.projectedPoint(p, this.renderer.printArea)
+    Painter.putPixel_quantize(print, this.renderer.printArea, _p, color)
   }
 
-  addLine = (p: number[], q: number[], color: Color): void => {
-    let _p = this.projectedPoint(p)
-    let _q = this.projectedPoint(q)
-    Painter.putLine(this.render, _p, _q, color);
+  addLine = (print: PrintLayer, p: number[], q: number[], color: Color): void => {
+    let _p = this.projectedPoint(p, this.renderer.printArea)
+    let _q = this.projectedPoint(q, this.renderer.printArea)
+    Painter.putLine(print, this.renderer.printArea, _p, _q, color);
   }
 
   update = () => {
-    this.render.commitChanges();
+    this.renderer.show();
   }
 
 }

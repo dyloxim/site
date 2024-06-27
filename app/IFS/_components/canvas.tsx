@@ -3,28 +3,28 @@ import IFSApp from '@IFS/app'
 
 const Canvas = ({ appEngine }: { appEngine: IFSApp }) => {
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const displayContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const setupApp = (canvas: HTMLCanvasElement) => {
-    appEngine.setupDisplay(canvas);
+  const setupApp = (displayContainer: HTMLDivElement) => {
+    appEngine.setupDisplay(displayContainer);
     appEngine.start();
   }
 
   useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      setupApp(canvas)
+    if (displayContainerRef.current) {
+      setupApp(displayContainerRef.current)
     }
   }, [setupApp])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{imageRendering: "pixelated"}}
-      height={700}
-      width={700}
-    >
-    </canvas>
+    <div
+      ref={displayContainerRef}
+      style={{
+      position: "relative",
+      width: "700px",
+      height: "700px"
+      }}>
+    </div>
   )
 }
 

@@ -1,8 +1,13 @@
-import { I_session, I_settings, I_state } from "./types";
-import FunctionSystem from "@IFS/functionSystem";
-import DisplayApperatus from "@IFS/display/displayApperatus";
-import Color from "@IFS/display/color";
+import { I_session, I_state } from "@IFS/types/operationTypes";
+import { I_settings } from "@IFS/types/configTypes";
 
+import { default as FunctionSystem } from "@IFS/functionSystem";
+import { default as DisplayApperatus } from "@IFS/display/displayApperatus";
+import { default as Rig } from "./display/rig";
+import { default as Color } from "@IFS/display/util/color";
+
+import { defaultState as baseState } from "@IFS/resources/defaults"
+import TurnTaker from "./turnTaker";
 
 export default class App {
 
@@ -12,10 +17,12 @@ export default class App {
   FS: FunctionSystem
   display: DisplayApperatus | undefined;
 
+  // SETUP FUNCTIONS
+
   constructor(settings: I_settings) {
     this.settings = settings;
-    this.FS = new FunctionSystem(this.settings.program.FS);
-    this.state = App.getInitialState(this.settings.program.firstPoint);
+    this.FS = new FunctionSystem(this.settings.FS);
+    this.state = App.getInitialState(this.settings.FS.firstPoint);
   }
 
   static constructWithState = (session: I_session): App => {
@@ -25,111 +32,49 @@ export default class App {
   }
 
   static getInitialState = (firstPoint: number[]): I_state => {
-    return {
-      program: {
-        thisTurn: {
-          position: firstPoint,
-          choice: -1,
-        },
-        lastTurn: {
-          position: firstPoint,
-          choice: -1,
-        }
-      },
-      animation: {
-        running: false,
-        frameTimes: {
-          first: null,
-          previous: null,
-        }
-      },
-      interaction: {
-        wantsRedraw: false,
-        updatePending: false
-      }
-    }
+    let state = baseState;
+    state.program.thisTurn.position = firstPoint;
+    state.program.lastTurn.position = firstPoint;
+    return state;
   }
 
-  setupDisplay = (canvas: HTMLCanvasElement) => {
-    this.display = new DisplayApperatus(this.settings.display, canvas);
+  setupDisplay = (displayContainer: HTMLDivElement) => {
+    this.settings.display.domain = Rig.handlePossibleImpliedDisplayRegion(
+      this.settings.FS.referenceRegion,
+      this.settings.display.domain
+    );
+    this.display = new DisplayApperatus(this.settings.display, displayContainer);
   }
 
-  getRandomFunctionIndex = (): number => {
-    let probabilitySum = this.FS.weights[0]
-    let regions = this.FS.weights.slice();
-    for (let i = 1; i < this.FS.order(); i++) {
-      probabilitySum += this.FS.weights[i]
-      regions[i] = probabilitySum;
-    }
-    let dart = Math.random()
-    let choice = 0
-    for (let i = 0; i < this.FS.order(); i++) {
-      if (regions[i] > dart) { choice = i; break; }
-    }
-    return choice;
-  }
 
-  getColor = (functionIndex: number): Color => {
-    if (this.settings.display.color.multi) {
-      return this.settings.display.color
-        .palette.colors[functionIndex];
-    } else {
-      return this.settings.display.color.base;
-    }
-  }
+  // CORE PROCESS
 
-  runItteration = (): void => {
-
-    let choice = this.getRandomFunctionIndex()
-
-    this.state.program.lastTurn = this.state.program.thisTurn
-
-    this.state.program.thisTurn = {
-      position: this.FS.transforms[choice]
-        .apply(this.state.program.thisTurn.position),
-      choice: choice
-    }
-
-    this.markCurrentPoint()
-  }
-
-  markCurrentPoint = (): void => {
-    let thisTurn = this.state.program.thisTurn;
-    this.display?.addPoint(thisTurn.position, this.getColor(thisTurn.choice));
+  start = (): void => {
+    this.state.animation.running = true;
+    TurnTaker.setup(this.settings, this.state, this.FS, this.display!)
+    requestAnimationFrame(this.animateFn);
   }
 
   animateFn = (timeStamp: number): void => {
 
-    if (this.state.interaction.updatePending) {
-      if (this.state.interaction.wantsRedraw) {
-        this.display?.reconstruct(this.settings.display);
-        this.state.interaction.wantsRedraw = false;
-      }
-      this.state.interaction.updatePending = false;
-    }
+    // check if session parameters have changed and make changes accordingly
+    TurnTaker.readSettings(this.settings, this.state, this.display!)
 
+    // main IFS iterations loop
     if (this.state.animation.running) {
 
-      if (this.state.animation.frameTimes.first === undefined) {
+      if (this.state.animation.frameTimes.first === undefined)
         this.state.animation.frameTimes.first = timeStamp
-      }
 
       if (this.state.animation.frameTimes.previous !== timeStamp) {
-        Array.from({ length: this.settings.animation.rate }, _ => this.runItteration())
-        this.display!.update();
+        TurnTaker.runItteration(this.settings, this.state, this.FS, this.display!)
       }
 
       this.state.animation.frameTimes.previous = timeStamp;
-
     }
 
     window.requestAnimationFrame(this.animateFn);
   }
 
-  start = (): void => {
-    this.state.animation.running = true;
-    this.display!.update();
-    requestAnimationFrame(this.animateFn);
-  }
 
 }

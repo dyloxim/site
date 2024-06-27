@@ -1,7 +1,9 @@
-import Vec2 from "@IFS/math/linearAlgebra/vec2"
-import I_session from "@IFS/types/I_session";
-import IFS_interact from "@IFS/interaction";
 import { useState } from "react";
+
+import Vec2 from "@IFS/math/linearAlgebra/vec2"
+import { I_session } from "@IFS/types/operationTypes";
+
+import { default as IFS_interact } from "@IFS/interact";
 
 export default function Controls({ session, updateSession }: {
   session: I_session,

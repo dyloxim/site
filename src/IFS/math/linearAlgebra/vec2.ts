@@ -18,4 +18,8 @@ export default class Vec2 extends Vector {
     return vectors.reduce((v, w) => [v[0]+w[0], v[1]+w[1]]);
   }
 
+  static mod(v: number[]): number {
+    return Math.sqrt(v[0]*v[0] + v[1]*v[1]);
+  }
+
 }
