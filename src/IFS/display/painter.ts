@@ -51,9 +51,6 @@ export default class Painter {
     let _dolly_y = _py + _m;
     let _dolly_y_Q = Num.integerPart(_dolly_y);
 
-    // joint together
-    // console.log(`drawing line between pixels with x coordinates '[${_px}, ${_py}]', and '[${_qx}, ${_qy}]'`)
-    // console.log(`gradient is '${_m}'`);
     for (var _dolly_x_Q = _px_Q + 1; _dolly_x_Q < _qx_Q; _dolly_x_Q++) {
       this.putPixel(print, printArea, was_steep ? [_dolly_y_Q, _dolly_x_Q] : [_dolly_x_Q, _dolly_y_Q], color);
       _dolly_y = _dolly_y + _m;

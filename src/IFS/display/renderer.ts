@@ -15,6 +15,8 @@ export default class Renderer {
   borderRect: Rect;
   printArea: Rect;
 
+  getPrintArea = () => this.printArea
+
   constructor(
     config: I_displayConfig,
     displayContainer: HTMLDivElement
@@ -47,12 +49,12 @@ export default class Renderer {
       .nearestWholeNumberDimensions();
 
     this.layers = {
-      figure: new PrintLayer(canvases[0], this.printArea),
-      pathOverlay: new PrintLayer(canvases[1], this.printArea),
-      bboxesOverlay: new PrintLayer(canvases[2], this.printArea),
+      figure: new PrintLayer("figure", canvases[0], this.printArea),
+      pathOverlay: new PrintLayer("pathOverlay", canvases[1], this.printArea),
+      bboxesOverlay: new PrintLayer("bboxesOverlay", canvases[2], this.printArea),
     }
 
-    this.show()
+    this.commitAll()
   }
 
   applyToAllLayers = (f: (layer: PrintLayer) => void): void => {
@@ -61,22 +63,18 @@ export default class Renderer {
     });
   }
 
-  reconstruct = (config: I_displayConfig): void => {
+  reconstructAll = (config: I_displayConfig): void => {
     this.printArea = this.borderRect.scale(config.rendering.upscaleFactor)
       .nearestWholeNumberDimensions();
     this.applyToAllLayers((layer: PrintLayer) => layer.reconstruct(this.printArea));
   }
 
-  clear = (): void => {
+  clearAll = (): void => {
     this.applyToAllLayers((layer: PrintLayer) => layer.clear());
   }
 
-  show = (): void => {
+  commitAll = (): void => {
     this.applyToAllLayers((layer: PrintLayer) => layer.commit());
-  }
-
-  getPrintArea = () => {
-    return this.printArea;
   }
 
 }

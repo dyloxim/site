@@ -4,6 +4,8 @@ import { I_state } from "./types/operationTypes";
 
 export default class Util {
 
+  static pathDrawThreshold = 10;
+
   static getWeightedRandomChoice = (weights: number[]): number => {
     let probabilitySum = weights[0]
     let regions = weights.slice();
@@ -28,5 +30,15 @@ export default class Util {
     }
   }
 
+  static shouldErasePreviousPaths = (settings: I_settings): boolean => {
+    return (settings.display.overlays.path.showLast
+      && !settings.display.overlays.path.persist
+      && settings.display.animation.rate <= Util.pathDrawThreshold)
+  }
+
+  static shouldMarkLastPath = (settings: I_settings): boolean => {
+    return (settings.display.overlays.path.showLast
+      && settings.display.animation.rate <= Util.pathDrawThreshold)
+  }
 
 }

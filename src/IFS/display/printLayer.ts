@@ -3,11 +3,13 @@ import Color from "./util/color";
 
 export default class PrintLayer {
 
+  name: string;
   material: HTMLCanvasElement;
   workPiece: CanvasRenderingContext2D;
   draft: ImageData;
 
-  constructor(canvas: HTMLCanvasElement, printArea: Rect) {
+  constructor(name: string, canvas: HTMLCanvasElement, printArea: Rect) {
+    this.name = name;
     this.material = canvas;
     this.workPiece = this.material.getContext('2d')!;
     this.material.width = printArea.width;

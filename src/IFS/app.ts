@@ -4,10 +4,10 @@ import { I_settings } from "@IFS/types/configTypes";
 import { default as FunctionSystem } from "@IFS/functionSystem";
 import { default as DisplayApperatus } from "@IFS/display/displayApperatus";
 import { default as Rig } from "./display/rig";
-import { default as Color } from "@IFS/display/util/color";
 
 import { defaultState as baseState } from "@IFS/resources/defaults"
-import TurnTaker from "./turnTaker";
+import Util from "./util";
+import TurnTaker from "./TurnTaker";
 
 export default class App {
 
@@ -51,25 +51,21 @@ export default class App {
 
   start = (): void => {
     this.state.animation.running = true;
-    TurnTaker.setup(this.settings, this.state, this.FS, this.display!)
+    TurnTaker.doFirstDraw(this.settings, this.state, this.display!);
     requestAnimationFrame(this.animateFn);
   }
 
   animateFn = (timeStamp: number): void => {
 
-    // check if session parameters have changed and make changes accordingly
-    TurnTaker.readSettings(this.settings, this.state, this.display!)
-
-    // main IFS iterations loop
     if (this.state.animation.running) {
-
       if (this.state.animation.frameTimes.first === undefined)
         this.state.animation.frameTimes.first = timeStamp
 
       if (this.state.animation.frameTimes.previous !== timeStamp) {
-        TurnTaker.runItteration(this.settings, this.state, this.FS, this.display!)
+        let stepsPerFrame = this.settings.display.animation.rate
+        TurnTaker.handleTurn(stepsPerFrame, this.settings, this.state, this.FS, this.display!)
       }
-
+      TurnTaker.updateAppropriateLayers(this.settings, this.display!);
       this.state.animation.frameTimes.previous = timeStamp;
     }
 

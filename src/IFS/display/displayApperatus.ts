@@ -1,5 +1,4 @@
 import { default as Color } from "@IFS/display/util/color";
-import { default as Rect } from "@IFS/display/util/rect";
 import { Renderer, Painter, Rig, PrintLayer } from "@IFS/display"
 
 import { I_displayConfig } from "@IFS/types/configTypes";
@@ -25,27 +24,28 @@ export default class DisplayApperatus {
 
   reconstruct = (config: I_displayConfig): void => {
     this.config = config;
-    this.renderer.reconstruct(this.config)
+    this.renderer.reconstructAll(this.config)
     this.rig.reconstruct(this.config, this.renderer.getPrintArea())
   }
 
-  projectedPoint = (p: number[], printArea: Rect): number[] => {
-    return this.rig.project(p, printArea.width);
-  }
-
-  addPoint = (print: PrintLayer, p: number[], color: Color): void => {
-    let _p = this.projectedPoint(p, this.renderer.printArea)
+  draftPoint = (print: PrintLayer, p: number[], color: Color): void => {
+    let _p = this.rig.projectPoint(this.renderer.printArea.width, p)
     Painter.putPixel_quantize(print, this.renderer.printArea, _p, color)
   }
 
-  addLine = (print: PrintLayer, p: number[], q: number[], color: Color): void => {
-    let _p = this.projectedPoint(p, this.renderer.printArea)
-    let _q = this.projectedPoint(q, this.renderer.printArea)
+  draftLine = (print: PrintLayer, p: number[], q: number[], color: Color): void => {
+    let [_p, _q] = this.rig.projectPoints(this.renderer.printArea.width, p, q);
     Painter.putLine(print, this.renderer.printArea, _p, _q, color);
   }
 
-  update = () => {
-    this.renderer.show();
-  }
+  updateFigure = () => this.renderer.layers.figure.commit()
+  updatePathOverlay = () => this.renderer.layers.pathOverlay.commit()
+  updateBboxesOverlay = () => this.renderer.layers.bboxesOverlay.commit()
+  updateAll = () => this.renderer.commitAll();
+
+  clearFigure = () => this.renderer.layers.figure.clear()
+  clearPathOverlay = () => this.renderer.layers.pathOverlay.clear()
+  clearBboxesOverlay = () => this.renderer.layers.bboxesOverlay.clear()
+  clearAll = () => this.renderer.clearAll();
 
 }

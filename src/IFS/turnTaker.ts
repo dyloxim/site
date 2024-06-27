@@ -1,81 +1,109 @@
-import { default as Util } from "@IFS/util";
-import { default as functionSystem } from "@IFS/functionSystem";
 import { default as Display } from "@IFS/display/displayApperatus"
+import { NoColor } from "@IFS/resources/colors"
 
-import { I_state } from "@IFS/types/operationTypes";
-import { I_settings } from "./types/configTypes";
+import { I_settings } from "./types/configTypes"
+import { I_state } from "./types/operationTypes"
+import Util from "./util"
+import functionSystem from "./functionSystem"
 
 export default class TurnTaker {
 
-  // process management
+  static doFirstDraw = (
+    settings: I_settings,
+    state: I_state,
+    display: Display
+  ): void => {
+    TurnTaker.ensureConfigApplied(settings, state, display!)
+  }
 
-  static setup = (
+  static handleTurn = (
+    stepsPerFrame: number,
     settings: I_settings,
     state: I_state,
     FS: functionSystem,
     display: Display
-  ): void => {
-    if (settings.display.overlays.boundingBoxes)
-      TurnTaker.drawBoundingBoxes(settings, state, FS, display);
+  ) => {
+    TurnTaker.prepareTurn(settings, state, display);
+    Array.from({ length: stepsPerFrame }, _ => TurnTaker.takeTurn(settings, state, FS, display))
+    TurnTaker.afterTurn(settings, state, display)
   }
 
-  static runItteration = (
+  static takeTurn = (
     settings: I_settings,
     state: I_state,
     FS: functionSystem,
     display: Display
-  ): void => {
-
-    Array.from({ length: settings.display.animation.rate }, _ => null).forEach(_ => {
-
-      // deprecate current position
-      state.program.lastTurn = state.program.thisTurn
-
-      // choose new function and get position of current point under transformation
-      let choice = Util.getWeightedRandomChoice(FS.weights)
-      let newPosition = FS.transforms[choice]
-        .apply(state.program.thisTurn.position)
-
-      // update state
-      state.program.thisTurn.choice = choice;
-      state.program.thisTurn.position = newPosition
-
-      // register new point on workpiece
-      TurnTaker.markCurrentPoint(settings, state, display);
-
-      if (settings.display.overlays.path.showLast)
-        TurnTaker.markLastPath(settings, state, display)
-    });
-
-    display.renderer.layers.figure.commit();
-
+  ) => {
+    TurnTaker.movePiece(settings, state, FS, display)
+    if (Util.shouldMarkLastPath(settings))
+      TurnTaker.markLastPath(settings, state, display)
   }
 
-
-  // state interpretation
-
-  static readSettings = (settings: I_settings, state: I_state, display: Display): void => {
+  static ensureConfigApplied = (
+    settings: I_settings,
+    state: I_state,
+    display: Display
+  ): void => {
     if (state.interaction.updatePending) {
+      if (settings.display.animation.rate >= Util.pathDrawThreshold)
+        display.clearPathOverlay();
       TurnTaker.handlePossibleRedraw(settings, state, display);
       state.interaction.updatePending = false;
     }
   }
 
-  static handlePossibleRedraw = (
+  private static prepareTurn = (
     settings: I_settings,
     state: I_state,
-    display: Display): void => {
+    display: Display
+  ) => {
+    TurnTaker.ensureConfigApplied(settings, state, display);
+    if (Util.shouldErasePreviousPaths(settings))
+      TurnTaker.erasePreviousPaths(settings, state, display);
+  }
+
+  private static afterTurn = (
+    settings: I_settings,
+    state: I_state,
+    display: Display
+  ) => {
+  }
+
+  static updateAppropriateLayers = (settings: I_settings, display: Display): void => {
+    // if animation loop is running, (where this function is called from),
+    // the figure layer always needs updating
+    display?.updateFigure()
+    // path overlay only needs updating if path overlays are active
+    if (Util.shouldMarkLastPath(settings))
+      display?.updatePathOverlay();
+  }
+
+  static handlePossibleRedraw = (settings: I_settings, state: I_state, display: Display) => {
     if (state.interaction.wantsRedraw) {
-      display.reconstruct(settings.display);
+      display.renderer.reconstructAll(settings.display);
+      display.rig.reconstruct(settings.display, display.renderer.getPrintArea());
       state.interaction.wantsRedraw = false;
     }
   }
 
+  static movePiece = (
+    settings: I_settings,
+    state: I_state, FS: functionSystem,
+    display: Display
+  ) => {
+    // deprecate current position
+    state.program.lastTurn = state.program.thisTurn
 
-  // straightforward drawing functions
+    // choose new function and get position of current point under transformation
+    let choice = Util.getWeightedRandomChoice(FS.weights)
+    let newPosition = FS.transforms[choice]
+      .apply(state.program.thisTurn.position)
 
-  static markCurrentPoint = (settings: I_settings, state: I_state, display: Display): void => {
-    display.addPoint(
+    // update state
+    state.program.thisTurn = { choice: choice, position: newPosition }
+
+    // register new point on workpiece
+    display?.draftPoint(
       display.renderer.layers.figure,
       state.program.thisTurn.position,
       Util.getThisTurnColor(settings, state)
@@ -83,29 +111,28 @@ export default class TurnTaker {
   }
 
   static markLastPath = (settings: I_settings, state: I_state, display: Display): void => {
-    // erase prior path
-    if (!settings.display.overlays.path.persist)
-      display.renderer.layers.pathOverlay.clear();
     // dont draw last path if steps/frame is high
-    if (settings.display.animation.rate < 10) {
-      display.addLine(
-        display.renderer.layers.pathOverlay,
-        state.program.thisTurn.position,
-        state.program.lastTurn.position,
-        Util.getThisTurnColor(settings, state)
-      );
-    }
-    display.renderer.layers.pathOverlay.commit();
+    display?.draftLine(
+      display?.renderer.layers.pathOverlay,
+      state.program.thisTurn.position,
+      state.program.lastTurn.position,
+      Util.getThisTurnColor(settings, state)
+    );
+    display?.updatePathOverlay();
   }
 
-  static drawBoundingBoxes = (
+  static erasePreviousPaths = (
     settings: I_settings,
     state: I_state,
-    FS: functionSystem,
     display: Display
   ): void => {
-
+    // dont draw last path if steps/frame is high
+    if (Util.shouldErasePreviousPaths(settings))
+      display?.clearPathOverlay();
   }
 
+  static drawBoundingBoxes = (): void => {
+
+  }
 
 }
