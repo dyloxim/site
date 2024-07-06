@@ -7,5 +7,11 @@ export const Primary = new Palette([
   Colors.Blue,
   Colors.Yellow,
   Colors.Cyan,
-  Colors.Magenta
+  Colors.Magenta,
+  Colors.PaleRed,
+  Colors.PaleGreen,
+  Colors.Lilac,
+  Colors.PastelBlue,
+  Colors.PrettyPink,
+  Colors.PastelYellow,
 ])

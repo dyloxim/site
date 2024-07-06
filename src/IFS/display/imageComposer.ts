@@ -1,17 +1,13 @@
 import { default as Rect } from "@IFS/display/util/rect";
 import { default as PrintLayer } from "@IFS/display/printLayer";
+import { DisplayLayer } from "@IFS/types/specifications";
+import { DisplayLayers } from "@IFS/resources/globalConstants";
 
-import { I_displayConfig } from "@IFS/types/configTypes"
+import { I_displayConfig } from "@IFS/types/configuration"
 
+export default class ImageComposer {
 
-export default class Renderer {
-
-  layers: {
-    figure: PrintLayer,
-    pathOverlay: PrintLayer,
-    bboxesOverlay: PrintLayer,
-  }
-
+  layers: Record<DisplayLayer, PrintLayer>;
   borderRect: Rect;
   printArea: Rect;
 
@@ -26,20 +22,6 @@ export default class Renderer {
     displayContainer.innerHTML = '';
 
     // initialize canvases
-    let canvases = ["figureCanvas", "pathOverlayCanvas", "bboxOverlayCanvas"]
-      .map((name, idx) => {
-        let canvas = document.createElement('canvas');
-        canvas.id = name;
-        canvas.style.imageRendering = "pixelated";
-        canvas.style.position = "absolute";
-        canvas.style.left = "0";
-        canvas.style.top = "0";
-        canvas.style.width = displayContainer.style.width;
-        canvas.style.height = displayContainer.style.height;
-        canvas.style.zIndex = `${idx + 1}`;
-        displayContainer.appendChild(canvas);
-        return canvas;
-      })
 
     this.borderRect = new Rect(
       Number(displayContainer.style.width.replace(/([0-9]+)px/, '$1')),
@@ -48,13 +30,27 @@ export default class Renderer {
     this.printArea = this.borderRect.scale(config.rendering.upscaleFactor)
       .nearestWholeNumberDimensions();
 
-    this.layers = {
-      figure: new PrintLayer("figure", canvases[0], this.printArea),
-      pathOverlay: new PrintLayer("pathOverlay", canvases[1], this.printArea),
-      bboxesOverlay: new PrintLayer("bboxesOverlay", canvases[2], this.printArea),
-    }
-
+    let newLayers: Record<string, PrintLayer> = {};
+    DisplayLayers.forEach((name, i) => {
+      let canvas = this.appendNamedCanvas(displayContainer, name + "Canvas", i+1)
+      newLayers[name] = new PrintLayer(name, canvas, this.printArea);
+    })
+    this.layers = newLayers;
     this.commitAll()
+  }
+
+  appendNamedCanvas = (displayContainer: HTMLDivElement, name: string, zIndex: number) => {
+    let canvas = document.createElement('canvas');
+    canvas.id = name;
+    canvas.style.imageRendering = "pixelated";
+    canvas.style.position = "absolute";
+    canvas.style.left = "0";
+    canvas.style.top = "0";
+    canvas.style.width = displayContainer.style.width;
+    canvas.style.height = displayContainer.style.height;
+    canvas.style.zIndex = `${zIndex}`;
+    displayContainer.appendChild(canvas);
+    return canvas;
   }
 
   applyToAllLayers = (f: (layer: PrintLayer) => void): void => {

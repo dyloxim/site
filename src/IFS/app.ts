@@ -1,18 +1,17 @@
-import { I_session, I_state } from "@IFS/types/operationTypes";
-import { I_settings } from "@IFS/types/configTypes";
+import { I_session, I_sessionState } from "@IFS/types/state";
+import { I_settings } from "@IFS/types/configuration";
 
 import { default as FunctionSystem } from "@IFS/functionSystem";
 import { default as DisplayApperatus } from "@IFS/display/displayApperatus";
 import { default as Rig } from "./display/rig";
 
 import { defaultState as baseState } from "@IFS/resources/defaults"
-import Util from "./util";
-import TurnTaker from "./TurnTaker";
+import Delegator from "./execution/delegator";
 
 export default class App {
 
   settings: I_settings;
-  state: I_state;
+  state: I_sessionState;
 
   FS: FunctionSystem
   display: DisplayApperatus | undefined;
@@ -31,7 +30,7 @@ export default class App {
     return app;
   }
 
-  static getInitialState = (firstPoint: number[]): I_state => {
+  static getInitialState = (firstPoint: number[]): I_sessionState => {
     let state = baseState;
     state.program.thisTurn.position = firstPoint;
     state.program.lastTurn.position = firstPoint;
@@ -50,26 +49,33 @@ export default class App {
   // CORE PROCESS
 
   start = (): void => {
-    this.state.animation.running = true;
-    TurnTaker.doFirstDraw(this.settings, this.state, this.display!);
+
+    Delegator.doFirstDraw({
+      session: { settings: this.settings, state: this.state },
+      FS: this.FS,
+      display: this.display!
+    });
     requestAnimationFrame(this.animateFn);
+
   }
 
   animateFn = (timeStamp: number): void => {
 
-    if (this.state.animation.running) {
-      if (this.state.animation.frameTimes.first === undefined)
-        this.state.animation.frameTimes.first = timeStamp
+    if (this.state.animation.frameTimes.first === undefined)
+      this.state.animation.frameTimes.first = timeStamp
 
       if (this.state.animation.frameTimes.previous !== timeStamp) {
-        let stepsPerFrame = this.settings.display.animation.rate
-        TurnTaker.handleTurn(stepsPerFrame, this.settings, this.state, this.FS, this.display!)
+        Delegator.handleTurn({
+          session: { settings: this.settings, state: this.state },
+          FS: this.FS,
+          display: this.display!
+        });
       }
-      TurnTaker.updateAppropriateLayers(this.settings, this.display!);
-      this.state.animation.frameTimes.previous = timeStamp;
-    }
+
+    this.state.animation.frameTimes.previous = timeStamp;
 
     window.requestAnimationFrame(this.animateFn);
+
   }
 
 

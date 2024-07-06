@@ -22,4 +22,8 @@ export default class Vec2 extends Vector {
     return Math.sqrt(v[0]*v[0] + v[1]*v[1]);
   }
 
+  static dist(v: number[], w: number[]) {
+    return Vec2.mod(Vec2.minus(v, w));
+  }
+
 }

@@ -1,6 +1,6 @@
-import Color from './util/color';
-import Rect from "./util/rect";
-import Num from "@IFS/math/numerical/num";
+import { default as Color } from './util/color';
+import { default as Rect } from "./util/rect";
+import { default as Num } from "@IFS/math/numerical/num";
 import { default as PrintLayer } from "./printLayer";
 
 export default class Painter {
@@ -55,6 +55,54 @@ export default class Painter {
       this.putPixel(print, printArea, was_steep ? [_dolly_y_Q, _dolly_x_Q] : [_dolly_x_Q, _dolly_y_Q], color);
       _dolly_y = _dolly_y + _m;
       _dolly_y_Q = Num.integerPart(_dolly_y)
+    }
+  }
+
+  // stolen from here: https://medium.com/@trey.tomes/bresenhams-circle-algorithm-2153b32a0ecf
+  static putCircle(
+    print: PrintLayer,
+    printArea: Rect,
+    [xc, yc]: number[],
+    r: number,
+    fill: boolean,
+    color: Color
+  ) {
+    xc = Math.floor(xc);
+    yc = Math.floor(yc);
+    r = Math.floor(r);
+
+    const drawOctants = (x: number, y: number) => {
+      this.putPixel(print, printArea, [xc + x, yc + y], color);
+      this.putPixel(print, printArea, [xc - x, yc + y], color);
+      this.putPixel(print, printArea, [xc + x, yc - y], color);
+      this.putPixel(print, printArea, [xc - x, yc - y], color);
+
+      this.putPixel(print, printArea, [xc + y, yc + x], color);
+      this.putPixel(print, printArea, [xc - y, yc + x], color);
+      this.putPixel(print, printArea, [xc + y, yc - x], color);
+      this.putPixel(print, printArea, [xc - y, yc - x], color);
+    };
+
+    const fillOctants = (x: number, y: number) => {
+      for (let xx = xc - x; xx <= xc + x; xx++) this.putPixel(print, printArea, [xx, yc + y], color);
+      for (let xx = xc - x; xx <= xc + x; xx++) this.putPixel(print, printArea, [xx, yc - y], color);
+      for (let xx = xc - y; xx <= xc + y; xx++) this.putPixel(print, printArea, [xx, yc + x], color);
+      for (let xx = xc - y; xx <= xc + y; xx++) this.putPixel(print, printArea, [xx, yc - x], color);
+    }
+
+    let x = 0, y = r;
+    let d = 3 - 2 * r;
+    fill ? fillOctants(x, y) : drawOctants(x, y);
+    while (y >= x) {
+      x++;
+
+      if (d > 0) {
+        y--;
+        d = d + 4 * (x - y) + 10;
+      } else {
+        d = d + 4 * x + 6;
+      }
+      fill ? fillOctants(x, y) : drawOctants(x, y);
     }
   }
 

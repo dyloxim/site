@@ -1,23 +1,25 @@
 import { default as Vec } from '@IFS/math/linearAlgebra/vec2';
-import { I_displayConfig } from '@IFS/types/configTypes';
+import { I_displayConfig } from '@IFS/types/configuration';
 import Rect from "./util/rect";
 
 export default class Rig {
 
   domain: I_domainIntern;
+  pixPerUnit: number;
 
   // Rigging calculation functions
 
   static handlePossibleImpliedDisplayRegion = (
     refRegion: {
-      corner: number[],
+      o: number[],
       e1: number[],
       e2: number[]
     },
     displayRegion: {
       origin: number[],
       displayRadius: number,
-    }
+    },
+    ensure?: boolean,
   ) => {
 
     /*  When this function is used
@@ -39,7 +41,7 @@ export default class Rig {
      *
      */
 
-    if (displayRegion.displayRadius == 0) {
+    if (displayRegion.displayRadius == 0 || ensure) {
 
       /*
        *  we calculate the implied display region as having its centre at the intersection
@@ -52,7 +54,7 @@ export default class Rig {
       let diag2 = Vec.add(Vec.scale(refRegion.e1, -1), refRegion.e2);
       let newDisplayRegion =
         {
-          origin: Vec.add(refRegion.corner, Vec.scale(diag1, 1 / 2)),
+          origin: Vec.add(refRegion.o, Vec.scale(diag1, 1 / 2)),
           displayRadius: Math.max(...[diag1, diag2].map(v => Vec.mod(v))) / 2
         }
       
@@ -90,11 +92,13 @@ export default class Rig {
   constructor(config: I_displayConfig, printArea: Rect) {
     let domain = Rig.determineDomain(config, printArea);
     this.domain = domain;
+    this.pixPerUnit = printArea.width / this.domain.width;
   }
 
   reconstruct = (config: I_displayConfig, printArea: Rect) => {
     let domain = Rig.determineDomain(config, printArea);
     this.domain = domain;
+    this.pixPerUnit = printArea.width / this.domain.width;
   }
 
 
@@ -106,25 +110,22 @@ export default class Rig {
    *
    */ 
 
-  projectPoint = (printWidth: number, p: number[]): number[] => {
-    let pixPerUnit = printWidth / this.domain.width;
-    let upsideDown = Vec.scale(
-      Vec.minus(p, this.domain.topLeft),
-      pixPerUnit
-    );
+  projectPoint = (p: number[]): number[] => {
+    let upsideDown = Vec.scale(Vec.minus(p, this.domain.topLeft), this.pixPerUnit);
     return [upsideDown[0], -upsideDown[1]];
   };
 
-  projectPoints = (printWidth: number, ...points: number[][]): number[][] => {
-    return points.map(p => {
-    let pixPerUnit = printWidth / this.domain.width;
-    let upsideDown = Vec.scale(
-      Vec.minus(p, this.domain.topLeft),
-      pixPerUnit
-    );
-    return [upsideDown[0], -upsideDown[1]];
-    })
+  projectPoints = (...points: number[][]): number[][] => {
+    return points.map(p => this.projectPoint(p));
   };
+
+  projectLength = (length: number): number => {
+    return Math.round(length * this.pixPerUnit);
+  }
+
+  reverseProject = (p: number[]): number[] => {
+    return Vec.add(Vec.scale([p[0], -p[1]], 1/this.pixPerUnit), this.domain.topLeft);
+  }
 
 }
 

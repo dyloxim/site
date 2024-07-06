@@ -1,4 +1,4 @@
-import { I_transform } from "@IFS/types/mathTypes";
+import { I_transform } from "@IFS/types/mathematical";
 import Color from "@IFS/display/util/color";
 import Palette from "@IFS/display/util/palette";
 
@@ -6,7 +6,7 @@ export interface I_functionSystem {
   transforms: I_transform[],
   weights: number[] | 'uniform',
   referenceRegion: {
-    corner: number[],
+    o: number[],
     e1: number[],
     e2: number[]
   },
@@ -33,7 +33,7 @@ export interface I_displayConfig {
     boundingBoxes: boolean,
     path: {
       showLast: boolean,
-      persist: boolean
+      persist: boolean,
     }
   }
 }
