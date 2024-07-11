@@ -17,7 +17,6 @@ export default class SessionMutation {
   }
 
   gives = (): I_session => {
-    
     this.ticketsGetter(this.s).forEach(ticket => {
       this.s.state.tickets[ticket.instructionGroup as InstructionGroup].add(ticket);
     })

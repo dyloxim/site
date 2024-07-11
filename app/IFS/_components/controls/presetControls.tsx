@@ -19,7 +19,11 @@ export default function PresetControls({ session, updateSession }: {
         s.settings.FS = FunctionSystems[presetName as NamedFSPreset]; return s;
       },
       ticketsGetter: s => {
-        let tickets = [CommonTickets.reloadFS, CommonTickets.reloadRig]
+        let tickets = [
+          CommonTickets.reloadFS,
+          CommonTickets.revertToRigToInitial,
+          CommonTickets.reloadRig
+        ]
         tickets = s.state.options.bboxes ? [CommonTickets.reloadBboxes, ...tickets] : tickets;
         return tickets;
       }

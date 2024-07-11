@@ -1,14 +1,16 @@
+import { default as FunctionSystem } from "@IFS/functionSystem"
+import { default as Rig } from "@IFS/display/rig"
 import { default as Color } from "@IFS/display/util/color"
+import { default as Util } from "@IFS/execution/util"
+
+import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 
 import { DisplayLayer } from "@IFS/types/specifications";
-import { default as Util } from "@IFS/execution/util"
+import { BasicLayerTicket } from "@IFS/types/tickets";
 import { AppStateProcessor, TicketProcessor } from "@IFS/types/interaction"
-import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import Rig from "@IFS/display/rig"
-import FunctionSystem from "@IFS/functionSystem"
+
 import * as CommonTickets from "@IFS/resources/tickets"
 import * as Globals from "@IFS/resources/globalConstants"
-import { BasicLayerTicket } from "@IFS/types/tickets";
 
 export default class IFSAppWorker {
 
@@ -31,16 +33,19 @@ export default class IFSAppWorker {
 
   // FS Operations
 
+  static revertRigToInitial: TicketProcessor = (app, _) => {
+    app.display.config.domain = Rig.handlePossibleImpliedDisplayRegion(
+      app.session.settings.FS.referenceRegion,
+      app.session.settings.display.domain, true
+    );
+  }
+
   static loadFSFromSettings: TicketProcessor = (app, _) => {
     let newFS = new FunctionSystem(app.session.settings.FS);
     app.FS.transforms = newFS.transforms;
     app.FS.weights = newFS.weights;
     app.FS.bboxes.reference = newFS.bboxes.reference;
     app.FS.bboxes.transformed = newFS.bboxes.transformed;
-    app.display.config.domain = Rig.handlePossibleImpliedDisplayRegion(
-      app.session.settings.FS.referenceRegion,
-      app.session.settings.display.domain, true
-    );
     app.session = new SessionMutation({
       session: app.session,
       assertion: s => {
@@ -65,12 +70,12 @@ export default class IFSAppWorker {
     app.display.clearBboxesOverlay()
     let bboxLayer = app.display.imageComposer.layers.bboxesOverlay
     // base box
-    let baseColor = Color.multiply(app.session.settings.display.color.base, .35);
+    let baseColor = Color.multiply(app.session.settings.display.color.base, .50);
     let vertSize = Util.getVertRadius(app.session.settings);
     app.display.draftPolygon(bboxLayer, app.FS.bboxes.reference, vertSize, baseColor)
     app.FS.bboxes.transformed.forEach((bbox, i) => {
-      let color = app.session.settings.display.color.multi ?
-        Color.multiply(app.session.settings.display.color.palette.colors[i], .35) : baseColor;
+      let color = app.session.state.options.color ?
+        Color.multiply(app.session.settings.display.color.palette.colors[i], .50) : baseColor;
       app.display.draftPolygon(bboxLayer, bbox, vertSize, color)
     })
     app.display.updateBboxesOverlay();
@@ -128,7 +133,6 @@ export default class IFSAppWorker {
       && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
     ) app.display.updatePathOverlay();
   }
-
 
   static maybeErasePastPaths: AppStateProcessor = (app): void => {
     if (app.session.state.options.path == "recent"

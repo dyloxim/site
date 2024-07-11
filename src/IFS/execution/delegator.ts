@@ -32,6 +32,8 @@ export default class Delegator {
       .forEach(appElement => {
         while (app.session.state.tickets[appElement].size !== 0) {
           app.session.state.tickets[appElement].forEach(ticket => {
+            console.log(`processing ${appElement} ticket '${ticket.instruction}':`)
+            console.log(ticket)
             ticket.processor(app, ticket);
             app.session.state.tickets[appElement].delete(ticket);
           });

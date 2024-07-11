@@ -10,10 +10,14 @@ export type SimpleTicket = {
   processor: TicketProcessor
 }
 
+let instructionStringWriter = (p: ["Erase" | "Draw", DisplayLayer]) => `${p[0]} ${p[1]}`
+
+export type LayerTicketInstructionString = ReturnType<typeof instructionStringWriter>
+
 export type BasicLayerTicket = SimpleTicket &{
   consumer: DisplayLayer
   instructionGroup: "layerErase" | "layerDraw",
-  instruction: "ensureShown" | "ensureHidden" | "erase"
+  instruction: LayerTicketInstructionString
 }
 
 export type DefinedTicket = typeof definedTickets[number] | BasicLayerTicket

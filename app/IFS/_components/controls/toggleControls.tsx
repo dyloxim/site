@@ -31,7 +31,7 @@ export default function IncrementControls({ session, updateSession }: {
     {
       key: "color",
       text: "Use Color",
-      mutation: s => { s.settings.display.color.multi = !s.settings.display.color.multi; return s; },
+      mutation: s => { s.state.options.color = !s.state.options.color; return s; },
       ticketsGetter: s => {
         let tickets = ([
           CommonTickets.generateBasicLayerTicket("layerErase", "figure", "erase"),

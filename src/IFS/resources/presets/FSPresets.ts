@@ -107,6 +107,20 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
+  serpinskiCarpet: {
+    transforms: [
+      { linear: [[8/9, 0],[0, 8/9]], translation: [-1, 0]},
+      { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, Math.sqrt(3)]},
+      { linear: [[8/9, 0],[0, 8/9]], translation: [ 1, 0]},
+    ],
+    weights: 'uniform',
+    referenceRegion: {
+      o: [-2,  -1.2],
+      e1: [4,0],
+      e2: [0,4]
+    },
+    firstPoint: [0, 0]
+  },
 }
 
 // mcWortersPentigree: {

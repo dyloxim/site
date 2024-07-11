@@ -22,6 +22,7 @@ export const DisplayLayers = [
 export const NamedFSPresets = [
   "barnsleyFern",
   "sierpinskiGasket",
+  "serpinskiCarpet",
   "sierpinskiPentagon",
   "kochSnowflake",
   "kochCurve",
@@ -36,8 +37,8 @@ export const NamedFSPresets = [
  * ----------------------------------
  */
 
-export const vertRadiusDisplayRatio = 1/140;
-export const selectionRadiusDisplayRatio = 1/20;
+export const vertRadiusDisplayRatio = 1/120;
+export const selectionRadiusDisplayRatio = 1/30;
 
 export const panStepSizeDisplayRatio = 1/8;
 export const zoomIncrementStep = 7/8;

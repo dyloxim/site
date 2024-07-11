@@ -47,6 +47,10 @@ export const defaultState: I_sessionState = {
     process: new Set<DefinedTicket>(),
     layerDraw: new Set<DefinedTicket>(),
     layerErase: new Set<DefinedTicket>(),
+  },
+
+  tacit: {
+    mutatingFS: false
   }
 
 }

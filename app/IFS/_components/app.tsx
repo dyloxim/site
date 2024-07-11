@@ -16,7 +16,7 @@ export default function App() {
 
   const [session, updateSession] = useState<I_session>({
     settings: preset,
-    state: IFSApp.getInitialState(preset.FS.firstPoint) 
+    state: IFSApp.getInitialState(preset) 
   });
 
   const appEngine = IFSApp.constructWithState(session);

@@ -1,16 +1,17 @@
 import IFSAppWorker from "@IFS/execution/IFSAppWorker";
 import MouseProcessor from "@IFS/execution/mouseProcessor";
 import { DisplayLayer } from "@IFS/types/specifications";
-import { SimpleTicket, BasicLayerTicket } from "@IFS/types/tickets"
+import { SimpleTicket, BasicLayerTicket, LayerTicketInstructionString } from "@IFS/types/tickets"
 
 /*
  * convenience function for generating tickets requesting basic layer changes
  */
 
+
 export const generateBasicLayerTicket = (
   instructionGroup: "layerErase" | "layerDraw",
   layer: DisplayLayer,
-  instruction: "ensureShown" | "ensureHidden" | "erase"
+  instruction: LayerTicketInstructionString
 ): BasicLayerTicket => {
   return {
     consumer: layer,
@@ -80,6 +81,12 @@ export const highlightSelection: SimpleTicket = {
   instructionGroup: "mouse",
   instruction: "highlightSelection",
   processor: MouseProcessor.highlightSelection
+}; ticketArray = [...ticketArray, reloadBboxes];
+
+export const revertToRigToInitial: SimpleTicket = {
+  instructionGroup: "mouse",
+  instruction: "highlightSelection",
+  processor: IFSAppWorker.revertRigToInitial
 }; ticketArray = [...ticketArray, reloadBboxes];
 
 export const definedTickets = ticketArray;

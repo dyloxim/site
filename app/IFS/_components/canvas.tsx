@@ -63,7 +63,7 @@ const Canvas = ({ setupFn, session, updateSession }: {
         ref={displayContainerRef}
         style={{
           position: "relative",
-          width: "700px",
+          width: window.innerWidth,
           height: "1100px"
         }}>
       </div>

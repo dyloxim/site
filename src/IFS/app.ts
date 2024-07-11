@@ -21,7 +21,7 @@ export default class App {
   constructor(settings: I_settings) {
     this.settings = settings;
     this.FS = new FunctionSystem(this.settings.FS);
-    this.state = App.getInitialState(this.settings.FS.firstPoint);
+    this.state = App.getInitialState(this.settings);
   }
 
   static constructWithState = (session: I_session): App => {
@@ -30,10 +30,11 @@ export default class App {
     return app;
   }
 
-  static getInitialState = (firstPoint: number[]): I_sessionState => {
+  static getInitialState = (settings: I_settings): I_sessionState => {
     let state = baseState;
-    state.program.thisTurn.position = firstPoint;
-    state.program.lastTurn.position = firstPoint;
+    state.program.thisTurn.position = settings.FS.firstPoint;
+    state.program.lastTurn.position = settings.FS.firstPoint;
+    state.options.color = settings.display.color.multi;
     return state;
   }
 

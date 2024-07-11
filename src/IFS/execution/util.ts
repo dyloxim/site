@@ -24,7 +24,7 @@ export default class Util {
   }
 
   static getThisTurnColor = (settings: I_settings, state: I_sessionState): Color => {
-    if (settings.display.color.multi) {
+    if (state.options.color) {
       return settings.display.color
         .palette.colors[state.program.thisTurn.choice];
     } else {

@@ -44,6 +44,10 @@ export interface I_sessionState {
     color: boolean,
   },
 
+  tacit: {
+    mutatingFS: boolean
+  }
+
   tickets: {
     [key in InstructionGroup]: Set<DefinedTicket>
   }
