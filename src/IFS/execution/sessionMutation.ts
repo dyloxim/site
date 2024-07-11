@@ -17,10 +17,6 @@ export default class SessionMutation {
   }
 
   gives = (): I_session => {
-    if(this.ticketsGetter(this.s).length != 0) {
-      console.log("registering ticket:")
-      console.log(this.ticketsGetter(this.s))
-    }
     this.ticketsGetter(this.s).forEach(ticket => {
       this.s.state.tickets[ticket.instructionGroup as InstructionGroup].add(ticket);
     })

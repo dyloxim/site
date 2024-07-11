@@ -50,7 +50,8 @@ export const defaultState: I_sessionState = {
   },
 
   tacit: {
-    mutatingFS: false
+    mutatingFS: false,
+    draggingRig: null
   }
 
 }

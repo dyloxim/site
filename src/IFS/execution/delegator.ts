@@ -14,7 +14,6 @@ export default class Delegator {
 
   static handleTurn: AppStateProcessor = (app) => {
     Delegator.dispatchTicketProcessors(app);
-    FSMutator.maybeTranslateBoundingBox(app);
     if (app.session.state.options.running) {
       IFSAppWorker.maybeErasePastPaths(app);
       Array.from({ length: app.session.state.options.animationRate }, _ =>  {

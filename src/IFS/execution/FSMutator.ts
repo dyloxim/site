@@ -8,13 +8,14 @@ import * as CommonTickets from "@IFS/resources/tickets"
 import { I_affine } from "@IFS/types/mathematical";
 
 export default class FSMutator {
+
   static maybeTranslateBoundingBox: AppStateProcessor = (app): void => {
-    if (app.session.state.tacit.mutatingFS) {
+    if (app.session.state.tacit.mutatingFS && app.session.state.mouse.selectionOffset) {
       let [i, j] = app.session.state.mouse.selectionCandidate!;
       let oldVert = app.FS.bboxes.transformed[i][j];
       let newVert = Vec.add(
         app.display.rig.reverseProject(app.session.state.mouse.pos),
-        app.session.state.mouse.selectionOffset!
+        app.session.state.mouse.selectionOffset
       )
       let oldTranslation = (_ => {
         let transform = (app.session.settings.FS.transforms[i] as I_affine)

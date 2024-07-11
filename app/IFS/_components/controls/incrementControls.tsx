@@ -1,9 +1,11 @@
+import { default as CategoricControl } from "./kinds/categoricControl";
+import { default as Vec } from "@IFS/math/linearAlgebra/vec2";
+
 import { I_session } from "@IFS/types/state";
 import { I_categoricControlSpecification } from "@IFS/types/interaction";
-import CategoricControl from "./kinds/categoricControl";
+
 import * as Globals from "@IFS/resources/globalConstants";
 import * as CommonTickets from "@IFS/resources/tickets";
-import { default as Vec } from "@IFS/math/linearAlgebra/vec2";
 
 export default function IncrementControls({ session, updateSession }: {
   session: I_session,

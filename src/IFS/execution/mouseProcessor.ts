@@ -1,9 +1,13 @@
 import { AppDerivedStateGetter, AppStateProcessor, TicketProcessor } from "@IFS/types/interaction"
-import Util from "./util";
+
+import { default as FSMutator } from "@IFS/execution/FSMutator";
+import { default as SessionMutation } from "@IFS/execution/sessionMutation";
+
+import { default as Color } from "@IFS/display/util/color";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
+import { default as Util } from "@IFS/execution/util";
+
 import * as CommonTickets from "@IFS/resources/tickets"
-import SessionMutation from "@IFS/execution/sessionMutation";
-import Color from "@IFS/display/util/color";
 
 export default class MouseProcessor {
 
@@ -11,32 +15,76 @@ export default class MouseProcessor {
 
   static handleMoveEvent: AppStateProcessor = app => {
     if (app.session.state.options.bboxes) {
+      FSMutator.maybeTranslateBoundingBox(app);
       MouseProcessor.processProximities(app);
       MouseProcessor.processSelectionCandidate(app);
     }
+    MouseProcessor.maybeTranslateRig(app);
   }
 
-  static handlePressEvent: AppStateProcessor = (app): void => {
+  static handleMouseDownEvent: AppStateProcessor = (app): void => {
+    if (app.session.state.mouse.selectionCandidate) {// get selectionOffset
+      let selectionOffset = MouseProcessor.getSelectionOffset(app);
 
-    if (app.session.state.mouse.down
-      && app.session.state.mouse.selectionCandidate) {
-
-        // get selectionOffset
-        let selectionOffset = MouseProcessor.getSelectionOffset(app);
-
-        app.session = new SessionMutation({ session: app.session,
-          assertion: s => { s.state.mouse.selectionOffset = selectionOffset; return s; },
-          ticketsGetter: s => [CommonTickets.setSwitch_MutatingFS]
-        }).gives();
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => {
+          s.state.mouse.selectionOffset = selectionOffset; s.state.tacit.mutatingFS = true;
+          return s;
+        },
+        ticketsGetter: _ => []
+      }).gives();
         
-      } else if (!app.session.state.mouse.down) {
+    } else {
 
-        app.session = new SessionMutation({ session: app.session,
-          assertion: s => { s.state.mouse.selectionOffset = null; return s; },
-          ticketsGetter: _ => [CommonTickets.unsetSwitch_MutatingFS]
-        }).gives();
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => {
+          s.state.tacit.draggingRig = app.session.settings.display.domain.origin;
+          return s
+        },
+        ticketsGetter: _ => []
+      }).gives();
+    }
 
-      }
+  }
+
+  static handleMouseUpEvent: AppStateProcessor = (app): void => {
+    if (app.session.state.tacit.mutatingFS) {// get selectionOffset
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => {
+          s.state.mouse.selectionOffset = null; s.state.tacit.mutatingFS = false;
+          return s;
+        },
+        ticketsGetter: _ => []
+      }).gives();
+    } else if (app.session.state.tacit.draggingRig) {
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => { s.state.tacit.draggingRig = null; return s },
+        ticketsGetter: _ => []
+      }).gives();
+    }
+
+  }
+
+  static maybeTranslateRig: AppStateProcessor = app => {
+    if (app.session.state.tacit.draggingRig && app.session.state.mouse.down) {
+      let newDisplayOrigin = Vec.add(
+        app.session.state.tacit.draggingRig,
+        Vec.minus(
+          app.display.rig.reverseProject(app.session.state.mouse.down),
+          app.display.rig.reverseProject(app.session.state.mouse.pos)
+        ));
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => { s.settings.display.domain.origin = newDisplayOrigin; return s; },
+        ticketsGetter: _ => [CommonTickets.reloadRig]
+      }).gives();
+
+    }
+  }
+
+
+  static handlePressEvent: AppStateProcessor = (app): void => {
+    if (app.session.state.mouse.down) MouseProcessor.handleMouseDownEvent(app);
+    else MouseProcessor.handleMouseUpEvent(app);
   }
 
   // subroutines

@@ -45,7 +45,8 @@ export interface I_sessionState {
   },
 
   tacit: {
-    mutatingFS: boolean
+    mutatingFS: boolean,
+    draggingRig: number[] | null
   }
 
   tickets: {

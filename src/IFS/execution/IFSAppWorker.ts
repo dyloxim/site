@@ -30,6 +30,12 @@ export default class IFSAppWorker {
       app.session.settings.display,
       app.display.imageComposer.getPrintArea()
     );
+    if (app.session.state.options.bboxes) {
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => s,
+        ticketsGetter: _ => [CommonTickets.reloadBboxes]
+      }).gives();
+    }
   }
 
   // FS Operations
