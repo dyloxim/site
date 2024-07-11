@@ -15,7 +15,7 @@ let instructionStringWriter = (p: ["Erase" | "Draw", DisplayLayer]) => `${p[0]} 
 export type LayerTicketInstructionString = ReturnType<typeof instructionStringWriter>
 
 export type BasicLayerTicket = SimpleTicket &{
-  consumer: DisplayLayer
+  consumer: DisplayLayer[]
   instructionGroup: "layerErase" | "layerDraw",
   instruction: LayerTicketInstructionString
 }

@@ -30,7 +30,11 @@ const Canvas = ({ setupFn, session, updateSession }: {
             ]
             return s;
           },
-          ticketsGetter: _ => [CommonTickets.handleMouseMoveEvent]
+          ticketsGetter: s => {
+            let tickets = [CommonTickets.handleMouseMoveEvent];
+            if (s.state.tacit.mutatingFS) tickets = [...tickets, CommonTickets.highlightSelection]
+            return tickets;
+          }
         }).gives());
       }, false);
 

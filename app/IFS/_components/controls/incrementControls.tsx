@@ -92,7 +92,7 @@ export default function IncrementControls({ session, updateSession }: {
         if (option.value) {
           return []
         } else {
-          return [CommonTickets.generateBasicLayerTicket("layerErase", "pathOverlay", "erase")]
+          return [CommonTickets.generateBasicLayerTicket("erase", ["pathOverlay"])]
         }
       }
     }

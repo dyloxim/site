@@ -24,7 +24,7 @@ export default function IncrementControls({ session, updateSession }: {
         if (s.state.options.bboxes) {
           return [CommonTickets.reloadBboxes]
         } else {
-          return [CommonTickets.generateBasicLayerTicket("layerErase", "bboxesOverlay", "erase")]
+          return [CommonTickets.generateBasicLayerTicket("erase", ["bboxesOverlay" ])]
         }
       }
     },
@@ -34,9 +34,7 @@ export default function IncrementControls({ session, updateSession }: {
       mutation: s => { s.state.options.color = !s.state.options.color; return s; },
       ticketsGetter: s => {
         let tickets = ([
-          CommonTickets.generateBasicLayerTicket("layerErase", "figure", "erase"),
-          CommonTickets.generateBasicLayerTicket("layerErase", "pathOverlay", "erase"),
-          CommonTickets.generateBasicLayerTicket("layerErase", "bboxesOverlay", "erase"),
+          CommonTickets.generateBasicLayerTicket("erase", ["figure", "pathOverlay", "bboxesOverlay"]),
         ] as DefinedTicket[])
         tickets = s.state.options.bboxes ? [CommonTickets.reloadBboxes, ...tickets] : tickets;
         return tickets

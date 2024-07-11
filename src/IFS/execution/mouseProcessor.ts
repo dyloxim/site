@@ -1,101 +1,88 @@
-import { AppDerivedStateGetter, AppStateProcessor } from "@IFS/types/interaction"
+import { AppDerivedStateGetter, AppStateProcessor, TicketProcessor } from "@IFS/types/interaction"
 import Util from "./util";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import * as CommonTickets from "@IFS/resources/tickets"
 import SessionMutation from "@IFS/execution/sessionMutation";
 import Color from "@IFS/display/util/color";
-import * as Colors from "@IFS/resources/colors";
-import { I_applicationState } from "..";
 
 export default class MouseProcessor {
 
-  static maybeUpdateProximityArray: AppDerivedStateGetter = (app): boolean[][] | null => {
-    if (!app.session.state.tacit.mutatingFS) {
-      return MouseProcessor.getProximityArray(app);
-    } else {
-      return app.session.state.mouse.proximities;
+  // entry points
+
+  static handleMoveEvent: AppStateProcessor = app => {
+    if (app.session.state.options.bboxes) {
+      MouseProcessor.processProximities(app);
+      MouseProcessor.processSelectionCandidate(app);
     }
-    
   }
 
-  static handleMoveEvent: AppStateProcessor = (app): void => {
+  static handlePressEvent: AppStateProcessor = (app): void => {
+
+    if (app.session.state.mouse.down
+      && app.session.state.mouse.selectionCandidate) {
+
+        // get selectionOffset
+        let selectionOffset = MouseProcessor.getSelectionOffset(app);
+
+        app.session = new SessionMutation({ session: app.session,
+          assertion: s => { s.state.mouse.selectionOffset = selectionOffset; return s; },
+          ticketsGetter: s => [CommonTickets.setSwitch_MutatingFS]
+        }).gives();
+        
+      } else if (!app.session.state.mouse.down) {
+
+        app.session = new SessionMutation({ session: app.session,
+          assertion: s => { s.state.mouse.selectionOffset = null; return s; },
+          ticketsGetter: _ => [CommonTickets.unsetSwitch_MutatingFS]
+        }).gives();
+
+      }
+  }
+
+  // subroutines
+
+  private static processProximities: AppStateProcessor = app => {
 
     let proximityArray: boolean[][] = MouseProcessor
-      .maybeUpdateProximityArray(app)
+      .getProximityArray(app)
 
-    if (
-      proximityArray !== app.session.state.mouse.proximities
-        && app.session.state.options.bboxes
-    ) {
-
+    if (proximityArray !== app.session.state.mouse.proximities) {
       // update session with proximity array
-      app.session = new SessionMutation({
-        session: app.session,
+      app.session = new SessionMutation({ session: app.session,
         assertion: s => { s.state.mouse.proximities = proximityArray; return s },
         ticketsGetter: _ => []
       }).gives()
+    }
 
-      // search for selection candidate
-      let candidate: null | number[] = null;
+    }
 
-      app.display.clearSelectionOverlay();
-      proximityArray.forEach((T, i) => T.forEach((vertIsProximal, j) => {
-          if (vertIsProximal && candidate == null) candidate = [i,j]
-      }));
+  static processSelectionCandidate: TicketProcessor = app => {
 
-      // update session with selection candidate if new
-      if(app.session.state.mouse.selectionCandidate != candidate) {
-        // 
-        app.session = new SessionMutation({
-          session: app.session,
-          assertion: s => {
-            s.state.mouse.selectionCandidate = candidate;
-            return s;
-          },
-          ticketsGetter: s => {
-            if (s.state.mouse.selectionCandidate) {
-              return [CommonTickets.highlightSelection]
-            } else {
-              return [CommonTickets.generateBasicLayerTicket(
-                "layerErase", "selectionOverlay", "erase section overlay"
-              )]
-            }
+    let candidate: null | number[] = null;
+    app.session.state.mouse.proximities!.forEach((T, i) => T.forEach((vertIsProximal, j) => {
+      if (vertIsProximal && candidate == null) candidate = [i,j]
+    }));
+
+    if(app.session.state.mouse.selectionCandidate != candidate) {
+      app.session = new SessionMutation({ session: app.session,
+        assertion: s => { s.state.mouse.selectionCandidate = candidate; return s; },
+        ticketsGetter: s => {
+          if (s.state.mouse.selectionCandidate) {
+            return [CommonTickets.highlightSelection]
+          } else {
+            return [CommonTickets.generateBasicLayerTicket("erase", ["selectionOverlay"])]
           }
-        }).gives();
-      }
-
-      app.display.imageComposer.layers.selectionOverlay.commit()
+        }
+      }).gives();
     }
+
+    app.display.imageComposer.layers.selectionOverlay.commit()
   }
 
-  static getProximityArray: AppDerivedStateGetter = (app): boolean[][] => {
+  // Common Ticket Processors
 
-    let selectionPixelRadius = Util.getSelectionPixelRadius(app)
-
-    return app.FS.bboxes.transformed.map((bbox) => bbox.map((vert) => {
-
-      let proximity = Vec.dist(
-        app.display.rig.projectPoint(vert),
-        app.session.state.mouse.pos
-      );
-      let isProximal = (proximity < selectionPixelRadius); return isProximal;
-
-  }));
-  }
-
-  static getSelectionOffset: AppDerivedStateGetter = (app): number[] | null => {
-    if (app.session.state.mouse.selectionCandidate) {
-      let [i,j] = app.session.state.mouse.selectionCandidate!;
-      return Vec.minus(
-        app.display.rig.reverseProject(app.session.state.mouse.pos),
-        app.FS.bboxes.transformed[i][j]
-      )
-    } else {
-      return null;
-    }
-  }
-
-  static highlightSelection: AppStateProcessor = (app): void => {
+  static highlightSelection: TicketProcessor = app => {
+    app.display.imageComposer.layers.selectionOverlay.clear()
     let i = app.session.state.mouse.selectionCandidate![0]
     let layer = app.display.imageComposer.layers.selectionOverlay;
     let bbox = app.FS.bboxes.transformed[i];
@@ -131,9 +118,9 @@ export default class MouseProcessor {
         vertSize * .5, true,
         (() => {
           if (app.session.state.options.color) {
-          return Color.multiply(app.session.settings.display.color.palette.colors[i], .70)
+            return Color.multiply(app.session.settings.display.color.palette.colors[i], .70)
           } else {
-          return Color.multiply(app.session.settings.display.color.base, .70)
+            return Color.multiply(app.session.settings.display.color.base, .70)
           }
         })()
       );
@@ -141,41 +128,52 @@ export default class MouseProcessor {
     app.display.imageComposer.layers.selectionOverlay.commit()
   }
 
-  static handlePressEvent: AppStateProcessor = (app): void => {
-    if (app.session.state.mouse.down
-      && app.session.state.mouse.selectionCandidate) {
-        // set selectionOffset
-        let selectionOffset = MouseProcessor.getSelectionOffset(app);
-        app.session = new SessionMutation({
-          session: app.session,
-          assertion: s => {
-            s.state.tacit.mutatingFS = true;
-            s.state.mouse.selectionOffset = selectionOffset;
-            return s;
-          },
-          ticketsGetter: s => {
-            if (s.state.mouse.selectionCandidate) {
-              return [CommonTickets.highlightSelection]
-            } else {
-              return [CommonTickets.generateBasicLayerTicket(
-                "layerErase", "selectionOverlay", "erase"
-              )]
-            }
-          }
-        }).gives();
-        
-      } else if (!app.session.state.mouse.down) {
+  static setFSMutationSwitch: TicketProcessor = (app) => {
+    app.session = new SessionMutation({
+      session: app.session,
+      assertion: s => { s.state.tacit.mutatingFS = true; return s; },
+      ticketsGetter: _ => []
+    }).gives();
+  }
 
-        app.session = new SessionMutation({
-          session: app.session,
-          assertion: s => {
-            s.state.mouse.selectionOffset = null;
-            s.state.tacit.mutatingFS = false;
-            return s; },
-          ticketsGetter: _ => []
-        }).gives();
+  static unsetFSMutationSwitch: TicketProcessor = (app) => {
+    app.session = new SessionMutation({
+      session: app.session,
+      assertion: s => { s.state.tacit.mutatingFS = false; return s; },
+      ticketsGetter: _ => []
+    }).gives();
+  }
 
-      }
+
+
+  // Derived state getters (helper functions)
+
+  private static getProximityArray: AppDerivedStateGetter = (app): boolean[][] | null => {
+    if (app.session.state.tacit.mutatingFS) {
+
+      return app.session.state.mouse.proximities;
+
+    } else {
+
+      return app.FS.bboxes.transformed.map((bbox) => bbox.map((vert) => {
+        let proximity = Vec.dist(app.display.rig.projectPoint(vert), app.session.state.mouse.pos);
+        let isProximal = (proximity < Util.getSelectionPixelRadius(app));
+        return isProximal;
+
+      }));
+    }
+  }
+
+  private static getSelectionOffset: AppDerivedStateGetter = (app): number[] | null => {
+    if (app.session.state.mouse.selectionCandidate) {
+      let [i,j] = app.session.state.mouse.selectionCandidate!;
+      return Vec.minus(
+        app.FS.bboxes.transformed[i][j],
+        app.display.rig.reverseProject(app.session.state.mouse.pos)
+      )
+    } else {
+      return null;
+    }
   }
 
 }

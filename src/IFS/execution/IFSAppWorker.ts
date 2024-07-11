@@ -17,8 +17,9 @@ export default class IFSAppWorker {
   // Basic Layer Operations
 
   static processCommonLayerTicket: TicketProcessor = (app, ticket) => {
-    app.display.imageComposer.layers[(ticket as BasicLayerTicket)
-      .consumer as DisplayLayer].clear();
+    (ticket as BasicLayerTicket).consumer.forEach(layer => {
+      app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
+    });
   }
 
   // Rig Operations
@@ -56,8 +57,7 @@ export default class IFSAppWorker {
         return s;
       },
       ticketsGetter: _ => [
-        CommonTickets.generateBasicLayerTicket("layerErase", "figure", "erase"),
-        CommonTickets.generateBasicLayerTicket("layerErase", "pathOverlay", "erase")
+        CommonTickets.generateBasicLayerTicket("erase", ["figure", "pathOverlay"]),
       ]
     }).gives();
   }
@@ -65,7 +65,6 @@ export default class IFSAppWorker {
   static readFSfromMouseInteraction: TicketProcessor = (app, _) => {}
 
   static loadBboxesFromSettings: TicketProcessor = (app, _) => {
-    console.log("drawing bboxes");
     // loading bboxes
     app.display.clearBboxesOverlay()
     let bboxLayer = app.display.imageComposer.layers.bboxesOverlay
@@ -79,9 +78,6 @@ export default class IFSAppWorker {
       app.display.draftPolygon(bboxLayer, bbox, vertSize, color)
     })
     app.display.updateBboxesOverlay();
-  }
-
-  static drawSelectionOverlays: TicketProcessor = (app, _): void => {
   }
 
   static movePiece: AppStateProcessor = (app) => {

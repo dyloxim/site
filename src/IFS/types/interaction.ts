@@ -9,7 +9,7 @@ export type AppDerivedStateGetter = (app: I_applicationState) => any;
 
 export type TicketProcessor = (
   app: I_applicationState,
-  ticket: DefinedTicket
+  ticket?: DefinedTicket
 ) => void;
 
 export interface I_categoricControlSpecification {
