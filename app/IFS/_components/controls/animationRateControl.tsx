@@ -3,7 +3,7 @@ import { I_session } from "@IFS/types/state";
 import { I_numericControlSpecification } from "@IFS/types/interaction";
 import NumericControl from "./kinds/numericControl";
 
-export default function PresetControls({ session, updateSession }: {
+export default function AnimationRateControl({ session, updateSession }: {
   session: I_session,
   updateSession: (session: I_session) => void
 }) {
@@ -12,7 +12,7 @@ export default function PresetControls({ session, updateSession }: {
 
   const animationControl: I_numericControlSpecification = {
     key: "animationRate",
-    text: "Animation Rate",
+    text: "Steps per frame",
     value: animationRate,
     setter: setAnimationRate,
     mutation: e => s => { s.state.options.animationRate = Number(e.target.value); return s },
@@ -25,7 +25,7 @@ export default function PresetControls({ session, updateSession }: {
         session={session}
         updateSession={updateSession}
         specification={animationControl}
-      />
+      /> &nbsp;
     </>
   )
 }

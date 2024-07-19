@@ -4,7 +4,6 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { I_session } from "@IFS/types/state";
 
 import * as CommonTickets from "@IFS/resources/tickets"
-import * as Globals from "@IFS/resources/globalConstants";
 
 const Canvas = ({ setupFn, session, updateSession }: {
   setupFn: (displayContainer: HTMLDivElement) => void,
@@ -20,11 +19,12 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
       setupFn(displayContainerRef.current)
 
-      let canvas = document.getElementById("selectionOverlayCanvas")! as HTMLCanvasElement;
+      let canvas = document.getElementById("hoverOverlayCanvas")! as HTMLCanvasElement;
 
       // MOUSE MOVE EVENT
 
       canvas.addEventListener('mousemove', (e: MouseEvent) => {
+
         updateSession(new SessionMutation({
           session: session,
           assertion: (s) => {
@@ -37,7 +37,7 @@ const Canvas = ({ setupFn, session, updateSession }: {
           },
           ticketsGetter: s => {
             let tickets = [CommonTickets.handleMouseMoveEvent];
-            if (s.state.tacit.mutatingFS) tickets = [...tickets, CommonTickets.highlightSelection]
+            if (s.state.tacit.mutatingFS) tickets = [...tickets, CommonTickets.showHoverTarget]
             if (s.state.tacit.draggingRig) tickets = [...tickets, CommonTickets.reloadRig]
             return tickets;
           }
@@ -63,7 +63,6 @@ const Canvas = ({ setupFn, session, updateSession }: {
           session: session,
           assertion: (s) => {
             s.state.mouse.down = null;
-            s.state.mouse.selectionOffset = null;
             return s;
           },
           ticketsGetter: _ => [CommonTickets.handleMousePressEvent]
@@ -106,11 +105,6 @@ const Canvas = ({ setupFn, session, updateSession }: {
           height: "1100px"
         }}>
       </div>
-      <p>mouse pos is: {
-        session ? Math.round(session.state.mouse.pos[0]) : "?"
-      },{
-        session ? Math.round(session.state.mouse.pos[1]) : "?"
-      }</p>
     </>
   )
 }

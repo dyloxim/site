@@ -23,28 +23,35 @@ export const defaultState: I_sessionState = {
 
 
   mouse: {
-    moved: false,
     pos: [0,0],
     down: null,
-    proximities: null,
-    selectionOffset: null,
-    selectionCandidate: null,
+    actionUndecided: null,
+    interactionCandidate: null,
+    interactionPrimed: false,
+    controlPointOffset: null,
+    activeSelection: []
   },
 
   options: {
     preset:"custom",
     animationRate: 1,
     running: true,
-    bboxes: false,
+    controlPointsShown: false,
     path: "recent",
     color: false,
   },
+
+  selectableEntities: {
+    primaryControlPoints: [],
+    secondaryControlPoints: []
+  },
+    
 
   tickets: {
     mouse: new Set<DefinedTicket>(),
     FS: new Set<DefinedTicket>(),
     rig: new Set<DefinedTicket>(),
-    process: new Set<DefinedTicket>(),
+    IFSprocess: new Set<DefinedTicket>(),
     layerDraw: new Set<DefinedTicket>(),
     layerErase: new Set<DefinedTicket>(),
   },

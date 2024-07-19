@@ -32,6 +32,7 @@ export default function App() {
         setupFn={setupApp}
         session={session}
         updateSession={updateSession}/>
+      <br/>
       <Controls
         session={session}
         updateSession={updateSession}/>

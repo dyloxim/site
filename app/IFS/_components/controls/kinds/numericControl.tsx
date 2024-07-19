@@ -9,8 +9,9 @@ export default function ContinuousControl({ session, updateSession, specificatio
 }) {
   return (
     <>
-      {specification.text} &nbsp;
+      {specification.text}: &nbsp;
       <input
+        style={{width: "100px"}}
         type="number"
         value={specification.value}
         name={specification.key}

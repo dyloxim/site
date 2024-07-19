@@ -1,3 +1,4 @@
+import FSMutator from "@IFS/execution/FSMutator";
 import IFSAppWorker from "@IFS/execution/IFSAppWorker";
 import MouseProcessor from "@IFS/execution/mouseProcessor";
 import { DisplayLayer } from "@IFS/types/specifications";
@@ -19,7 +20,8 @@ export const generateBasicLayerTicket = (
       ["draw", "layerDraw"]
     ]).get(instruction) as "layerErase" | "layerDraw")}`,
     instruction: `${instruction} layers: ${layers}`,
-    processor: IFSAppWorker.processCommonLayerTicket
+    processor: IFSAppWorker.processCommonLayerTicket,
+    log: false
   }
 };
 
@@ -32,57 +34,122 @@ export const generateBasicLayerTicket = (
 let ticketArray: SimpleTicket[] = [];
 
 export const reloadRig: SimpleTicket = {
+
   instructionGroup: "rig",
   instruction: "Load rig from settings",
-  processor: IFSAppWorker.loadRigFromSettings
+  processor: IFSAppWorker.loadRigFromSettings,
+  log: false
+
 }; ticketArray = [...ticketArray, reloadRig];
 
+
 export const reloadFS: SimpleTicket = {
+
   instructionGroup: "FS",
   instruction: "Load FS from settings",
-  processor: IFSAppWorker.loadFSFromSettings
+  processor: IFSAppWorker.loadFSFromSettings,
+  log: false
+
 }; ticketArray = [...ticketArray, reloadFS];
 
-export const reloadBboxes: SimpleTicket = {
+
+export const reloadControlPoints: SimpleTicket = {
+
   instructionGroup: "layerDraw",
   instruction: "Load FS handle overlays from settings",
-  processor: IFSAppWorker.loadBboxesFromSettings
-}; ticketArray = [...ticketArray, reloadBboxes];
+  processor: IFSAppWorker.loadControlPointsFromSettings,
+  log: false
+
+}; ticketArray = [...ticketArray, reloadControlPoints];
+
+
+
+export const reviewControlPointsConfig: SimpleTicket = {
+
+  instructionGroup: "layerErase",
+  instruction: "Consult settings and dispatch required tickets for control points overlay",
+  processor: IFSAppWorker.reviewControlPointsConfig,
+  log: true
+
+}; ticketArray = [...ticketArray, reviewControlPointsConfig];
+
+
 
 export const handleMouseMoveEvent: SimpleTicket = {
+
   instructionGroup: "mouse",
   instruction: "Handle mouse move event",
-  processor: MouseProcessor.handleMoveEvent
-}; ticketArray = [...ticketArray, reloadBboxes];
+  processor: MouseProcessor.handleMoveEvent,
+  log: false
+
+}; ticketArray = [...ticketArray, handleMouseMoveEvent];
+
+
 
 export const handleMousePressEvent: SimpleTicket = {
+
   instructionGroup: "mouse",
   instruction: "Handle mouse press event",
-  processor: MouseProcessor.handlePressEvent
-}; ticketArray = [...ticketArray, reloadBboxes];
+  processor: MouseProcessor.handlePressEvent,
+  log: false
 
-export const highlightSelection: SimpleTicket = {
+}; ticketArray = [...ticketArray, handleMousePressEvent];
+
+
+
+export const showHoverTarget: SimpleTicket = {
+
   instructionGroup: "layerDraw",
-  instruction: "highlightSelection",
-  processor: MouseProcessor.highlightSelection
-}; ticketArray = [...ticketArray, reloadBboxes];
+  instruction: "show hover target",
+  processor: MouseProcessor.showHoverTarget,
+  log: false
+  
+}; ticketArray = [...ticketArray, showHoverTarget];
 
-export const revertToRigToInitial: SimpleTicket = {
-  instructionGroup: "mouse",
-  instruction: "highlightSelection",
-  processor: IFSAppWorker.revertRigToInitial
-}; ticketArray = [...ticketArray, reloadBboxes];
 
-export const setSwitch_MutatingFS: SimpleTicket = {
-  instructionGroup: "mouse",
-  instruction: "Begin FS mutation interaction",
-  processor: MouseProcessor.setFSMutationSwitch
-}; ticketArray = [...ticketArray, reloadBboxes];
 
-export const unsetSwitch_MutatingFS: SimpleTicket = {
+export const revertRigToInitial: SimpleTicket = {
+
+  instructionGroup: "rig",
+  instruction: "revert rig to initial",
+  processor: IFSAppWorker.revertRigToInitial,
+  log: false
+
+}; ticketArray = [...ticketArray, revertRigToInitial];
+
+
+
+export const normaliseControlPoints: SimpleTicket = {
+
+  instructionGroup: "FS",
+  instruction: "Normalise Control Points",
+  processor: IFSAppWorker.normaliseControlPoints,
+  log: false
+
+}; ticketArray = [...ticketArray, normaliseControlPoints];
+
+
+
+export const reloadSelectionOverlay: SimpleTicket = {
+
+  instructionGroup: "layerDraw",
+  instruction: "Draw selection parallelogram overlay",
+  processor: MouseProcessor.drawSelectionOverlay,
+  log: false
+
+}; ticketArray = [...ticketArray, reloadSelectionOverlay];
+
+
+
+export const reloadSecondaryEntities: SimpleTicket = {
+
   instructionGroup: "mouse",
-  instruction: "End FS mutation interaction",
-  processor: MouseProcessor.unsetFSMutationSwitch
-}; ticketArray = [...ticketArray, reloadBboxes];
+  instruction: "update secondary entities",
+  processor: FSMutator.reloadSecondaryEntities,
+  log: true
+
+}; ticketArray = [...ticketArray, reloadSecondaryEntities];
+
+
 
 export const definedTickets = ticketArray;

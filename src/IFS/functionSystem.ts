@@ -1,7 +1,7 @@
 import { I_functionSystem } from '@IFS/types/configuration';
 import { default as Transform } from '@IFS/math/linearAlgebra/transform';
 import { default as TransformFactory } from '@IFS/math/linearAlgebra/transformFactory';
-import { default as Vec } from '@IFS/math/linearAlgebra/vec2'
+import { I_affine } from './types/mathematical';
 
 export default class FunctionSystem {
 
@@ -9,10 +9,10 @@ export default class FunctionSystem {
 
   weights: number[];
 
-  bboxes: {
-    reference: number[][],
-    transformed: number[][][],
-  }
+  controlPoints: {
+    origin: number[],
+    basis: number[][]
+  }[];
 
   constructor(def: I_functionSystem) {
     this.transforms = def.transforms.map((t) => TransformFactory.getInstance(t));
@@ -24,19 +24,13 @@ export default class FunctionSystem {
       let weightSum = def.weights.reduce((a, b) => a + b);
       this.weights = def.weights.map(a => a / weightSum);
     }
-    let referenceBbox = [
-      def.referenceRegion.o,
-      Vec.add(def.referenceRegion.o, def.referenceRegion.e1),
-      Vec.sum(def.referenceRegion.o, def.referenceRegion.e1, def.referenceRegion.e2),
-      Vec.add(def.referenceRegion.o, def.referenceRegion.e2),
-    ]
-    let transformedBboxes = this.transforms.map((t) => {
-      return referenceBbox.map(v => t.apply(v));
-    })
-    this.bboxes = {
-      reference: referenceBbox,
-      transformed: transformedBboxes
-    }
+    this.controlPoints = def.transforms.map(T => {
+      return {
+        origin: (T as I_affine).translation ?? [0,0],
+        basis: (T as I_affine).linear
+      }
+
+    });
   }
 
   order = (): number => this.transforms.length;

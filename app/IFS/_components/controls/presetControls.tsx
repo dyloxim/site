@@ -18,21 +18,18 @@ export default function PresetControls({ session, updateSession }: {
       mutation: (s) => {
         s.settings.FS = FunctionSystems[presetName as NamedFSPreset]; return s;
       },
-      ticketsGetter: s => {
-        let tickets = [
-          CommonTickets.reloadFS,
-          CommonTickets.revertToRigToInitial,
-          CommonTickets.reloadRig
-        ]
-        tickets = s.state.options.bboxes ? [CommonTickets.reloadBboxes, ...tickets] : tickets;
-        return tickets;
-      }
+      ticketsGetter: _ => [
+        CommonTickets.reloadFS,
+        CommonTickets.revertRigToInitial,
+        CommonTickets.reloadRig,
+        CommonTickets.reviewControlPointsConfig
+      ]
     }
   })
 
   return (
     <>
-      Presets: {presetControls.map(specification => (
+      Load Preset: {presetControls.map(specification => (
         <CategoricControl
           key={specification.key}
           session={session}

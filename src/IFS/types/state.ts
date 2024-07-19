@@ -4,6 +4,7 @@ import { DefinedTicket } from "@IFS/types/tickets"
 import { InstructionGroup } from "@IFS/types/tickets"
 import { default as FunctionSystem } from "@IFS/functionSystem"
 import { default as Display } from "@IFS/display/displayApperatus"
+import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction"
 
 
 export interface I_sessionState {
@@ -27,21 +28,44 @@ export interface I_sessionState {
   },
 
   mouse: {
-    moved: boolean,
+    // pixel pos
     pos: number[],
+    // when mouse is down, returns position of mouse at mouse down event, null otherwise
     down: number[] | null,
-    proximities: boolean[][] | null,
-    selectionCandidate: number[] | null,
-    selectionOffset: number[] | null
+
+
+    // if action is being decided (mouse is down but time has not yet elapsed
+    //   to determine whether to simply update the active selection, or whether to begin
+    //   a drag interaction) then set this property to the time at which the ambiguity was
+    //   triggered -- the time of the offending mouse down event. Otherwise set to null (if
+    //   there is no action to be decided or if a decision was already made)
+
+    actionUndecided: number | null, // returns timestamp or null;
+
+    interactionCandidate: null | I_selectableEntityMetaData,
+
+    interactionPrimed: boolean,
+
+    // list of indicies indicating transforms currently in the active selection
+    activeSelection: number[],
+
+    // vector describing offset between mousedown location and selection candidate control
+    //   point location
+    controlPointOffset: number[] | null
+
   },
 
+  selectableEntities: {
+    [key in SelectableEntityCategory]: I_selectableEntityMetaData[]
+  }
+
   options: {
-    preset: NamedFSPreset | "custom",
-    animationRate: number,
     running: boolean,
-    bboxes: boolean,
-    path: null | "recent" | "persist"
     color: boolean,
+    path: null | "recent" | "persist"
+    animationRate: number,
+    controlPointsShown: boolean,
+    preset: NamedFSPreset | "custom",
   },
 
   tacit: {

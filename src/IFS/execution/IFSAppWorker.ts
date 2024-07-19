@@ -3,88 +3,22 @@ import { default as Rig } from "@IFS/display/rig"
 import { default as Color } from "@IFS/display/util/color"
 import { default as Util } from "@IFS/execution/util"
 
+import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
+
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 
 import { DisplayLayer } from "@IFS/types/specifications";
 import { BasicLayerTicket } from "@IFS/types/tickets";
-import { AppStateProcessor, TicketProcessor } from "@IFS/types/interaction"
 
 import * as CommonTickets from "@IFS/resources/tickets"
 import * as Globals from "@IFS/resources/globalConstants"
 
+import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
+import { I_affine } from "@IFS/types/mathematical"
+
 export default class IFSAppWorker {
 
-  // Basic Layer Operations
-
-  static processCommonLayerTicket: TicketProcessor = (app, ticket) => {
-    (ticket as BasicLayerTicket).consumer.forEach(layer => {
-      app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
-    });
-  }
-
-  // Rig Operations
-
-  static loadRigFromSettings: TicketProcessor = (app, _) => {
-    app.display.imageComposer.reconstructAll(app.session.settings.display);
-    app.display.rig.reconstruct(
-      app.session.settings.display,
-      app.display.imageComposer.getPrintArea()
-    );
-    if (app.session.state.options.bboxes) {
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => s,
-        ticketsGetter: _ => [CommonTickets.reloadBboxes]
-      }).gives();
-    }
-  }
-
-  // FS Operations
-
-  static revertRigToInitial: TicketProcessor = (app, _) => {
-    app.display.config.domain = Rig.handlePossibleImpliedDisplayRegion(
-      app.session.settings.FS.referenceRegion,
-      app.session.settings.display.domain, true
-    );
-  }
-
-  static loadFSFromSettings: TicketProcessor = (app, _) => {
-    let newFS = new FunctionSystem(app.session.settings.FS);
-    app.FS.transforms = newFS.transforms;
-    app.FS.weights = newFS.weights;
-    app.FS.bboxes.reference = newFS.bboxes.reference;
-    app.FS.bboxes.transformed = newFS.bboxes.transformed;
-    app.session = new SessionMutation({
-      session: app.session,
-      assertion: s => {
-        s.state.program.thisTurn.choice = 0;
-        s.state.program.thisTurn.position = s.settings.FS.firstPoint;
-        s.state.program.lastTurn.choice = 0;
-        s.state.program.lastTurn.position = s.settings.FS.firstPoint;
-        return s;
-      },
-      ticketsGetter: _ => [
-        CommonTickets.generateBasicLayerTicket("erase", ["figure", "pathOverlay"]),
-      ]
-    }).gives();
-  }
-
-  static readFSfromMouseInteraction: TicketProcessor = (app, _) => {}
-
-  static loadBboxesFromSettings: TicketProcessor = (app, _) => {
-    // loading bboxes
-    app.display.clearBboxesOverlay()
-    let bboxLayer = app.display.imageComposer.layers.bboxesOverlay
-    // base box
-    let baseColor = Color.multiply(app.session.settings.display.color.base, .50);
-    let vertSize = Util.getVertRadius(app.session.settings);
-    app.display.draftPolygon(bboxLayer, app.FS.bboxes.reference, vertSize, baseColor)
-    app.FS.bboxes.transformed.forEach((bbox, i) => {
-      let color = app.session.state.options.color ?
-        Color.multiply(app.session.settings.display.color.palette.colors[i], .50) : baseColor;
-      app.display.draftPolygon(bboxLayer, bbox, vertSize, color)
-    })
-    app.display.updateBboxesOverlay();
-  }
+  // ordinary routines
 
   static movePiece: AppStateProcessor = (app) => {
     // deprecate current position
@@ -136,73 +70,147 @@ export default class IFSAppWorker {
     ) app.display.updatePathOverlay();
   }
 
+
   static maybeErasePastPaths: AppStateProcessor = (app): void => {
     if (app.session.state.options.path == "recent"
       && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
     ) app.display.clearPathOverlay();
   }
 
-  // static maybeEraseFigure = (state: I_state, display: Display): void => {
-  //   if (state.interaction.required.redrawFigure) {
-  //     display.clearFigure();
-  //     state.interaction.required.redrawFigure = false;
-  //   }
-  // }
+  // TICKETS
 
-  // static maybeErasePath = (state: I_state, display: Display): void => {
-  //   if (state.interaction.required.redrawPath) {
-  //     display.clearPathOverlay();
-  //     state.interaction.required.redrawPath = false;
-  //   }
-  // }
+  // basic layer operations
 
-  // static maybeEraseBboxes = (state: I_state, display: Display): void => {
-  //   if (state.interaction.required.redrawBboxes) {
-  //     display.clearBboxesOverlay();
-  //     state.interaction.required.redrawBboxes = false
-  //   }
-  // }
+  static processCommonLayerTicket: TicketProcessor = (app, ticket) => {
+    (ticket as BasicLayerTicket).consumer.forEach(layer => {
+      app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
+    });
+  }
 
-  // static maybeEraseSelection = (state: I_state, display: Display): void => {
-  //   if (state.interaction.required.redrawSelection) {
-  //     display.clearSelectionOverlay();
-  //     state.interaction.required.redrawSelection = false;
-  //   }
-  // }
+  // reloading from settings
 
-  // static maybeErasePreviousPaths = (
-  //   settings: I_settings,
-  //   display: Display
-  // ): void => {
-  //   // dont draw last path if steps/frame is high
-  //   if (Decider.shouldErasePreviousPaths(settings)) {
-  //     display?.clearPathOverlay();
-  //   }
-  // }
+  static loadRigFromSettings: TicketProcessor = (app, _) => {
+    app.display.imageComposer.reconstructAll(app.session.settings.display);
+    app.display.rig.reconstruct(
+      app.session.settings.display,
+      app.display.imageComposer.getPrintArea()
+    );
+    app.session = new SessionMutation({ session: app.session,
+      assertion: s => s,
+      ticketsGetter: _ => [CommonTickets.reviewControlPointsConfig]
+    }).gives();
+  }
 
-  // static maybeDrawBoundingBoxes = (
-  //    settings: I_settings,
-  //    FS: FunctionSystem,
-  //    display: Displaystatic loadFSFromSettings: TicketProcessor
-  //    static readFSfromMouseInteraction: TicketProcessor
-  //static readFSfromMouseInteraction: TicketProcessor
-  //,
-  //  ): void => {
-  //    if (settings.display.overlays.boundingBoxes) {
-  //      // drawing bounding boxes
-  //      display.clearBboxesOverlay()
-  //      let bboxLayer = display.imageComposer.layers.bboxesOverlay
-  //      // base box
-  //      let baseColor = Color.multiply(settings.display.color.base, .35);
-  //      let vertSize = Util.getVertRadius(settings, display);
-  //      display.draftPolygon(bboxLayer, FS.bboxes.reference, vertSize, baseColor)
-  //      FS.bboxes.transformed.forEach((bbox, i) => {
-  //        let color = settings.display.color.multi ?
-  //          Color.multiply(settings.display.color.palette.colors[i], .35) : baseColor;
-  //        display.draftPolygon(bboxLayer, bbox, vertSize, color)
-  //      })
-  //      display.updateBboxesOverlay();
-  //    }
-  //  }
+  static revertRigToInitial: TicketProcessor = (app, _) => {
+    app.display.config.domain = Rig.handlePossibleImpliedDisplayRegion(
+      app.session.settings.FS.referenceRegion,
+      app.session.settings.display.domain, true
+    );
+  }
+
+  static loadFSFromSettings: TicketProcessor = (app, _) => {
+    let newFS = new FunctionSystem(app.session.settings.FS);
+    app.FS.transforms = newFS.transforms;
+    app.FS.weights = newFS.weights;
+    app.FS.controlPoints = newFS.controlPoints
+    app.session = new SessionMutation({
+      session: app.session,
+      assertion: s => {
+        s.state.program.thisTurn.choice = 0;
+        s.state.program.thisTurn.position = s.settings.FS.firstPoint;
+        s.state.program.lastTurn.choice = 0;
+        s.state.program.lastTurn.position = s.settings.FS.firstPoint;
+        return s;
+      },
+      ticketsGetter: _ => [
+        CommonTickets.generateBasicLayerTicket("erase", ["figure", "pathOverlay"]),
+      ]
+    }).gives();
+  }
+
+  static drawAxis: TicketProcessor = app => {
+    app.display.clearGrid()
+    let layer = app.display.imageComposer.layers.grid
+    let axisColor = Color.multiply(app.session.settings.display.color.base, .3);
+    let domain = app.display.rig.domain
+    app.display.draftLine(layer, [domain.centre[0]-domain.width/2, 0], [domain.centre[0]+domain.width/2, 0], axisColor)
+    app.display.draftLine(layer, [0,domain.centre[1]-domain.height/2], [0, domain.centre[1]+domain.height/2], axisColor)
+
+  }
+
+  static loadControlPointsFromSettings: TicketProcessor = app => {
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+      let points: I_selectableEntityMetaData[] = app.FS.controlPoints
+        .map((K, i) => {
+
+          return {
+            id: [i,0],
+            type: "primaryControlPoints",
+            pos: K.origin,
+            isProximal: false
+          }
+
+        });
+
+        s.state.selectableEntities.primaryControlPoints = points
+        return s;
+
+      },
+      ticketsGetter: _ => []
+    }).gives();
+
+    app.FS.controlPoints.map(K => K.origin).forEach((p, i) => {
+      let color = app.session.settings.display.color.palette.colors[i]
+      app.display.draftPrimaryControlPoint(p, color, false);
+    })
+
+    app.display.updateControlPointsOverlay();
+
+  }
+
+  static reviewControlPointsConfig: TicketProcessor = app => {
+    if (app.session.state.options.controlPointsShown) {
+      app.session = new SessionMutation({session: app.session, assertion: s => s,
+
+        ticketsGetter: s => {
+
+          if (
+            s.state.mouse.activeSelection.length == 1
+          ) {
+
+            return [
+              CommonTickets.reloadSelectionOverlay,
+              CommonTickets.reloadControlPoints
+            ]
+
+          } else return [CommonTickets.reloadControlPoints]
+        }
+
+      }).gives();
+    }
+  }
+
+  static normaliseControlPoints: TicketProcessor = app => {
+    let points = app.session.settings.FS.transforms.map((T) => {
+      return (T as I_affine).translation ?? [0,0];
+    });
+    let middlePoint = Vec.scale(
+      Vec.sum(...points),
+      1/points.length
+    )
+    let newTransforms = app.session.settings.FS.transforms.map(T => {
+      let newTranslation = Vec.minus((T as I_affine).translation ?? [0,0], middlePoint);
+      return {
+        linear: (T as I_affine).linear,
+        translation: newTranslation
+      };
+    });
+    app.session = new SessionMutation({ session: app.session,
+      assertion: s => {s.settings.FS.transforms = newTransforms; return s },
+      ticketsGetter: _ => [CommonTickets.reloadRig, CommonTickets.reloadFS]
+    }).gives()
+  }
 
 }

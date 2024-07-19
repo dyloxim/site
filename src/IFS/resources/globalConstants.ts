@@ -4,13 +4,15 @@
  * ------------------------------------
  */
 
-export const DisplayLayers = [
+export const DefinedDisplayLayers = [
   "grid",
   "figure",
   "pathOverlay",
-  "bboxesOverlay",
+  "controlPointsOverlay",
   "selectionOverlay",
+  "hoverOverlay",
 ] as const;
+
 
 
 
@@ -32,16 +34,47 @@ export const NamedFSPresets = [
 
 
 
+
+/*
+ * Instruction Groups
+ * ------------------
+ */
+
+export const InstructionGroups = [
+  "mouse",
+  "FS",
+  "rig",
+  "IFSprocess",
+  "layerErase",
+  "layerDraw"
+] as const;
+
+
+/*
+ * Selectable Entity Categories
+ * -----------------------------
+ */
+
+export const SelectableEntityCategories = [
+  "primaryControlPoints",
+  "secondaryControlPoints"
+] as const;
+
+
+
+
 /*
  * Default drawn UI entity parameters
  * ----------------------------------
  */
 
-export const vertRadiusDisplayRatio = 1/120;
+export const vertRadiusDisplayRatio = 1/80;
 export const selectionRadiusDisplayRatio = 1/30;
 
 export const panStepSizeDisplayRatio = 1/8;
 export const zoomIncrementStep = 7/8;
 export const resolutionIncrementStep = 1.1;
 
-export const pathDrawThreshold = 100000;
+export const pathDrawThreshold = 10000;
+
+export const decisionTimeoutThreshold = 150;

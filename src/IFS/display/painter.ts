@@ -35,7 +35,7 @@ export default class Painter {
     let was_steep = Math.abs(qy - py) > Math.abs(qx - px);
 
     let [_px, _py, _qx, _qy] = [px, py, qx, qy]; // mirrored or flipped working coordinates
-    if (was_steep) { [_px, _py, _qx, _qy] = [py, px, qy, qx]; } // mirroring in x=y
+    if (was_steep) { [_px, _py, _qx, _qy] = [_py, _px, _qy, _qx]; } // mirroring in x=y
     if (_px > _qx) { [_px, _py, _qx, _qy] = [_qx, _qy, _px, _py]; } // swapping p and q
     let [_dx, _dy] = [_qx - _px, _qy - _py];
     let _m = (_dx === 0) ? 1 : _dy / _dx;
@@ -53,6 +53,63 @@ export default class Painter {
 
     for (var _dolly_x_Q = _px_Q + 1; _dolly_x_Q < _qx_Q; _dolly_x_Q++) {
       this.putPixel(print, printArea, was_steep ? [_dolly_y_Q, _dolly_x_Q] : [_dolly_x_Q, _dolly_y_Q], color);
+      _dolly_y = _dolly_y + _m;
+      _dolly_y_Q = Num.integerPart(_dolly_y)
+    }
+  }
+
+  static putSolidParallelogram(
+    print: PrintLayer,
+    printArea: Rect,
+    [px, py]: number[],
+    [qx, qy]: number[],
+    [rx, ry]: number[],
+    color: Color
+  ) {
+
+    // NOTES: an underscore prefix, i.e. "_V" indicates that the variable contains the
+    //   working value of the point "V" -- in particular this means that "_V" may either be mirrored
+    //   in x=y, or it may also have been swapped with its partner point from the other end of the line.
+    //
+    // in the case that the point has been mirrored (when condition 'was_steep' is met), then the point
+    //   will have to be re-mirrored before drawing.
+    let was_steep = Math.abs(qy - py) > Math.abs(qx - px);
+
+    let [_px, _py, _qx, _qy] = [px, py, qx, qy]; // mirrored or flipped working coordinates
+
+    // K: vector between near side and far side (line begin side, and line end side)
+    let [kx, ky] = [rx - px, ry - py]; let [_kx, _ky] = [kx, ky];
+
+    if (was_steep) { [_px, _py, _qx, _qy, _kx, _ky] = [_py, _px, _qy, _qx, _ky, _kx]; } // mirroring in x=y
+    if (_px > _qx) { [_px, _py, _qx, _qy] = [_qx, _qy, _px, _py]; } // swapping p and q
+    let [_dx, _dy] = [_qx - _px, _qy - _py];
+    let _m = (_dx === 0) ? 1 : _dy / _dx;
+
+    let [_rx, _ry, _sx, _sy] = [rx, ry, rx + (qx - px), ry + (qy - py)]; // mirrored or flipped working coordinates
+
+
+    const plotNextLine = ([_Nx, _Ny]: number[]) => {
+      // N : near point
+      // M: far point
+      let [_Mx, _My] = [_Nx + _kx, _Ny + _ky]
+      let [Nx, Ny, Mx, My] = was_steep ? [_Ny, _Nx, _My, _Mx] : [_Nx, _Ny, _Mx, _My];
+      this.putLine(print, printArea, [Nx, Ny], [Mx, My],  color)
+    }
+
+
+    // paint p
+    let _px_Q = Num.round(_px), _py_Q = Num.integerPart(_py + _m * (_px_Q - _px))
+    plotNextLine([_px_Q, _py_Q]);
+
+    // paint q
+    let _qx_Q = Num.round(_qx), _qy_Q = Num.integerPart(_qy + _m * (_qx_Q - _qx))
+    plotNextLine([_qx_Q, _qy_Q]);
+
+    let _dolly_y = _py + _m;
+    let _dolly_y_Q = Num.integerPart(_dolly_y);
+
+    for (var _dolly_x_Q = _px_Q + 1; _dolly_x_Q < _qx_Q; _dolly_x_Q++) {
+      plotNextLine([_dolly_x_Q, _dolly_y_Q]);
       _dolly_y = _dolly_y + _m;
       _dolly_y_Q = Num.integerPart(_dolly_y)
     }

@@ -1,3 +1,4 @@
+import { SelectableEntityCategories } from "@IFS/resources/globalConstants";
 import { I_applicationState, I_session } from "@IFS/types/state";
 import { DefinedTicket } from "@IFS/types/tickets";
 
@@ -27,3 +28,13 @@ export interface I_numericControlSpecification {
   mutation: (e: React.ChangeEvent<HTMLInputElement>) => SessionAssertion,
   ticketsGetter: (s: I_session) => DefinedTicket[]
 }
+
+export type SelectableEntityCategory = typeof SelectableEntityCategories[number]
+
+export interface I_selectableEntityMetaData {
+  id: number[],
+  type: SelectableEntityCategory,
+  pos: number[],
+  isProximal: boolean,
+}
+

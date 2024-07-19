@@ -1,7 +1,7 @@
 import { default as Rect } from "@IFS/display/util/rect";
 import { default as PrintLayer } from "@IFS/display/printLayer";
 import { DisplayLayer } from "@IFS/types/specifications";
-import { DisplayLayers } from "@IFS/resources/globalConstants";
+import { DefinedDisplayLayers } from "@IFS/resources/globalConstants";
 
 import { I_displayConfig } from "@IFS/types/configuration"
 
@@ -31,15 +31,22 @@ export default class ImageComposer {
       .nearestWholeNumberDimensions();
 
     let newLayers: Record<string, PrintLayer> = {};
-    DisplayLayers.forEach((name, i) => {
-      let canvas = this.appendNamedCanvas(displayContainer, name + "Canvas", i+1)
+
+    DefinedDisplayLayers.forEach((name, i) => {
+
+      let canvas = this.getConfiguredCanvas(displayContainer, name + "Canvas", i+1)
+
+      displayContainer.appendChild(canvas);
+
       newLayers[name] = new PrintLayer(name, canvas, this.printArea);
+
     })
+
     this.layers = newLayers;
     this.commitAll()
   }
 
-  appendNamedCanvas = (displayContainer: HTMLDivElement, name: string, zIndex: number) => {
+  getConfiguredCanvas = (displayContainer: HTMLDivElement, name: string, zIndex: number) => {
     let canvas = document.createElement('canvas');
     canvas.id = name;
     canvas.style.imageRendering = "pixelated";
@@ -49,7 +56,6 @@ export default class ImageComposer {
     canvas.style.width = displayContainer.style.width;
     canvas.style.height = displayContainer.style.height;
     canvas.style.zIndex = `${zIndex}`;
-    displayContainer.appendChild(canvas);
     return canvas;
   }
 

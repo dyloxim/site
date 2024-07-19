@@ -1,8 +1,8 @@
 import { AppStateProcessor } from "@IFS/types/interaction"
-import { InstructionGroup } from "@IFS/types/tickets";
+import { InstructionGroups } from "@IFS/resources/globalConstants"
 
 import { default as IFSAppWorker } from "@IFS/execution/IFSAppWorker"
-import { default as FSMutator } from "@IFS/execution/FSMutator";
+import { default as MouseProcessor } from "@IFS/execution/mouseProcessor";
 
 export default class Delegator {
 
@@ -13,31 +13,49 @@ export default class Delegator {
   }
 
   static handleTurn: AppStateProcessor = (app) => {
+
     Delegator.dispatchTicketProcessors(app);
+
+    if (app.session.state.mouse.actionUndecided) {
+      MouseProcessor.maybeDecideMouseAction(app);
+    }
+
+
     if (app.session.state.options.running) {
+
       IFSAppWorker.maybeErasePastPaths(app);
+
       Array.from({ length: app.session.state.options.animationRate }, _ =>  {
         IFSAppWorker.movePiece(app)
         IFSAppWorker.maybeMarkLastPath(app);
         IFSAppWorker.maybeMarkPoint(app);
       });
+
       IFSAppWorker.maybeRefreshPathOverlay(app);
+
     }
+
+
     app.display.imageComposer.layers.figure.commit();
+
   }
 
   private static dispatchTicketProcessors: AppStateProcessor = (app) => {
-    (["mouse", "FS", "rig", "process", "layerErase", "layerDraw"] as InstructionGroup[])
-      .forEach(appElement => {
-        while (app.session.state.tickets[appElement].size !== 0) {
-          app.session.state.tickets[appElement].forEach(ticket => {
-            console.log(`processing ${appElement} ticket '${ticket.instruction}':`)
-            console.log(ticket)
-            ticket.processor(app, ticket);
-            app.session.state.tickets[appElement].delete(ticket);
-          });
-        }
-      });
+
+    InstructionGroups.forEach(instructionGroup => {
+
+      let ticketGroup = app.session.state.tickets[instructionGroup]
+
+      while (ticketGroup.size !== 0) {
+
+        ticketGroup.forEach(ticket =>
+          {
+            if (ticket.log) console.log(`processing ticket: ${ticket.instruction}`) 
+            ticket.processor(app, ticket); ticketGroup.delete(ticket);
+          }
+        );
+
+      }});
   }
 
 }

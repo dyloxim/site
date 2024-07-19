@@ -1,4 +1,4 @@
-import { AppDerivedStateGetter, AppStateProcessor, TicketProcessor } from "@IFS/types/interaction"
+import { AppStateProcessor, I_selectableEntityMetaData, SelectableEntityCategory, TicketProcessor } from "@IFS/types/interaction"
 
 import { default as FSMutator } from "@IFS/execution/FSMutator";
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
@@ -8,220 +8,342 @@ import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as Util } from "@IFS/execution/util";
 
 import * as CommonTickets from "@IFS/resources/tickets"
+import * as Globals from "@IFS/resources/globalConstants"
 
 export default class MouseProcessor {
 
+
   // entry points
 
+
   static handleMoveEvent: AppStateProcessor = app => {
-    if (app.session.state.options.bboxes) {
-      FSMutator.maybeTranslateBoundingBox(app);
-      MouseProcessor.processProximities(app);
-      MouseProcessor.processSelectionCandidate(app);
+
+    if (app.session.state.options.controlPointsShown) {
+
+      if (app.session.state.tacit.mutatingFS) FSMutator.mutateFS(app);
+
+      if (!app.session.state.mouse.down) MouseProcessor.processProximities(app);
+
     }
-    MouseProcessor.maybeTranslateRig(app);
-  }
 
-  static handleMouseDownEvent: AppStateProcessor = (app): void => {
-    if (app.session.state.mouse.selectionCandidate) {// get selectionOffset
-      let selectionOffset = MouseProcessor.getSelectionOffset(app);
-
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => {
-          s.state.mouse.selectionOffset = selectionOffset; s.state.tacit.mutatingFS = true;
-          return s;
-        },
-        ticketsGetter: _ => []
-      }).gives();
-        
-    } else {
-
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => {
-          s.state.tacit.draggingRig = app.session.settings.display.domain.origin;
-          return s
-        },
-        ticketsGetter: _ => []
-      }).gives();
-    }
+    if (app.session.state.tacit.draggingRig) MouseProcessor.translateRig(app);
 
   }
 
-  static handleMouseUpEvent: AppStateProcessor = (app): void => {
-    if (app.session.state.tacit.mutatingFS) {// get selectionOffset
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => {
-          s.state.mouse.selectionOffset = null; s.state.tacit.mutatingFS = false;
-          return s;
-        },
-        ticketsGetter: _ => []
-      }).gives();
-    } else if (app.session.state.tacit.draggingRig) {
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => { s.state.tacit.draggingRig = null; return s },
-        ticketsGetter: _ => []
-      }).gives();
-    }
 
-  }
+  static handlePressEvent: AppStateProcessor = app => {
 
-  static maybeTranslateRig: AppStateProcessor = app => {
-    if (app.session.state.tacit.draggingRig && app.session.state.mouse.down) {
-      let newDisplayOrigin = Vec.add(
-        app.session.state.tacit.draggingRig,
-        Vec.minus(
-          app.display.rig.reverseProject(app.session.state.mouse.down),
-          app.display.rig.reverseProject(app.session.state.mouse.pos)
-        ));
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => { s.settings.display.domain.origin = newDisplayOrigin; return s; },
-        ticketsGetter: _ => [CommonTickets.reloadRig]
-      }).gives();
-
-    }
-  }
-
-
-  static handlePressEvent: AppStateProcessor = (app): void => {
     if (app.session.state.mouse.down) MouseProcessor.handleMouseDownEvent(app);
     else MouseProcessor.handleMouseUpEvent(app);
+
   }
 
-  // subroutines
 
-  private static processProximities: AppStateProcessor = app => {
+  static handleMouseDownEvent: AppStateProcessor = app => {
 
-    let proximityArray: boolean[][] = MouseProcessor
-      .getProximityArray(app)
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
 
-    if (proximityArray !== app.session.state.mouse.proximities) {
-      // update session with proximity array
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => { s.state.mouse.proximities = proximityArray; return s },
-        ticketsGetter: _ => []
-      }).gives()
-    }
+      s.state.mouse.actionUndecided = Date.now();
+      s.state.mouse.controlPointOffset = Util.getControlPointOffset(app)
 
-    }
+      if (s.state.mouse.controlPointOffset != null) {
+        s.state.mouse.interactionPrimed = true;
+      }
 
-  static processSelectionCandidate: TicketProcessor = app => {
+      return s;
 
-    let candidate: null | number[] = null;
-    app.session.state.mouse.proximities!.forEach((T, i) => T.forEach((vertIsProximal, j) => {
-      if (vertIsProximal && candidate == null) candidate = [i,j]
-    }));
+    }, ticketsGetter: _ => []}).gives();
 
-    if(app.session.state.mouse.selectionCandidate != candidate) {
-      app.session = new SessionMutation({ session: app.session,
-        assertion: s => { s.state.mouse.selectionCandidate = candidate; return s; },
-        ticketsGetter: s => {
-          if (s.state.mouse.selectionCandidate) {
-            return [CommonTickets.highlightSelection]
-          } else {
-            return [CommonTickets.generateBasicLayerTicket("erase", ["selectionOverlay"])]
-          }
-        }
-      }).gives();
-    }
-
-    app.display.imageComposer.layers.selectionOverlay.commit()
   }
 
-  // Common Ticket Processors
 
-  static highlightSelection: TicketProcessor = app => {
+  static endFSMutationInteraction: AppStateProcessor = app => {
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+      s.state.mouse.interactionPrimed = false;
+      s.state.mouse.interactionCandidate = null;
+
+      s.state.mouse.controlPointOffset = null;
+      s.state.tacit.mutatingFS = false;
+
+      return s;
+
+    }, ticketsGetter: _ => [
+      CommonTickets.handleMouseMoveEvent,
+      CommonTickets.reviewControlPointsConfig
+    ] }).gives();
+  }
+
+
+  static endRigDragInteraction: AppStateProcessor = app => {
+
+      app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+        s.state.mouse.interactionPrimed = false;
+        s.state.mouse.interactionCandidate = null;
+
+        s.state.tacit.draggingRig = null;
+
+        return s
+
+      }, ticketsGetter: _ => [CommonTickets.handleMouseMoveEvent]}).gives();
+  }
+
+  
+  static handleMouseUpEvent: AppStateProcessor = app => {
+
     app.display.imageComposer.layers.selectionOverlay.clear()
-    let i = app.session.state.mouse.selectionCandidate![0]
-    let layer = app.display.imageComposer.layers.selectionOverlay;
-    let bbox = app.FS.bboxes.transformed[i];
-    let color = Color.multiply(app.session.settings.display.color.base, .6);
-    // highlight bounding box basis vectors;
-    app.display.draftLine(layer, bbox[0], bbox[1], color);
-    app.display.draftLine(layer, bbox[0], bbox[3], color);
-    // mark verticies
-    let vertSize = Util.getVertRadius(app.session.settings);
-    let selectionRadius = Util.getSelectionRadius(app.session.settings);
-    app.display.draftCircle(layer, bbox[0], vertSize, true, color);
-    app.display.draftCircle(layer, bbox[1], vertSize, true, color);
-    app.display.draftCircle(layer, bbox[3], vertSize, true, color);
-    // mark selection candidate
-    app.display.draftCircle(
-      layer,
-      bbox[app.session.state.mouse.selectionCandidate![1]],
-      selectionRadius * 0.75,
-      false,
-      Color.multiply(app.session.settings.display.color.base, .7)
-    );
-    app.display.draftCircle(
-      layer,
-      bbox[app.session.state.mouse.selectionCandidate![1]],
-      selectionRadius * 0.65,
-      false,
-      Color.multiply(app.session.settings.display.color.palette.colors[i], .7)
-    );
-    if (app.session.state.mouse.selectionCandidate![1] == 2) {
-      app.display.draftCircle(
-        layer,
-        bbox[app.session.state.mouse.selectionCandidate![1]],
-        vertSize * .5, true,
-        (() => {
-          if (app.session.state.options.color) {
-            return Color.multiply(app.session.settings.display.color.palette.colors[i], .70)
-          } else {
-            return Color.multiply(app.session.settings.display.color.base, .70)
-          }
-        })()
-      );
-    }
-    app.display.imageComposer.layers.selectionOverlay.commit()
-  }
 
-  static setFSMutationSwitch: TicketProcessor = (app) => {
-    app.session = new SessionMutation({
-      session: app.session,
-      assertion: s => { s.state.tacit.mutatingFS = true; return s; },
-      ticketsGetter: _ => []
-    }).gives();
-  }
-
-  static unsetFSMutationSwitch: TicketProcessor = (app) => {
-    app.session = new SessionMutation({
-      session: app.session,
-      assertion: s => { s.state.tacit.mutatingFS = false; return s; },
-      ticketsGetter: _ => []
-    }).gives();
-  }
-
-
-
-  // Derived state getters (helper functions)
-
-  private static getProximityArray: AppDerivedStateGetter = (app): boolean[][] | null => {
     if (app.session.state.tacit.mutatingFS) {
 
-      return app.session.state.mouse.proximities;
+      MouseProcessor.endFSMutationInteraction(app);
+
+    } else if (app.session.state.tacit.draggingRig) {
+
+      MouseProcessor.endRigDragInteraction(app);
+
+    }
+
+  }
+
+
+  static maybeDecideMouseAction: AppStateProcessor = app => {
+
+    if (Util.interactionDecisionTimedOut(app)) {
+
+      app.session.state.mouse.actionUndecided = null;
+
+      if (app.session.state.mouse.down) {
+
+        MouseProcessor.beginDragInteraction(app);
+
+      } else {
+
+        
+        MouseProcessor.handleClickEvent(app);
+
+      }
+
+    }
+
+  }
+
+
+  // actions
+
+
+  static beginDragInteraction: AppStateProcessor = app => {
+
+    app.display.imageComposer.layers.hoverOverlay.clear();
+    app.display.imageComposer.layers.selectionOverlay.clear();
+
+    if (app.session.state.mouse.interactionPrimed) {
+
+
+      app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+        s.state.tacit.mutatingFS = true;
+
+        return s;}, ticketsGetter: _ => [
+
+            CommonTickets.generateBasicLayerTicket("erase", ["hoverOverlay"]),
+            CommonTickets.reviewControlPointsConfig
+
+        ]}).gives();
+
 
     } else {
 
-      return app.FS.bboxes.transformed.map((bbox) => bbox.map((vert) => {
-        let proximity = Vec.dist(app.display.rig.projectPoint(vert), app.session.state.mouse.pos);
-        let isProximal = (proximity < Util.getSelectionPixelRadius(app));
-        return isProximal;
+      app.session = new SessionMutation({ session: app.session, assertion: s => {
 
-      }));
+        let initialDragPos = app.session.settings.display.domain.origin;
+        s.state.tacit.draggingRig = initialDragPos;
+
+        return s;}, ticketsGetter: _ => []}).gives();
+
     }
   }
 
-  private static getSelectionOffset: AppDerivedStateGetter = (app): number[] | null => {
-    if (app.session.state.mouse.selectionCandidate) {
-      let [i,j] = app.session.state.mouse.selectionCandidate!;
-      return Vec.minus(
-        app.FS.bboxes.transformed[i][j],
-        app.display.rig.reverseProject(app.session.state.mouse.pos)
-      )
-    } else {
-      return null;
+
+  static processProximities: AppStateProcessor = app => {
+
+    let oldTarget = app.session.state.mouse.interactionCandidate;
+    let newTarget: null | I_selectableEntityMetaData = null;
+
+    // loop through loaded entities
+
+    newTarget = Globals.SelectableEntityCategories
+      .map(category => { return Util.processEntityCategoryProximities(app, category); })
+      .reduce((a, b) => { return b ?? a });
+
+    if (Util.interactionCandidateChanged(app, newTarget)) {
+      
+      app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+        s.state.mouse.interactionCandidate = newTarget;
+        return s;
+
+      }, ticketsGetter: s =>  { switch(
+
+        !!s.state.mouse.interactionCandidate 
+
+        // true when target has become proximal, 
+        //  false when target has become null
+
+      ) {
+
+        case true: 
+
+          return [CommonTickets.showHoverTarget]
+
+        case false:
+
+          if (Util.targetEqualsSelection(app, oldTarget)) return [];
+
+          else return [
+            CommonTickets.generateBasicLayerTicket("erase", ["hoverOverlay"]),
+            CommonTickets.reviewControlPointsConfig
+          ];
+
+        default:
+          return [];
+
+      }}}).gives()
+
     }
+
   }
+
+
+  static handleSecondaryControlPointClicked: AppStateProcessor = app => {}
+
+
+  static handleNewSelection: AppStateProcessor = app => {
+
+    app.display.imageComposer.layers.selectionOverlay.clear();
+    app.display.imageComposer.layers.hoverOverlay.clear();
+
+    let target = app.session.state.mouse.interactionCandidate!
+
+    let i = target.id[0]
+    let K = app.FS.controlPoints[i];
+
+    let newEntities: I_selectableEntityMetaData[] = K.basis .map((v, j) => {
+
+      return {
+        id: [i, j],
+        type: "secondaryControlPoints",
+        pos: Vec.add(K.origin, v),
+        isProximal: false
+      }});
+
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+      s.state.mouse.activeSelection = [i];
+      s.state.selectableEntities.secondaryControlPoints = newEntities;
+
+      return s;}, ticketsGetter: _ => [
+
+      CommonTickets.handleMouseMoveEvent
+
+    ]}).gives();
+
+    MouseProcessor.drawSelectionOverlay(app);
+
+  }
+
+
+  static clearSelection: AppStateProcessor = app => {
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+
+      s.state.mouse.activeSelection = [];
+      s.state.mouse.interactionPrimed = false;
+      s.state.selectableEntities.secondaryControlPoints = [];
+      s.state.selectableEntities.primaryControlPoints = [];
+
+      return s;
+
+    }, ticketsGetter: _ => [
+
+      CommonTickets.reviewControlPointsConfig,
+      CommonTickets.handleMouseMoveEvent
+
+    ]}).gives();
+
+  }
+
+
+  static handleClickEvent: AppStateProcessor = app => {
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+      s.state.mouse.interactionPrimed = false;
+      return s;}, ticketsGetter: _ => []}).gives();
+
+    let target = app.session.state.mouse.interactionCandidate
+
+    if (
+
+      target == null
+        || target.type == "secondaryControlPoints"
+        || Util.targetEqualsSelection(app, target)
+
+    ) { MouseProcessor.clearSelection(app); }
+
+    else MouseProcessor.handleNewSelection(app);
+
+  }
+
+
+  static translateRig: AppStateProcessor = app => {
+
+    if (app.session.state.mouse.down) {
+      let originalOrigin = app.session.state.tacit.draggingRig!;
+      let newDisplayOrigin = Vec.add(originalOrigin, Util.mouseDragVector(app))
+
+      app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+        s.settings.display.domain.origin = newDisplayOrigin;
+
+        return s; }, ticketsGetter: _ => [CommonTickets.reloadRig]}).gives();
+    }
+
+  }
+
+
+
+
+  static drawSelectionOverlay: AppStateProcessor = (app): void => {
+
+    let i = app.session.state.mouse.activeSelection[0];
+    let K = app.FS.controlPoints[i]
+    let color = app.session.settings.display.color.palette.colors[i];
+
+    app.display.draftSelectionOverlay(K, color);
+
+    app.display.updateSelectionOverlay();
+
+  }
+
+
+  static showHoverTarget: TicketProcessor = app => {
+
+    let target = app.session.state.mouse.interactionCandidate;
+
+    if (target !== null) {
+
+      let color = Color.multiply(Util.getTargetColor(app, target), .8);
+
+      app.display.draftHoverCue(target.pos, color, target.type);
+      app.display.imageComposer.layers.hoverOverlay.commit()
+
+    }
+
+  }
+
 
 }
+

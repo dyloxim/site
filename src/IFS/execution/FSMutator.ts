@@ -1,95 +1,136 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 
-import { AppStateProcessor } from "@IFS/types/interaction";
+import { AppStateProcessor, I_selectableEntityMetaData } from "@IFS/types/interaction";
+import { I_applicationState } from "@IFS/types/state";
 
 import * as CommonTickets from "@IFS/resources/tickets"
-
-import { I_affine } from "@IFS/types/mathematical";
+import MouseProcessor from "./mouseProcessor";
+import Util from "./util";
 
 export default class FSMutator {
 
-  static maybeTranslateBoundingBox: AppStateProcessor = (app): void => {
-    if (app.session.state.tacit.mutatingFS && app.session.state.mouse.selectionOffset) {
-      let [i, j] = app.session.state.mouse.selectionCandidate!;
-      let oldVert = app.FS.bboxes.transformed[i][j];
-      let newVert = Vec.add(
-        app.display.rig.reverseProject(app.session.state.mouse.pos),
-        app.session.state.mouse.selectionOffset
-      )
-      let oldTranslation = (_ => {
-        let transform = (app.session.settings.FS.transforms[i] as I_affine)
-        if (transform.translation != undefined) {
-          return transform.translation;
-        } else {
-          return [0,0];
-        }
-      })();
-      let oldLinear = (app.session.settings.FS.transforms[i] as I_affine).linear
-      app.session = new SessionMutation({
-        session: app.session,
-        assertion: s => {
-          s.settings.FS.transforms[i] = {
-            linear:  oldLinear,
-            translation: Vec.add(oldTranslation, Vec.minus(newVert, oldVert))
-          }
-          return s
-          // F = [[Fa, Fb], [Fc, Fd]] ,,,  G = [[Ga, Gb], [Gc, Gd]]
-          // p = [[pa, pb], [pc, pd]]
-          // [pa, pb] = [[Ga * Fa + Gb * Fc], [Ga * Fb + Gb * Fd]]
-        },
-        ticketsGetter: _ => [
-          CommonTickets.reloadFS,
-          CommonTickets.reloadBboxes
-        ]
-      }).gives()
+
+
+  static mutateFS: AppStateProcessor = (app): void => {
+
+    switch(app.session.state.mouse.interactionCandidate?.type) {
+
+      case "primaryControlPoints":
+
+        FSMutator.mutateTranslationComponent(app);
+        break;
+
+      case "secondaryControlPoints":
+
+        FSMutator.mutateLinearComponent(app);
+        break; 
+
+    }
+
+  }
+
+  
+
+  static reloadSecondaryEntities: AppStateProcessor = app => {
+
+    let newEntities = Util.getSelectionControlPoints(app);
+
+    if (newEntities != null) {
+
+    app.session = new SessionMutation({ session: app.session, assertion: s => {
+
+      s.state.selectableEntities.secondaryControlPoints = newEntities;
+
+      return s;}, ticketsGetter: _ => []}).gives();
+
+      MouseProcessor.drawSelectionOverlay(app);
     }
   }
 
-  static rotateBoundingBox: AppStateProcessor = (app): void => {
-    console.log("rotating bounding box");
-  }
 
-  static handleFSTransform: AppStateProcessor  = (app): void => {
-    if (app.session.state.mouse.down && app.session.state.mouse.selectionCandidate) {
-      let [i, j] = app.session.state.mouse.selectionCandidate;
 
-      if (!app.session.state.mouse.selectionOffset) {
-        app.session = new SessionMutation({
-          session: app.session,
-          assertion: s => {
-            s.state.mouse.selectionOffset = Vec.minus(
-              app.display.rig.reverseProject(s.state.mouse.down!),
-              app.FS.bboxes.transformed[i][j]
-            )
-            return s;
-          },
-          ticketsGetter: _ => []
-        }).gives();
-      }
+  static mutateTranslationComponent: AppStateProcessor = app => {
 
-      switch (j) {
-        case 0:
-          let newBbox = app.FS.bboxes.transformed[i].map((_, k) => Vec.sum(
-            app.display.rig.reverseProject(app.session.state.mouse.pos),
-            app.session.state.mouse.selectionOffset!,
-            Vec.minus(
-              app.FS.bboxes.transformed[i][k],
-              app.FS.bboxes.transformed[i][0]
-            )
-          ));
-          break;
-        case 1:
-        case 3:
-          app.FS.bboxes.transformed[i][j] = Vec.sum(
-            app.display.rig.reverseProject(app.session.state.mouse.pos),
-            app.session.state.mouse.selectionOffset!,
-          );
-          break;
-        case 2:
-          break;
-      }
+    app.display.imageComposer.layers.hoverOverlay.clear();
+    app.display.imageComposer.layers.controlPointsOverlay.clear();
+
+    if (app.session.state.mouse.activeSelection.length == 1) {
+
+      app.display.imageComposer.layers.selectionOverlay.clear();
+
     }
+
+    let i = app.session.state.mouse.interactionCandidate!.id[0];
+
+    let newPos = Vec.minus(
+      app.display.rig.reverseProject(app.session.state.mouse.pos),
+      app.session.state.mouse.controlPointOffset!
+    )
+
+    app.session = new SessionMutation({session: app.session, assertion: s => {
+
+      if (s.state.mouse.activeSelection.length == 1 && s.state.mouse.activeSelection[0] != i) {
+        s.state.mouse.activeSelection = [];
+      }
+
+      s.state.mouse.interactionCandidate!.pos = newPos;
+      s.settings.FS.transforms[i] = {
+
+        linear:  app.FS.controlPoints[i].basis,
+        translation: newPos
+
+      }; return s;
+
+    }, ticketsGetter: s => {
+
+      let tickets = [CommonTickets.reloadFS, CommonTickets.reloadControlPoints]
+
+      if (s.state.mouse.activeSelection.length == 1) {
+        tickets = [...tickets, CommonTickets.reloadSecondaryEntities]
+      }
+
+      return tickets; }}).gives()
+
   }
+
+
+
+
+  
+  static mutateLinearComponent(app: I_applicationState) {
+
+    let [i, j] = app.session.state.mouse.interactionCandidate!.id;
+
+    let newPos = Vec.minus(
+      app.display.rig.reverseProject(app.session.state.mouse.pos),
+      app.session.state.mouse.controlPointOffset!
+    )
+
+    let newLinear = app.FS.controlPoints[i].basis;
+    newLinear[j] = Vec.minus(newPos, app.FS.controlPoints[i].origin);
+
+    app.session = new SessionMutation({session: app.session, assertion: s => {
+
+      s.state.mouse.interactionCandidate!.pos = newPos;
+      s.settings.FS.transforms[i] = {
+
+        linear: newLinear,
+        translation: app.FS.controlPoints[i].origin
+
+      }; return s;
+
+    }, ticketsGetter: _ => [
+
+      CommonTickets.reloadFS,
+
+    ]}).gives()
+
+    MouseProcessor.handleNewSelection(app);
+
+  }
+
+
+
 
 }
