@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <div>
-      <Link href="/integer_explorer">Integer Explorer App</Link>
+      <Link href="/IFS">IFS App</Link>
     </div>
   );
 }
