@@ -9,6 +9,7 @@ import { default as Util } from "@IFS/execution/util";
 
 import * as CommonTickets from "@IFS/resources/tickets"
 import * as Globals from "@IFS/resources/globalConstants"
+import { DefinedTicket } from "@IFS/types/tickets";
 
 export default class MouseProcessor {
 
@@ -156,20 +157,20 @@ export default class MouseProcessor {
 
   static endRigDragInteraction: AppStateProcessor = app => {
 
-      app.session = new SessionMutation({ using: app.session, do: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
-        s.state.mouse.interactionPrimed = false;
-        s.state.mouse.interactionCandidate = null;
+      s.state.mouse.interactionPrimed = false;
+      s.state.mouse.interactionCandidate = null;
 
-        s.state.tacit.draggingRig = null;
+      s.state.tacit.draggingRig = null;
 
-        return s
+      return s
 
-      }, queue: _ => [
+    }, queue: _ => [
 
-        CommonTickets.handleMouseMoveEvent
+      CommonTickets.handleMouseMoveEvent
 
-      ]}).result();
+    ]}).result();
   }
 
 
@@ -187,8 +188,8 @@ export default class MouseProcessor {
 
         return s;}, queue: _ => [
 
-            CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
-            CommonTickets.reviewControlPointsConfig
+          CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
+          CommonTickets.reviewControlPointsConfig
 
         ]}).result();
 
@@ -216,49 +217,54 @@ export default class MouseProcessor {
   static processProximities: AppStateProcessor = app => {
 
     let oldTarget = app.session.state.mouse.interactionCandidate;
-    let newTarget: null | I_selectableEntityMetaData = null;
+    let newTarget = Util.getCurrentTarget(app);
 
-    // loop through loaded entities
-
-    newTarget = Globals.SelectableEntityCategories
-      .map(category => { return Util.processEntityCategoryProximities(app, category); })
-      .reduce((a, b) => { return b ?? a });
-
-    if (Util.interactionCandidateChanged(app, newTarget)) {
+    if (!Util.entitiesEqual(oldTarget, newTarget)) {
       
       app.session = new SessionMutation({ using: app.session, do: s => {
 
         s.state.mouse.interactionCandidate = newTarget;
         return s;
 
-      }, queue: s =>  { switch(
+      }, queue: _ =>  {
 
-        !!s.state.mouse.interactionCandidate 
+        /*
+         *  Possible situations requiring action:
+         *
+         *  1. Target changed from selected nothing to selected something
+         *
+         *      Response: highlight new target
+         *     
+         *  2. Target changed from selected one thing to selected nothing
+         *
+         *      Response: erase / clear hover overlay
+         *
+         *  3. Target changed from selected one thing to selected another thing
+         *
+         *      Response: erase / clear hover overlay and highlight new target
+         *
+         */
 
-        // true when target has become proximal, 
-        //  false when target has become null
+        if (oldTarget == null) {
 
-      ) {
+          return [CommonTickets.showHoverTarget];
 
-        case true: 
+        } else if (newTarget == null) {
 
-          return [CommonTickets.showHoverTarget]
+          return [CommonTickets.layerUpdate("erase", ["hoverOverlay"])]
 
-        case false:
+        } else {
 
-          if (Util.targetEqualsSelection(app, oldTarget)) return [];
-
-          else return [
-
+          return [
             CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
-            CommonTickets.reviewControlPointsConfig
+            CommonTickets.showHoverTarget
+          ]
+          
 
-          ];
+        }
 
-        default:
-          return [];
 
-      }}}).result()
+      }}).result()
 
     }
 
@@ -295,9 +301,9 @@ export default class MouseProcessor {
 
       return s;}, queue: _ => [
 
-      CommonTickets.handleMouseMoveEvent
+        CommonTickets.handleMouseMoveEvent
 
-    ]}).result();
+      ]}).result();
 
     MouseProcessor.drawSelectionOverlay(app);
 

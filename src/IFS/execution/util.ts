@@ -150,6 +150,14 @@ export default class Util {
   }
 
 
+  static getCurrentTarget = (app: I_applicationState): null | I_selectableEntityMetaData => {
+
+    return Globals.SelectableEntityCategories
+      .map(category => { return Util.processEntityCategoryProximities(app, category); })
+      .reduce((a, b) => { return b ?? a });
+
+  }
+
   static getControlPointOffset = (app: I_applicationState): null | number[] => {
 
     let candidate = app.session.state.mouse.interactionCandidate!;
@@ -230,13 +238,11 @@ export default class Util {
   // checks / flags -------------------------------------------------------------
 
 
-  static targetEqualsSelection = (
-    app: I_applicationState, target: I_selectableEntityMetaData | null
+  static entitiesEqual = (
+    selection: I_selectableEntityMetaData | null, target: I_selectableEntityMetaData | null
   ) => {
 
-    return target!.type == "primaryControlPoints" ? (
-      target!.id[0] == app.session.state.mouse.activeSelection[0]
-    ) : false;
+    return (JSON.stringify(selection) == JSON.stringify(target));
 
   }
 
@@ -267,27 +273,15 @@ export default class Util {
   }
 
 
-  static interactionCandidateChanged = (
-    app: I_applicationState,
-    candidate: I_selectableEntityMetaData | null
-  ): boolean => {
+  static targetEqualsSelection = (
+    app: I_applicationState, target: I_selectableEntityMetaData | null
+  ) => {
 
-    let previous = app.session.state.mouse.interactionCandidate
-    return JSON.stringify(previous) != JSON.stringify(candidate)
+    return target!.type == "primaryControlPoints" ? (
+      target!.id[0] == app.session.state.mouse.activeSelection[0]
+    ) : false;
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   
