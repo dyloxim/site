@@ -4,10 +4,11 @@ import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 
 import { I_displayConfig, I_settings } from "@IFS/types/configuration";
-import { I_applicationState, I_sessionState } from "@IFS/types/state";
+import { I_applicationState, I_session, I_sessionState } from "@IFS/types/state";
 
 import * as Globals from "@IFS/resources/globalConstants"
 import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction";
+import { DefinedTicket, InstructionGroup } from "@IFS/types/tickets";
 
 export default class Util {
 
@@ -57,6 +58,9 @@ export default class Util {
 
 
   
+
+
+  
   // .............................................................................
   // display proportions / sizes
   // .............................................................................
@@ -97,13 +101,22 @@ export default class Util {
 
 
 
+
+
+
+
+
+
+  
   
   // .............................................................................
   // interaction data
   // .............................................................................
 
 
+
   // calculations ---------------------------------------------------------------
+
 
   static processEntityCategoryProximities = (
     app: I_applicationState,
@@ -112,7 +125,7 @@ export default class Util {
 
     let proximalEntity: null | I_selectableEntityMetaData = null;
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
 
       s.state.selectableEntities[category].forEach((entity, i) => {
@@ -131,7 +144,7 @@ export default class Util {
 
       return s;
 
-    }, ticketsGetter: _ => []}).gives()
+    }}).result()
 
     return proximalEntity;
   }
@@ -213,7 +226,9 @@ export default class Util {
   }
 
 
+
   // checks / flags -------------------------------------------------------------
+
 
   static targetEqualsSelection = (
     app: I_applicationState, target: I_selectableEntityMetaData | null
@@ -263,6 +278,19 @@ export default class Util {
   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   // .............................................................................
   // common conveniences

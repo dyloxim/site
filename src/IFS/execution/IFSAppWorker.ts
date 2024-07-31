@@ -29,16 +29,13 @@ export default class IFSAppWorker {
     let newPosition = app.FS.transforms[choice]
       .apply(app.session.state.program.thisTurn.position)
 
-    // update state
-    app.session = new SessionMutation({
-      session: app.session,
-      assertion: (s) => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
+
         s.state.program.lastTurn = lastTurn;
         s.state.program.thisTurn = { choice: choice, position: newPosition };
         return s;
-      },
-      ticketsGetter: _ => []
-    }).gives();
+
+    }}).result();
 
     // register new point on workpiece
   }
@@ -70,35 +67,45 @@ export default class IFSAppWorker {
     ) app.display.updatePathOverlay();
   }
 
-
   static maybeErasePastPaths: AppStateProcessor = (app): void => {
     if (app.session.state.options.path == "recent"
       && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
     ) app.display.clearPathOverlay();
   }
 
-  // TICKETS
 
+
+
+  
+  // TICKETS
+  
   // basic layer operations
 
-  static processCommonLayerTicket: TicketProcessor = (app, ticket) => {
+  static processLayerTicket: TicketProcessor = (app, ticket) => {
     (ticket as BasicLayerTicket).consumer.forEach(layer => {
       app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
     });
   }
 
+
+
+  
   // reloading from settings
 
   static loadRigFromSettings: TicketProcessor = (app, _) => {
+
     app.display.imageComposer.reconstructAll(app.session.settings.display);
     app.display.rig.reconstruct(
       app.session.settings.display,
       app.display.imageComposer.getPrintArea()
     );
-    app.session = new SessionMutation({ session: app.session,
-      assertion: s => s,
-      ticketsGetter: _ => [CommonTickets.reviewControlPointsConfig]
-    }).gives();
+
+    app.session = new SessionMutation({ using: app.session,
+
+      queue: _ => [CommonTickets.reviewControlPointsConfig]
+
+    }).result();
+
   }
 
   static revertRigToInitial: TicketProcessor = (app, _) => {
@@ -113,19 +120,19 @@ export default class IFSAppWorker {
     app.FS.transforms = newFS.transforms;
     app.FS.weights = newFS.weights;
     app.FS.controlPoints = newFS.controlPoints
-    app.session = new SessionMutation({
-      session: app.session,
-      assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
+
         s.state.program.thisTurn.choice = 0;
         s.state.program.thisTurn.position = s.settings.FS.firstPoint;
         s.state.program.lastTurn.choice = 0;
         s.state.program.lastTurn.position = s.settings.FS.firstPoint;
         return s;
+
       },
-      ticketsGetter: _ => [
-        CommonTickets.generateBasicLayerTicket("erase", ["figure", "pathOverlay"]),
-      ]
-    }).gives();
+
+      queue: _ => [CommonTickets.layerUpdate("erase", ["figure", "pathOverlay"])]
+
+    }).result();
   }
 
   static drawAxis: TicketProcessor = app => {
@@ -140,10 +147,9 @@ export default class IFSAppWorker {
 
   static loadControlPointsFromSettings: TicketProcessor = app => {
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
-      let points: I_selectableEntityMetaData[] = app.FS.controlPoints
-        .map((K, i) => {
+      let points: I_selectableEntityMetaData[] = app.FS.controlPoints.map((K, i) => {
 
           return {
             id: [i,0],
@@ -157,9 +163,7 @@ export default class IFSAppWorker {
         s.state.selectableEntities.primaryControlPoints = points
         return s;
 
-      },
-      ticketsGetter: _ => []
-    }).gives();
+      }}).result();
 
     app.FS.controlPoints.map(K => K.origin).forEach((p, i) => {
       let color = app.session.settings.display.color.palette.colors[i]
@@ -172,45 +176,60 @@ export default class IFSAppWorker {
 
   static reviewControlPointsConfig: TicketProcessor = app => {
     if (app.session.state.options.controlPointsShown) {
-      app.session = new SessionMutation({session: app.session, assertion: s => s,
+      app.session = new SessionMutation({ using: app.session,
 
-        ticketsGetter: s => {
+        queue: s => {
 
-          if (
-            s.state.mouse.activeSelection.length == 1
-          ) {
+          let actions = [CommonTickets.reloadControlPoints]
 
-            return [
-              CommonTickets.reloadSelectionOverlay,
-              CommonTickets.reloadControlPoints
-            ]
+          if (s.state.mouse.activeSelection.length == 1) 
+            actions = [...actions, CommonTickets.reloadSelectionOverlay]
 
-          } else return [CommonTickets.reloadControlPoints]
-        }
+          return actions;
 
-      }).gives();
+        }}).result();
     }
   }
 
   static normaliseControlPoints: TicketProcessor = app => {
+
+    // prepare new values
+
     let points = app.session.settings.FS.transforms.map((T) => {
       return (T as I_affine).translation ?? [0,0];
     });
+
     let middlePoint = Vec.scale(
       Vec.sum(...points),
       1/points.length
     )
+
     let newTransforms = app.session.settings.FS.transforms.map(T => {
+
       let newTranslation = Vec.minus((T as I_affine).translation ?? [0,0], middlePoint);
+
       return {
         linear: (T as I_affine).linear,
         translation: newTranslation
       };
+
     });
-    app.session = new SessionMutation({ session: app.session,
-      assertion: s => {s.settings.FS.transforms = newTransforms; return s },
-      ticketsGetter: _ => [CommonTickets.reloadRig, CommonTickets.reloadFS]
-    }).gives()
+
+
+    // update session
+
+    app.session = new SessionMutation({ using: app.session, do: s => {
+
+      s.settings.FS.transforms = newTransforms;
+      return s
+
+    }, queue: _ => [
+
+      CommonTickets.reloadRig,
+      CommonTickets.reloadFS
+
+    ]}).result()
+
   }
 
 }

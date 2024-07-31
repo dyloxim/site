@@ -38,11 +38,12 @@ export default class FSMutator {
 
     if (newEntities != null) {
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.selectableEntities.secondaryControlPoints = newEntities;
+      return s;
 
-      return s;}, ticketsGetter: _ => []}).gives();
+    }}).result();
 
       MouseProcessor.drawSelectionOverlay(app);
     }
@@ -68,7 +69,7 @@ export default class FSMutator {
       app.session.state.mouse.controlPointOffset!
     )
 
-    app.session = new SessionMutation({session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
       if (s.state.mouse.activeSelection.length == 1 && s.state.mouse.activeSelection[0] != i) {
         s.state.mouse.activeSelection = [];
@@ -76,21 +77,23 @@ export default class FSMutator {
 
       s.state.mouse.interactionCandidate!.pos = newPos;
       s.settings.FS.transforms[i] = {
-
         linear:  app.FS.controlPoints[i].basis,
         translation: newPos
+      };
+      
+      return s;
 
-      }; return s;
+    }, queue: s => {
 
-    }, ticketsGetter: s => {
-
-      let tickets = [CommonTickets.reloadFS, CommonTickets.reloadControlPoints]
+      let actions = [CommonTickets.reloadFS, CommonTickets.reloadControlPoints]
 
       if (s.state.mouse.activeSelection.length == 1) {
-        tickets = [...tickets, CommonTickets.reloadSecondaryEntities]
+        actions = [...actions, CommonTickets.reloadSecondaryEntities]
       }
 
-      return tickets; }}).gives()
+      return actions;
+
+    }}) .result()
 
   }
 
@@ -110,7 +113,7 @@ export default class FSMutator {
     let newLinear = app.FS.controlPoints[i].basis;
     newLinear[j] = Vec.minus(newPos, app.FS.controlPoints[i].origin);
 
-    app.session = new SessionMutation({session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.interactionCandidate!.pos = newPos;
       s.settings.FS.transforms[i] = {
@@ -120,11 +123,9 @@ export default class FSMutator {
 
       }; return s;
 
-    }, ticketsGetter: _ => [
+    }, queue: _ => [CommonTickets.reloadFS]
 
-      CommonTickets.reloadFS,
-
-    ]}).gives()
+    }).result()
 
     MouseProcessor.handleNewSelection(app);
 

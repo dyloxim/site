@@ -9,18 +9,15 @@ export default function DiscreteControl({ session, updateSession, specification 
 }) {
   return (
     <>
-      <button
-        onClick={() => {
-          updateSession(
-            new SessionMutation({
-              session: session,
-              assertion: specification.mutation,
-              ticketsGetter: specification.ticketsGetter
-            }).gives()
-          )
-        }}>
-        {specification.text}
-      </button>
+      <button onClick={() => {
+
+        updateSession(new SessionMutation({using: session,
+
+            do: specification.mutation,
+
+            queue: specification.ticketsGetter
+
+          }).result())}}> {specification.text} </button>
     </>
   )
 }

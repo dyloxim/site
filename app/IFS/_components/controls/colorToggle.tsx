@@ -4,9 +4,14 @@ import CategoricControl from "./kinds/categoricControl";
 import { DefinedTicket } from "@IFS/types/tickets";
 
 
-export default function ColorToggle({ session, updateSession }: {
+export default function ColorToggle(
+
+  { session, updateSession }: {
+
   session: I_session,
+
   updateSession: (session: I_session) => void
+
 }) {
   return (
     <>
@@ -19,7 +24,7 @@ export default function ColorToggle({ session, updateSession }: {
           mutation: s => { s.state.options.color = !s.state.options.color; return s; },
           ticketsGetter: _ => [
             CommonTickets.reviewControlPointsConfig,
-            CommonTickets. generateBasicLayerTicket(
+            CommonTickets.layerUpdate(
               "erase", ["figure", "pathOverlay", "controlPointsOverlay"]
             )
           ]

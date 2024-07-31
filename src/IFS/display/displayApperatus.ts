@@ -10,21 +10,33 @@ import { SelectableEntityCategory } from "@IFS/types/interaction";
 
 export default class DisplayApperatus {
 
+  // Properties
+  // ----------
+
   config: I_displayConfig;
-
   imageComposer: ImageComposer;
-
   rig: Rig;
 
+
+  // Initialization
+  // --------------
 
   constructor(
     config: I_displayConfig,
     displayContainer: HTMLDivElement
   ) {
+
     this.config = config;
+
     this.imageComposer = new ImageComposer(this.config, displayContainer);
+
     this.rig = new Rig(this.config, this.imageComposer.getPrintArea());
+
   }
+
+
+  // Reconfiguration
+  // ---------------
 
   reconstruct = (config: I_displayConfig): void => {
     this.config = config;
@@ -34,7 +46,8 @@ export default class DisplayApperatus {
 
 
   
-  // Drawing primatives components
+  // Drawing procedures
+  // ------------------
 
   draftPoint = (print: PrintLayer, p: number[], color: Color): void => {
     let _p = this.rig.projectPoint(p)
@@ -111,6 +124,7 @@ export default class DisplayApperatus {
 
 
   // Drawing semantic components
+  // ---------------------------
 
   draftHoverCue = (p: number[], mainColor: Color, targetType: SelectableEntityCategory) => {
 
@@ -193,6 +207,7 @@ export default class DisplayApperatus {
 
 
   // Standard layer operations
+  // -------------------------
 
   updateFigure = () => this.imageComposer.layers.figure.commit()
   updatePathOverlay = () => this.imageComposer.layers.pathOverlay.commit()
@@ -207,6 +222,7 @@ export default class DisplayApperatus {
   clearAll = () => this.imageComposer.clearAll();
 
   // Helper function
+  // ---------------
 
   getPrintWidth = () => { return this.imageComposer.printArea.width }
 

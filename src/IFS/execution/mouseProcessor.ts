@@ -13,7 +13,38 @@ import * as Globals from "@IFS/resources/globalConstants"
 export default class MouseProcessor {
 
 
-  // entry points
+  // state monitoring
+  // ----------------
+
+
+  static maybeDecideMouseAction: AppStateProcessor = app => {
+
+    if (Util.interactionDecisionTimedOut(app)) {
+
+      app.session.state.mouse.actionUndecided = null;
+
+      if (app.session.state.mouse.down) {
+
+        MouseProcessor.beginDragInteraction(app);
+
+      } else {
+
+        
+        MouseProcessor.handleClickEvent(app);
+
+      }
+
+    }
+
+  }
+
+
+  // event response handling
+  // -----------------------
+
+
+  
+  // base events
 
 
   static handleMoveEvent: AppStateProcessor = app => {
@@ -41,7 +72,7 @@ export default class MouseProcessor {
 
   static handleMouseDownEvent: AppStateProcessor = app => {
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.actionUndecided = Date.now();
       s.state.mouse.controlPointOffset = Util.getControlPointOffset(app)
@@ -52,45 +83,11 @@ export default class MouseProcessor {
 
       return s;
 
-    }, ticketsGetter: _ => []}).gives();
+    }}).result();
 
   }
 
 
-  static endFSMutationInteraction: AppStateProcessor = app => {
-
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
-
-      s.state.mouse.interactionPrimed = false;
-      s.state.mouse.interactionCandidate = null;
-
-      s.state.mouse.controlPointOffset = null;
-      s.state.tacit.mutatingFS = false;
-
-      return s;
-
-    }, ticketsGetter: _ => [
-      CommonTickets.handleMouseMoveEvent,
-      CommonTickets.reviewControlPointsConfig
-    ] }).gives();
-  }
-
-
-  static endRigDragInteraction: AppStateProcessor = app => {
-
-      app.session = new SessionMutation({ session: app.session, assertion: s => {
-
-        s.state.mouse.interactionPrimed = false;
-        s.state.mouse.interactionCandidate = null;
-
-        s.state.tacit.draggingRig = null;
-
-        return s
-
-      }, ticketsGetter: _ => [CommonTickets.handleMouseMoveEvent]}).gives();
-  }
-
-  
   static handleMouseUpEvent: AppStateProcessor = app => {
 
     app.display.imageComposer.layers.selectionOverlay.clear()
@@ -108,29 +105,72 @@ export default class MouseProcessor {
   }
 
 
-  static maybeDecideMouseAction: AppStateProcessor = app => {
+  static handleClickEvent: AppStateProcessor = app => {
 
-    if (Util.interactionDecisionTimedOut(app)) {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
-      app.session.state.mouse.actionUndecided = null;
+      s.state.mouse.interactionPrimed = false;
+      return s;
 
-      if (app.session.state.mouse.down) {
+    }}).result();
 
-        MouseProcessor.beginDragInteraction(app);
+    let target = app.session.state.mouse.interactionCandidate
 
-      } else {
+    if (
 
-        
-        MouseProcessor.handleClickEvent(app);
+      target == null
+        || target.type == "secondaryControlPoints"
+        || Util.targetEqualsSelection(app, target)
 
-      }
+    ) { MouseProcessor.clearSelection(app); }
 
-    }
+    else MouseProcessor.handleNewSelection(app);
 
   }
 
 
-  // actions
+  
+  // derived / model semantic events 
+
+
+  static endFSMutationInteraction: AppStateProcessor = app => {
+
+    app.session = new SessionMutation({ using: app.session, do: s => {
+
+      s.state.mouse.interactionPrimed = false;
+      s.state.mouse.interactionCandidate = null;
+
+      s.state.mouse.controlPointOffset = null;
+      s.state.tacit.mutatingFS = false;
+
+      return s;
+
+    }, queue: _ => [
+
+      CommonTickets.handleMouseMoveEvent,
+      CommonTickets.reviewControlPointsConfig
+
+    ] }).result();
+  }
+
+
+  static endRigDragInteraction: AppStateProcessor = app => {
+
+      app.session = new SessionMutation({ using: app.session, do: s => {
+
+        s.state.mouse.interactionPrimed = false;
+        s.state.mouse.interactionCandidate = null;
+
+        s.state.tacit.draggingRig = null;
+
+        return s
+
+      }, queue: _ => [
+
+        CommonTickets.handleMouseMoveEvent
+
+      ]}).result();
+  }
 
 
   static beginDragInteraction: AppStateProcessor = app => {
@@ -141,29 +181,36 @@ export default class MouseProcessor {
     if (app.session.state.mouse.interactionPrimed) {
 
 
-      app.session = new SessionMutation({ session: app.session, assertion: s => {
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
         s.state.tacit.mutatingFS = true;
 
-        return s;}, ticketsGetter: _ => [
+        return s;}, queue: _ => [
 
-            CommonTickets.generateBasicLayerTicket("erase", ["hoverOverlay"]),
+            CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
             CommonTickets.reviewControlPointsConfig
 
-        ]}).gives();
+        ]}).result();
 
 
     } else {
 
-      app.session = new SessionMutation({ session: app.session, assertion: s => {
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
         let initialDragPos = app.session.settings.display.domain.origin;
         s.state.tacit.draggingRig = initialDragPos;
 
-        return s;}, ticketsGetter: _ => []}).gives();
+        return s;}, queue: _ => []}).result();
 
     }
   }
+
+
+
+  
+
+  // actions
+  // -------
 
 
   static processProximities: AppStateProcessor = app => {
@@ -179,12 +226,12 @@ export default class MouseProcessor {
 
     if (Util.interactionCandidateChanged(app, newTarget)) {
       
-      app.session = new SessionMutation({ session: app.session, assertion: s => {
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
         s.state.mouse.interactionCandidate = newTarget;
         return s;
 
-      }, ticketsGetter: s =>  { switch(
+      }, queue: s =>  { switch(
 
         !!s.state.mouse.interactionCandidate 
 
@@ -202,14 +249,16 @@ export default class MouseProcessor {
           if (Util.targetEqualsSelection(app, oldTarget)) return [];
 
           else return [
-            CommonTickets.generateBasicLayerTicket("erase", ["hoverOverlay"]),
+
+            CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
             CommonTickets.reviewControlPointsConfig
+
           ];
 
         default:
           return [];
 
-      }}}).gives()
+      }}}).result()
 
     }
 
@@ -239,16 +288,16 @@ export default class MouseProcessor {
       }});
 
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.activeSelection = [i];
       s.state.selectableEntities.secondaryControlPoints = newEntities;
 
-      return s;}, ticketsGetter: _ => [
+      return s;}, queue: _ => [
 
       CommonTickets.handleMouseMoveEvent
 
-    ]}).gives();
+    ]}).result();
 
     MouseProcessor.drawSelectionOverlay(app);
 
@@ -257,7 +306,7 @@ export default class MouseProcessor {
 
   static clearSelection: AppStateProcessor = app => {
 
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
 
       s.state.mouse.activeSelection = [];
@@ -267,33 +316,12 @@ export default class MouseProcessor {
 
       return s;
 
-    }, ticketsGetter: _ => [
+    }, queue: _ => [
 
       CommonTickets.reviewControlPointsConfig,
       CommonTickets.handleMouseMoveEvent
 
-    ]}).gives();
-
-  }
-
-
-  static handleClickEvent: AppStateProcessor = app => {
-
-    app.session = new SessionMutation({ session: app.session, assertion: s => {
-      s.state.mouse.interactionPrimed = false;
-      return s;}, ticketsGetter: _ => []}).gives();
-
-    let target = app.session.state.mouse.interactionCandidate
-
-    if (
-
-      target == null
-        || target.type == "secondaryControlPoints"
-        || Util.targetEqualsSelection(app, target)
-
-    ) { MouseProcessor.clearSelection(app); }
-
-    else MouseProcessor.handleNewSelection(app);
+    ]}).result();
 
   }
 
@@ -304,16 +332,15 @@ export default class MouseProcessor {
       let originalOrigin = app.session.state.tacit.draggingRig!;
       let newDisplayOrigin = Vec.add(originalOrigin, Util.mouseDragVector(app))
 
-      app.session = new SessionMutation({ session: app.session, assertion: s => {
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
         s.settings.display.domain.origin = newDisplayOrigin;
+        return s;
 
-        return s; }, ticketsGetter: _ => [CommonTickets.reloadRig]}).gives();
+      }, queue: _ => [CommonTickets.reloadRig]}).result();
     }
 
   }
-
-
 
 
   static drawSelectionOverlay: AppStateProcessor = (app): void => {

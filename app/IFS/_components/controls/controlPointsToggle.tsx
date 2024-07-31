@@ -21,7 +21,7 @@ export default function ControlPointsToggle({ session, updateSession }: {
           },
           ticketsGetter: _ => [
             CommonTickets.reviewControlPointsConfig, 
-            CommonTickets.generateBasicLayerTicket("erase", ["controlPointsOverlay" ])
+            CommonTickets.layerUpdate("erase", ["controlPointsOverlay" ])
           ]
         }}
       />

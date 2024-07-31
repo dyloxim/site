@@ -14,7 +14,7 @@ export const defaultDisplay: I_displayConfig = {
     palette: Palettes.Primary,
   },
   rendering: {
-    upscaleFactor: 1.3,
+    upscaleFactor: .3,
   },
   animation: {
     rate: 1,

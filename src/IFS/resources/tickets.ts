@@ -9,7 +9,7 @@ import { SimpleTicket, BasicLayerTicket } from "@IFS/types/tickets"
  */
 
 
-export const generateBasicLayerTicket = (
+export const layerUpdate = (
   instruction: "erase" | "draw",
   layers: DisplayLayer[],
 ): BasicLayerTicket => {
@@ -20,7 +20,7 @@ export const generateBasicLayerTicket = (
       ["draw", "layerDraw"]
     ]).get(instruction) as "layerErase" | "layerDraw")}`,
     instruction: `${instruction} layers: ${layers}`,
-    processor: IFSAppWorker.processCommonLayerTicket,
+    processor: IFSAppWorker.processLayerTicket,
     log: false
   }
 };

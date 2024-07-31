@@ -25,48 +25,60 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
       canvas.addEventListener('mousemove', (e: MouseEvent) => {
 
-        updateSession(new SessionMutation({
-          session: session,
-          assertion: (s) => {
+        updateSession(new SessionMutation({ using: session, do: s => {
+
             let rect = canvas.getBoundingClientRect();
             s.state.mouse.pos = [
               (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
               (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
             ]
             return s;
-          },
-          ticketsGetter: s => {
+
+          }, queue: s => {
+
             let tickets = [CommonTickets.handleMouseMoveEvent];
             if (s.state.tacit.mutatingFS) tickets = [...tickets, CommonTickets.showHoverTarget]
             if (s.state.tacit.draggingRig) tickets = [...tickets, CommonTickets.reloadRig]
             return tickets;
-          }
-        }).gives());
+
+          }}).result());
+
       }, false);
 
 
       // MOUSE DOWN EVENT
 
       canvas!.addEventListener('mousedown', (_: MouseEvent): void => {
-        updateSession(new SessionMutation({
-          session: session,
-          assertion: (s) => { s.state.mouse.down = s.state.mouse.pos; return s; },
-          ticketsGetter: _ => [CommonTickets.handleMousePressEvent]
-        }).gives());
+
+        updateSession(new SessionMutation({ using: session, do: s => {
+
+          s.state.mouse.down = s.state.mouse.pos;
+          return s;
+
+        }, queue: _ => [
+
+          CommonTickets.handleMousePressEvent
+
+        ]}).result());
+
       }, false);
 
 
       // MOUSE UP EVENT
 
       canvas!.addEventListener('mouseup', (_: MouseEvent): void => {
-        updateSession(new SessionMutation({
-          session: session,
-          assertion: (s) => {
+
+        updateSession(new SessionMutation({ using: session, do: s => {
+
             s.state.mouse.down = null;
             return s;
-          },
-          ticketsGetter: _ => [CommonTickets.handleMousePressEvent]
-        }).gives());
+
+        }, queue: _ => [
+
+          CommonTickets.handleMousePressEvent
+
+        ]}).result());
+
       }, false);
 
 
@@ -74,10 +86,11 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
       canvas!.addEventListener('wheel', (e: WheelEvent): void => {
         if (e.deltaY != 0 && e.ctrlKey) {
+
           e.preventDefault(); e.stopPropagation()
-          updateSession(new SessionMutation({
-            session: session,
-            assertion: (s) => {
+
+          updateSession(new SessionMutation({ using: session, do: s => {
+
               let normalizeFn = (x: number) => - (1/((x/5)+5)) + .2;
               let multiplier = (_ => {
                 if (e.deltaY > 0) return 1 + normalizeFn(e.deltaY);
@@ -86,13 +99,17 @@ const Canvas = ({ setupFn, session, updateSession }: {
               let newDisplayRadius = s.settings.display.domain.displayRadius * multiplier;
               s.settings.display.domain.displayRadius = newDisplayRadius;
               return s;
-            },
-            ticketsGetter: _ => [CommonTickets.reloadRig]
-          }).gives());
-        }
-      }, false);
+
+          }, queue: _ => [
+
+            CommonTickets.reloadRig
+
+          ]}).result());
+
+        }}, false);
 
     }
+
   }, [setupFn])
 
   return (

@@ -11,25 +11,32 @@ export default function PathOverlayControls({ session, updateSession }: {
 }) {
 
   const pathControls: I_categoricControlSpecification[] = [
+
     { key: "noPath", text: 'Hide Path', value: null },
     { key: "showRecentPaths", text: 'Show Last', value: "recent" },
     { key: "persistPaths", text: 'Show All', value: "persist" },
+
   ].map(option => {
+
     return {
+
       key: option.key,
       text: option.text,
-      mutation: (s) => {
+
+      mutation: s => {
         s.state.options.path = option.value as null | "recent" | "persist";
         return s;
       },
+
       ticketsGetter: _ => {
         if (option.value) {
           return []
         } else {
-          return [CommonTickets.generateBasicLayerTicket("erase", ["pathOverlay"])]
+          return [CommonTickets.layerUpdate("erase", ["pathOverlay"])]
         }
       }
     }
+
   });
 
   return (
