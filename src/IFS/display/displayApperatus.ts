@@ -41,7 +41,7 @@ export default class DisplayApperatus {
   reconstruct = (config: I_displayConfig): void => {
     this.config = config;
     this.imageComposer.reconstructAll(this.config)
-    this.rig.reconstruct(this.config, this.imageComposer.getPrintArea())
+    this.rig.reload(this.config, this.imageComposer.getPrintArea())
   }
 
 

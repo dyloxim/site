@@ -27,7 +27,6 @@ export default function PresetControls({ session, updateSession }: {
         Actions.reloadFS,
         Actions.revertRigToInitial,
         Actions.reloadRig,
-        Actions.reviewControlPointsConfig
       ]
     }
   })

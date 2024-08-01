@@ -142,7 +142,7 @@ export default class IFSAppWorker {
         Actions.layerUpdate("erase",
           ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
         ),
-        Actions.reloadControlPoints,
+        Actions.reviewControlPointsConfig,
         Actions.reloadSecondaryEntities
       ]
 
@@ -189,6 +189,7 @@ export default class IFSAppWorker {
   }
 
   static reviewControlPointsConfig: TicketProcessor = app => {
+
     if (app.session.state.options.controlPointsShown) {
 
       app.session = new SessionMutation({ using: app.session,
