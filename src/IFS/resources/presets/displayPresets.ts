@@ -9,7 +9,7 @@ export const defaultDisplay: I_displayConfig = {
     displayRadius: 0,
   },
   color: {
-    multi: false,
+    multi: true,
     base: Colors.White,
     palette: Palettes.Primary,
   },

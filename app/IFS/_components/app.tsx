@@ -15,7 +15,7 @@ import * as Actions from "@IFS/resources/tickets"
 
 export default function App() {
 
-  let preset = { display: defaultDisplay, FS: FunctionSystems.sierpinskiPentagon }
+  let preset = { display: defaultDisplay, FS: FunctionSystems.heighwayDragon }
 
   const [session, updateSession] = useState<I_session>({
     settings: preset,
