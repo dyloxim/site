@@ -1,4 +1,9 @@
 import Script from 'next/script'
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dyloxim · IFS"
+};
 
 export default function RootLayout({
   children,
