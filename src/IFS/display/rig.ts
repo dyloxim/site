@@ -95,7 +95,7 @@ export default class Rig {
     this.pixPerUnit = printArea.width / this.domain.width;
   }
 
-  reconstruct = (config: I_displayConfig, printArea: Rect) => {
+  reload = (config: I_displayConfig, printArea: Rect) => {
     let domain = Rig.determineDomain(config, printArea);
     this.domain = domain;
     this.pixPerUnit = printArea.width / this.domain.width;

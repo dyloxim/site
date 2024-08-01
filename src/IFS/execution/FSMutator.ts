@@ -4,7 +4,7 @@ import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { AppStateProcessor, I_selectableEntityMetaData } from "@IFS/types/interaction";
 import { I_applicationState } from "@IFS/types/state";
 
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 import MouseProcessor from "./mouseProcessor";
 import Util from "./util";
 
@@ -14,7 +14,7 @@ export default class FSMutator {
 
   static mutateFS: AppStateProcessor = (app): void => {
 
-    switch(app.session.state.mouse.interactionCandidate?.type) {
+    switch(app.session.state.mouse.interactionCandidate!.type) {
 
       case "primaryControlPoints":
 
@@ -43,24 +43,18 @@ export default class FSMutator {
       s.state.selectableEntities.secondaryControlPoints = newEntities;
       return s;
 
-    }}).result();
+    }, queue: _ => [
+      Actions.layerUpdate("erase", ["selectionOverlay"]),
+      Actions.drawSelectionOverlay
+    ]
+    }).result();
 
-      MouseProcessor.drawSelectionOverlay(app);
     }
   }
 
 
 
   static mutateTranslationComponent: AppStateProcessor = app => {
-
-    app.display.imageComposer.layers.hoverOverlay.clear();
-    app.display.imageComposer.layers.controlPointsOverlay.clear();
-
-    if (app.session.state.mouse.activeSelection.length == 1) {
-
-      app.display.imageComposer.layers.selectionOverlay.clear();
-
-    }
 
     let i = app.session.state.mouse.interactionCandidate!.id[0];
 
@@ -71,10 +65,6 @@ export default class FSMutator {
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
-      if (s.state.mouse.activeSelection.length == 1 && s.state.mouse.activeSelection[0] != i) {
-        s.state.mouse.activeSelection = [];
-      }
-
       s.state.mouse.interactionCandidate!.pos = newPos;
       s.settings.FS.transforms[i] = {
         linear:  app.FS.controlPoints[i].basis,
@@ -83,17 +73,9 @@ export default class FSMutator {
       
       return s;
 
-    }, queue: s => {
+    }, queue: _ => [Actions.reloadFS]
 
-      let actions = [CommonTickets.reloadFS, CommonTickets.reloadControlPoints]
-
-      if (s.state.mouse.activeSelection.length == 1) {
-        actions = [...actions, CommonTickets.reloadSecondaryEntities]
-      }
-
-      return actions;
-
-    }}) .result()
+    }) .result()
 
   }
 
@@ -113,6 +95,7 @@ export default class FSMutator {
     let newLinear = app.FS.controlPoints[i].basis;
     newLinear[j] = Vec.minus(newPos, app.FS.controlPoints[i].origin);
 
+
     app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.interactionCandidate!.pos = newPos;
@@ -123,14 +106,11 @@ export default class FSMutator {
 
       }; return s;
 
-    }, queue: _ => [CommonTickets.reloadFS]
+    }, queue: _ => [Actions.reloadFS]
 
     }).result()
 
-    MouseProcessor.handleNewSelection(app);
-
   }
-
 
 
 

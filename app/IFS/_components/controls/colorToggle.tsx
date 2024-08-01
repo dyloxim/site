@@ -1,7 +1,6 @@
 import { I_session } from "@IFS/types/state";
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 import CategoricControl from "./kinds/categoricControl";
-import { DefinedTicket } from "@IFS/types/tickets";
 
 
 export default function ColorToggle(
@@ -23,8 +22,8 @@ export default function ColorToggle(
           text: "Toggle Color",
           mutation: s => { s.state.options.color = !s.state.options.color; return s; },
           ticketsGetter: _ => [
-            CommonTickets.reviewControlPointsConfig,
-            CommonTickets.layerUpdate(
+            Actions.reviewControlPointsConfig,
+            Actions.layerUpdate(
               "erase", ["figure", "pathOverlay", "controlPointsOverlay"]
             )
           ]

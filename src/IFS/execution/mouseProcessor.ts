@@ -7,9 +7,7 @@ import { default as Color } from "@IFS/display/util/color";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as Util } from "@IFS/execution/util";
 
-import * as CommonTickets from "@IFS/resources/tickets"
-import * as Globals from "@IFS/resources/globalConstants"
-import { DefinedTicket } from "@IFS/types/tickets";
+import * as Actions from "@IFS/resources/tickets"
 
 export default class MouseProcessor {
 
@@ -63,14 +61,6 @@ export default class MouseProcessor {
   }
 
 
-  static handlePressEvent: AppStateProcessor = app => {
-
-    if (app.session.state.mouse.down) MouseProcessor.handleMouseDownEvent(app);
-    else MouseProcessor.handleMouseUpEvent(app);
-
-  }
-
-
   static handleMouseDownEvent: AppStateProcessor = app => {
 
     app.session = new SessionMutation({ using: app.session, do: s => {
@@ -89,107 +79,56 @@ export default class MouseProcessor {
   }
 
 
-  static handleMouseUpEvent: AppStateProcessor = app => {
+  static handleClickEvent: AppStateProcessor = app => {
 
-    app.display.imageComposer.layers.selectionOverlay.clear()
+    let target = app.session.state.mouse.interactionCandidate;
 
-    if (app.session.state.tacit.mutatingFS) {
+    if (target == null) {
 
-      MouseProcessor.endFSMutationInteraction(app);
+      MouseProcessor.handleBGClickEvent(app);
 
-    } else if (app.session.state.tacit.draggingRig) {
+    } else MouseProcessor.activateSelection(app);
 
-      MouseProcessor.endRigDragInteraction(app);
+  }
+
+  static handleBGClickEvent: AppStateProcessor = app => {
+
+    console.log("bg clicked");
+
+    if (app.session.state.selected.length > 0) {
+
+      MouseProcessor.clearSelection(app);
 
     }
 
-  }
+    else app.session = new SessionMutation({ using: app.session, do: s => {
 
-
-  static handleClickEvent: AppStateProcessor = app => {
-
-    app.session = new SessionMutation({ using: app.session, do: s => {
-
-      s.state.mouse.interactionPrimed = false;
-      return s;
-
-    }}).result();
-
-    let target = app.session.state.mouse.interactionCandidate
-
-    if (
-
-      target == null
-        || target.type == "secondaryControlPoints"
-        || Util.targetEqualsSelection(app, target)
-
-    ) { MouseProcessor.clearSelection(app); }
-
-    else MouseProcessor.handleNewSelection(app);
-
-  }
-
-
-  
-  // derived / model semantic events 
-
-
-  static endFSMutationInteraction: AppStateProcessor = app => {
-
-    app.session = new SessionMutation({ using: app.session, do: s => {
-
-      s.state.mouse.interactionPrimed = false;
-      s.state.mouse.interactionCandidate = null;
-
-      s.state.mouse.controlPointOffset = null;
-      s.state.tacit.mutatingFS = false;
-
+      s.state.options.controlPointsShown = !s.state.options.controlPointsShown;
       return s;
 
     }, queue: _ => [
+      Actions.layerUpdate("erase", ["controlPointsOverlay", "hoverOverlay", "selectionOverlay"]),
+      Actions.reviewControlPointsConfig
+    ]
 
-      CommonTickets.handleMouseMoveEvent,
-      CommonTickets.reviewControlPointsConfig
+    }).result();
 
-    ] }).result();
   }
-
-
-  static endRigDragInteraction: AppStateProcessor = app => {
-
-    app.session = new SessionMutation({ using: app.session, do: s => {
-
-      s.state.mouse.interactionPrimed = false;
-      s.state.mouse.interactionCandidate = null;
-
-      s.state.tacit.draggingRig = null;
-
-      return s
-
-    }, queue: _ => [
-
-      CommonTickets.handleMouseMoveEvent
-
-    ]}).result();
-  }
-
 
   static beginDragInteraction: AppStateProcessor = app => {
 
-    app.display.imageComposer.layers.hoverOverlay.clear();
-    app.display.imageComposer.layers.selectionOverlay.clear();
-
     if (app.session.state.mouse.interactionPrimed) {
-
 
       app.session = new SessionMutation({ using: app.session, do: s => {
 
         s.state.tacit.mutatingFS = true;
+        s.state.selected = [s.state.mouse.interactionCandidate!.id[0]]
+        return s;
 
-        return s;}, queue: _ => [
+      }, queue: _ => [
 
-          CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
-          CommonTickets.reviewControlPointsConfig
+          Actions.layerUpdate("erase", ["hoverOverlay"]),
+          Actions.reviewControlPointsConfig
 
         ]}).result();
 
@@ -247,17 +186,17 @@ export default class MouseProcessor {
 
         if (oldTarget == null) {
 
-          return [CommonTickets.showHoverTarget];
+          return [Actions.showHoverTarget];
 
         } else if (newTarget == null) {
 
-          return [CommonTickets.layerUpdate("erase", ["hoverOverlay"])]
+          return [Actions.layerUpdate("erase", ["hoverOverlay"])]
 
         } else {
 
           return [
-            CommonTickets.layerUpdate("erase", ["hoverOverlay"]),
-            CommonTickets.showHoverTarget
+            Actions.layerUpdate("erase", ["hoverOverlay"]),
+            Actions.showHoverTarget
           ]
           
 
@@ -271,41 +210,20 @@ export default class MouseProcessor {
   }
 
 
-  static handleSecondaryControlPointClicked: AppStateProcessor = app => {}
+  static handleSecondaryControlPointClicked: AppStateProcessor = _ => {}
 
 
-  static handleNewSelection: AppStateProcessor = app => {
-
-    app.display.imageComposer.layers.selectionOverlay.clear();
-    app.display.imageComposer.layers.hoverOverlay.clear();
-
-    let target = app.session.state.mouse.interactionCandidate!
-
-    let i = target.id[0]
-    let K = app.FS.controlPoints[i];
-
-    let newEntities: I_selectableEntityMetaData[] = K.basis .map((v, j) => {
-
-      return {
-        id: [i, j],
-        type: "secondaryControlPoints",
-        pos: Vec.add(K.origin, v),
-        isProximal: false
-      }});
-
+  static activateSelection: AppStateProcessor = app => {
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
-      s.state.mouse.activeSelection = [i];
-      s.state.selectableEntities.secondaryControlPoints = newEntities;
+      let i = app.session.state.mouse.interactionCandidate!.id[0];
+      s.state.selected = [i];
+      return s;
 
-      return s;}, queue: _ => [
+    }, queue: _ => [Actions.reloadSecondaryEntities]
 
-        CommonTickets.handleMouseMoveEvent
-
-      ]}).result();
-
-    MouseProcessor.drawSelectionOverlay(app);
+    }).result();
 
   }
 
@@ -314,18 +232,14 @@ export default class MouseProcessor {
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
-
-      s.state.mouse.activeSelection = [];
-      s.state.mouse.interactionPrimed = false;
-      s.state.selectableEntities.secondaryControlPoints = [];
-      s.state.selectableEntities.primaryControlPoints = [];
+      s.state.selected = [];
+      s.state.selectableEntities["secondaryControlPoints"] = [];
 
       return s;
 
     }, queue: _ => [
 
-      CommonTickets.reviewControlPointsConfig,
-      CommonTickets.handleMouseMoveEvent
+      Actions.layerUpdate("erase", ["selectionOverlay", "hoverOverlay"]),
 
     ]}).result();
 
@@ -343,7 +257,7 @@ export default class MouseProcessor {
         s.settings.display.domain.origin = newDisplayOrigin;
         return s;
 
-      }, queue: _ => [CommonTickets.reloadRig]}).result();
+      }, queue: _ => [Actions.reloadRig]}).result();
     }
 
   }
@@ -351,7 +265,7 @@ export default class MouseProcessor {
 
   static drawSelectionOverlay: AppStateProcessor = (app): void => {
 
-    let i = app.session.state.mouse.activeSelection[0];
+    let i = app.session.state.selected[0];
     let K = app.FS.controlPoints[i]
     let color = app.session.settings.display.color.palette.colors[i];
 

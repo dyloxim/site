@@ -1,5 +1,5 @@
 import { I_session } from "@IFS/types/state";
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 import CategoricControl from "./kinds/categoricControl";
 
 
@@ -17,11 +17,12 @@ export default function ControlPointsToggle({ session, updateSession }: {
           text: "Show Control Points",
           mutation: s => {
             s.state.options.controlPointsShown = !s.state.options.controlPointsShown;
+            s.state.selected = [];
             return s;
           },
           ticketsGetter: _ => [
-            CommonTickets.reviewControlPointsConfig, 
-            CommonTickets.layerUpdate("erase", ["controlPointsOverlay" ])
+            Actions.reviewControlPointsConfig, 
+            Actions.layerUpdate("erase", ["controlPointsOverlay", "selectionOverlay"])
           ]
         }}
       />

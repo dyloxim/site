@@ -27,6 +27,9 @@ export interface I_sessionState {
     }
   },
 
+  // list of indicies indicating transforms currently in the active selection
+  selected: number[];
+
   mouse: {
     // pixel pos
     pos: number[],
@@ -46,8 +49,6 @@ export interface I_sessionState {
 
     interactionPrimed: boolean,
 
-    // list of indicies indicating transforms currently in the active selection
-    activeSelection: number[],
 
     // vector describing offset between mousedown location and selection candidate control
     //   point location

@@ -2,13 +2,14 @@ import { default as Color } from "@IFS/display/util/color";
 import { default as Display } from "@IFS/display/displayApperatus";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
+import { default as Mat } from "@IFS/math/linearAlgebra/lin2x2"
 
-import { I_displayConfig, I_settings } from "@IFS/types/configuration";
-import { I_applicationState, I_session, I_sessionState } from "@IFS/types/state";
+import { I_displayConfig, I_functionSystem, I_settings } from "@IFS/types/configuration";
+import { I_applicationState, I_sessionState } from "@IFS/types/state";
+import { I_affine, I_transform } from "@IFS/types/mathematical";
 
 import * as Globals from "@IFS/resources/globalConstants"
 import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction";
-import { DefinedTicket, InstructionGroup } from "@IFS/types/tickets";
 
 export default class Util {
 
@@ -210,7 +211,8 @@ export default class Util {
     app: I_applicationState
   ): I_selectableEntityMetaData[] | null => {
     
-    let target = app.session.state.mouse.interactionCandidate;
+    let i = app.session.state.selected[0];
+    let target = app.session.state.selectableEntities.primaryControlPoints[i];
     let entities = null;
 
     if (target != null) {
@@ -278,7 +280,7 @@ export default class Util {
   ) => {
 
     return target!.type == "primaryControlPoints" ? (
-      target!.id[0] == app.session.state.mouse.activeSelection[0]
+      target!.id[0] == app.session.state.selected[0]
     ) : false;
 
   }
@@ -289,14 +291,6 @@ export default class Util {
   // .............................................................................
   // common conveniences
   // .............................................................................
-
-
-  
-  static getTransformColor(app: I_applicationState, i: any) {
-
-      throw new Error("Method not implemented.");
-
-  }
 
 
   static getPalette(app: I_applicationState) {

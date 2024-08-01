@@ -1,5 +1,5 @@
 import { I_session } from "@IFS/types/state";
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 import CategoricControl from "./kinds/categoricControl";
 
 export default function AutoCenterControl({ session, updateSession }: {
@@ -16,7 +16,7 @@ export default function AutoCenterControl({ session, updateSession }: {
           key: "normaliseControlPoints",
           text: "Normalise Control Points",
           mutation: s => s,
-          ticketsGetter: _ => [CommonTickets.normaliseControlPoints]
+          ticketsGetter: _ => [Actions.normaliseControlPoints]
         }}
       />
     </>

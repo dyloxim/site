@@ -3,7 +3,7 @@ import { default as CategoricControl } from "./kinds/categoricControl";
 import { I_session } from "@IFS/types/state";
 import { I_categoricControlSpecification } from "@IFS/types/interaction";
 
-import * as CommonTickets from "@IFS/resources/tickets";
+import * as Actions from "@IFS/resources/tickets";
 
 export default function PathOverlayControls({ session, updateSession }: {
   session: I_session,
@@ -32,7 +32,7 @@ export default function PathOverlayControls({ session, updateSession }: {
         if (option.value) {
           return []
         } else {
-          return [CommonTickets.layerUpdate("erase", ["pathOverlay"])]
+          return [Actions.layerUpdate("erase", ["pathOverlay"])]
         }
       }
     }

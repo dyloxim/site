@@ -33,6 +33,16 @@ export const layerUpdate = (
 
 let ticketArray: SimpleTicket[] = [];
 
+export const reconstructRig: SimpleTicket = {
+
+  instructionGroup: "rig",
+  instruction: "Replace display layers with new canvases and then load rig from settings",
+  processor: IFSAppWorker.reconstructRig,
+  log: false
+
+}; ticketArray = [...ticketArray, reconstructRig];
+
+
 export const reloadRig: SimpleTicket = {
 
   instructionGroup: "rig",
@@ -69,7 +79,7 @@ export const reviewControlPointsConfig: SimpleTicket = {
   instructionGroup: "layerErase",
   instruction: "Consult settings and dispatch required tickets for control points overlay",
   processor: IFSAppWorker.reviewControlPointsConfig,
-  log: true
+  log: false
 
 }; ticketArray = [...ticketArray, reviewControlPointsConfig];
 
@@ -86,14 +96,14 @@ export const handleMouseMoveEvent: SimpleTicket = {
 
 
 
-export const handleMousePressEvent: SimpleTicket = {
+export const handleMouseDownEvent: SimpleTicket = {
 
   instructionGroup: "mouse",
-  instruction: "Handle mouse press event",
-  processor: MouseProcessor.handlePressEvent,
+  instruction: "Handle mouse down event",
+  processor: MouseProcessor.handleMouseDownEvent,
   log: false
 
-}; ticketArray = [...ticketArray, handleMousePressEvent];
+}; ticketArray = [...ticketArray, handleMouseDownEvent];
 
 
 
@@ -144,12 +154,32 @@ export const reloadSelectionOverlay: SimpleTicket = {
 export const reloadSecondaryEntities: SimpleTicket = {
 
   instructionGroup: "mouse",
-  instruction: "update secondary entities",
+  instruction: "load secondary entities",
   processor: FSMutator.reloadSecondaryEntities,
-  log: true
+  log: false
 
 }; ticketArray = [...ticketArray, reloadSecondaryEntities];
 
 
+
+export const drawSelectionOverlay: SimpleTicket = {
+
+  instructionGroup: "layerDraw",
+  instruction: "draw secondary entities",
+  processor: MouseProcessor.drawSelectionOverlay,
+  log: false
+
+}; ticketArray = [...ticketArray, drawSelectionOverlay];
+
+
+
+export const clearSelection: SimpleTicket = {
+
+  instructionGroup: "mouse",
+  instruction: "unload and erase all selectable entities",
+  processor: MouseProcessor.clearSelection,
+  log: false
+
+}; ticketArray = [...ticketArray, clearSelection];
 
 export const definedTickets = ticketArray;

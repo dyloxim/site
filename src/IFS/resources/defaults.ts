@@ -29,8 +29,9 @@ export const defaultState: I_sessionState = {
     interactionCandidate: null,
     interactionPrimed: false,
     controlPointOffset: null,
-    activeSelection: []
   },
+
+  selected: [],
 
   options: {
     preset:"custom",

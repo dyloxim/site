@@ -3,7 +3,7 @@ import { default as Vec } from "@IFS/math/linearAlgebra/vec2";
 import { I_categoricControlSpecification } from "@IFS/types/interaction";
 
 import * as Globals from "@IFS/resources/globalConstants";
-import * as CommonTickets from "@IFS/resources/tickets";
+import * as Actions from "@IFS/resources/tickets";
 import { I_session } from "@IFS/types/state";
 import CategoricControl from "./kinds/categoricControl";
 
@@ -31,7 +31,7 @@ export default function PanControls({ session, updateSession }: {
         s.settings.display.domain.origin = newDisplayOrigin;
         return s;
       },
-      ticketsGetter: _ => [CommonTickets.reloadRig, CommonTickets.reviewControlPointsConfig]
+      ticketsGetter: _ => [Actions.reloadRig, Actions.reviewControlPointsConfig]
     }})
 
   return (

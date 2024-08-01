@@ -10,7 +10,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { DisplayLayer } from "@IFS/types/specifications";
 import { BasicLayerTicket } from "@IFS/types/tickets";
 
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 import * as Globals from "@IFS/resources/globalConstants"
 
 import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
@@ -92,17 +92,24 @@ export default class IFSAppWorker {
   
   // reloading from settings
 
-  static loadRigFromSettings: TicketProcessor = (app, _) => {
-
+  static reconstructRig: TicketProcessor = app => {
     app.display.imageComposer.reconstructAll(app.session.settings.display);
-    app.display.rig.reconstruct(
+    IFSAppWorker.loadRigFromSettings(app);
+  }
+
+  static loadRigFromSettings: TicketProcessor = app => {
+
+    app.display.rig.reload(
       app.session.settings.display,
       app.display.imageComposer.getPrintArea()
     );
 
     app.session = new SessionMutation({ using: app.session,
 
-      queue: _ => [CommonTickets.reviewControlPointsConfig]
+      queue: _ => [
+        Actions.reviewControlPointsConfig,
+        Actions.reloadFS,
+      ]
 
     }).result();
 
@@ -116,6 +123,7 @@ export default class IFSAppWorker {
   }
 
   static loadFSFromSettings: TicketProcessor = (app, _) => {
+
     let newFS = new FunctionSystem(app.session.settings.FS);
     app.FS.transforms = newFS.transforms;
     app.FS.weights = newFS.weights;
@@ -130,7 +138,13 @@ export default class IFSAppWorker {
 
       },
 
-      queue: _ => [CommonTickets.layerUpdate("erase", ["figure", "pathOverlay"])]
+      queue: _ => [
+        Actions.layerUpdate("erase",
+          ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
+        ),
+        Actions.reloadControlPoints,
+        Actions.reloadSecondaryEntities
+      ]
 
     }).result();
   }
@@ -176,17 +190,13 @@ export default class IFSAppWorker {
 
   static reviewControlPointsConfig: TicketProcessor = app => {
     if (app.session.state.options.controlPointsShown) {
+
       app.session = new SessionMutation({ using: app.session,
-
         queue: s => {
-
-          let actions = [CommonTickets.reloadControlPoints]
-
-          if (s.state.mouse.activeSelection.length == 1) 
-            actions = [...actions, CommonTickets.reloadSelectionOverlay]
-
+          let actions = [Actions.reloadControlPoints]
+          if (s.state.selected.length == 1) 
+            actions = [...actions, Actions.reloadSelectionOverlay]
           return actions;
-
         }}).result();
     }
   }
@@ -225,8 +235,8 @@ export default class IFSAppWorker {
 
     }, queue: _ => [
 
-      CommonTickets.reloadRig,
-      CommonTickets.reloadFS
+      Actions.reloadRig,
+      Actions.reloadFS
 
     ]}).result()
 

@@ -3,7 +3,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 
 import { I_session } from "@IFS/types/state";
 
-import * as CommonTickets from "@IFS/resources/tickets"
+import * as Actions from "@IFS/resources/tickets"
 
 const Canvas = ({ setupFn, session, updateSession }: {
   setupFn: (displayContainer: HTMLDivElement) => void,
@@ -36,9 +36,9 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
           }, queue: s => {
 
-            let tickets = [CommonTickets.handleMouseMoveEvent];
-            if (s.state.tacit.mutatingFS) tickets = [...tickets, CommonTickets.showHoverTarget]
-            if (s.state.tacit.draggingRig) tickets = [...tickets, CommonTickets.reloadRig]
+            let tickets = [Actions.handleMouseMoveEvent];
+            if (s.state.tacit.mutatingFS) tickets = [...tickets, Actions.showHoverTarget]
+            if (s.state.tacit.draggingRig) tickets = [...tickets, Actions.reloadRig]
             return tickets;
 
           }}).result());
@@ -57,7 +57,7 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
         }, queue: _ => [
 
-          CommonTickets.handleMousePressEvent
+          Actions.handleMouseDownEvent
 
         ]}).result());
 
@@ -70,14 +70,14 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
         updateSession(new SessionMutation({ using: session, do: s => {
 
-            s.state.mouse.down = null;
-            return s;
+          s.state.mouse.down = null;
+          s.state.tacit.draggingRig = null;
+          s.state.tacit.mutatingFS = false;
+          s.state.mouse.interactionPrimed = false;
 
-        }, queue: _ => [
+          return s;
 
-          CommonTickets.handleMousePressEvent
-
-        ]}).result());
+        }}).result());
 
       }, false);
 
@@ -102,7 +102,7 @@ const Canvas = ({ setupFn, session, updateSession }: {
 
           }, queue: _ => [
 
-            CommonTickets.reloadRig
+            Actions.reloadRig
 
           ]}).result());
 
