@@ -1,6 +1,6 @@
 import { I_settings } from "@IFS/types/configuration"
 import { NamedFSPreset } from "@IFS/types/specifications"
-import { DefinedTicket } from "@IFS/types/tickets"
+import { Ticket } from "@IFS/types/tickets"
 import { InstructionGroup } from "@IFS/types/tickets"
 import { default as FunctionSystem } from "@IFS/functionSystem"
 import { default as Display } from "@IFS/display/displayApperatus"
@@ -75,7 +75,7 @@ export interface I_sessionState {
   }
 
   tickets: {
-    [key in InstructionGroup]: Set<DefinedTicket>
+    [key in InstructionGroup]: Set<Ticket>
   }
 
 }

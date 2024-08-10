@@ -8,12 +8,16 @@ import { default as Rig } from "./display/rig";
 import { defaultState as baseState } from "@IFS/resources/defaults"
 import Delegator from "./execution/delegator";
 
+
+
+
+
 export default class App {
 
   settings: I_settings;
   state: I_sessionState;
 
-  FS: FunctionSystem
+  FS: FunctionSystem;
   display: DisplayApperatus | undefined;
 
   // SETUP FUNCTIONS
@@ -25,7 +29,7 @@ export default class App {
   }
 
   static constructWithState = (session: I_session): App => {
-    let app = new App(session.settings)
+    let app = new App(session.settings);
     app.state = session.state;
     return app;
   }

@@ -1,11 +1,10 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 
-import { AppStateProcessor, I_selectableEntityMetaData } from "@IFS/types/interaction";
+import { AppStateProcessor } from "@IFS/types/interaction";
 import { I_applicationState } from "@IFS/types/state";
 
 import * as Actions from "@IFS/resources/tickets"
-import MouseProcessor from "./mouseProcessor";
 import Util from "./util";
 
 export default class FSMutator {
@@ -38,16 +37,14 @@ export default class FSMutator {
 
     if (newEntities != null) {
 
-    app.session = new SessionMutation({ using: app.session, do: s => {
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
-      s.state.selectableEntities.secondaryControlPoints = newEntities;
-      return s;
+        s.state.selectableEntities.secondaryControlPoints = newEntities;
+        return s;
 
-    }, queue: _ => [
-      Actions.layerUpdate("erase", ["selectionOverlay"]),
-      Actions.drawSelectionOverlay
-    ]
-    }).result();
+      }, queue: _ => [["ERASE", ["selectionOverlay"]], "DO:drawSelectionOverlay"]
+
+      }).result();
 
     }
   }
@@ -73,7 +70,7 @@ export default class FSMutator {
       
       return s;
 
-    }, queue: _ => [Actions.reloadFS]
+    }, queue: _ => ["RELOAD:FS"]
 
     }) .result()
 
@@ -106,7 +103,7 @@ export default class FSMutator {
 
       }; return s;
 
-    }, queue: _ => [Actions.reloadFS]
+    }, queue: _ => ["RELOAD:FS"]
 
     }).result()
 

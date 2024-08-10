@@ -1,11 +1,14 @@
+'use client'
 import App from './_components/app'
-import Commentary from './_components/commentary'
+import { defaultDisplay } from '@IFS/resources/presets/displayPresets'
+import { FunctionSystems } from '@IFS/resources/presets/FSPresets'
 
 export default function IFSPage() {
-  return (
-    <div>
-      <App/>
-      <Commentary/>
-    </div>
-  )
+
+  let preset = {
+    display: defaultDisplay,
+    FS: FunctionSystems.heighwayDragon
+  }
+
+  return (<App preset={preset} />)
 }

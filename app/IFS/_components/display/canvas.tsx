@@ -1,12 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-import { I_session } from "@IFS/types/state";
-
-
-const Canvas = ({ setupFn, session, updateSession }: {
+const Canvas = ({ setupFn }: {
   setupFn: (displayContainer: HTMLDivElement) => void,
-  session: I_session,
-  updateSession: (session: I_session) => void
 }) => {
 
   const displayContainerRef = useRef<HTMLDivElement | null>(null);

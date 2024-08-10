@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dyloxim"
+  title: "dyloxim.com"
 };
 
 export default function RootLayout({

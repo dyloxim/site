@@ -1,6 +1,9 @@
 import { SelectableEntityCategories } from "@IFS/resources/globalConstants";
 import { I_applicationState, I_session } from "@IFS/types/state";
-import { DefinedTicket } from "@IFS/types/tickets";
+import { Ticket } from "@IFS/types/tickets";
+
+
+// function types
 
 export type SessionAssertion = (s: I_session, ...parameters: any) => I_session;
 
@@ -8,26 +11,16 @@ export type AppStateProcessor = (app: I_applicationState) => void;
 
 export type AppDerivedStateGetter = (app: I_applicationState) => any;
 
+
+// component specs
+
 export type TicketProcessor = (
   app: I_applicationState,
-  ticket?: DefinedTicket
+  ticket?: Ticket
 ) => void;
 
-export interface I_categoricControlSpecification {
-  key: string,
-  text: string,
-  mutation: SessionAssertion,
-  ticketsGetter: (s: I_session) => DefinedTicket[]
-}
 
-export interface I_numericControlSpecification {
-  key: string,
-  text: string,
-  value: number,
-  setter: React.Dispatch<React.SetStateAction<number>>,
-  mutation: (e: React.ChangeEvent<HTMLInputElement>) => SessionAssertion,
-  ticketsGetter: (s: I_session) => DefinedTicket[]
-}
+// entity data structure
 
 export type SelectableEntityCategory = typeof SelectableEntityCategories[number]
 

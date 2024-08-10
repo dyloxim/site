@@ -1,5 +1,5 @@
 import { I_sessionState } from "@IFS/types/state";
-import { DefinedTicket } from "@IFS/types/tickets";
+import { Ticket } from "@IFS/types/tickets";
 
 export const defaultState: I_sessionState = {
 
@@ -38,7 +38,7 @@ export const defaultState: I_sessionState = {
     animationRate: 1,
     running: true,
     controlPointsShown: false,
-    path: "recent",
+    path: null,
     color: false,
   },
 
@@ -49,12 +49,12 @@ export const defaultState: I_sessionState = {
     
 
   tickets: {
-    mouse: new Set<DefinedTicket>(),
-    FS: new Set<DefinedTicket>(),
-    rig: new Set<DefinedTicket>(),
-    IFSprocess: new Set<DefinedTicket>(),
-    layerDraw: new Set<DefinedTicket>(),
-    layerErase: new Set<DefinedTicket>(),
+    mouse: new Set<Ticket>(),
+    FS: new Set<Ticket>(),
+    rig: new Set<Ticket>(),
+    IFSprocess: new Set<Ticket>(),
+    layerDraw: new Set<Ticket>(),
+    layerErase: new Set<Ticket>(),
   },
 
   tacit: {

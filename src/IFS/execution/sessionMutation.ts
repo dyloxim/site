@@ -1,12 +1,14 @@
 import { SessionAssertion } from "@IFS/types/interaction";
 import { I_session } from "@IFS/types/state";
-import { InstructionGroup, DefinedTicket } from "@IFS/types/tickets";
+import { InstructionGroup, ActionKey, LayerActionKey, isLayerActionsRef, QueueItem } from "@IFS/types/tickets";
+import { Actions, layerUpdateAction } from "@IFS/resources/tickets"
+import { DisplayLayer } from "@IFS/types/specifications";
 
 export default class SessionMutation {
 
   private session: I_session;
   private mutation: SessionAssertion;
-  private requests: DefinedTicket[];
+  private requests: (QueueItem)[];
 
 
 
@@ -14,7 +16,7 @@ export default class SessionMutation {
   constructor(mutation: {
     using: I_session,
     do?: SessionAssertion,
-    queue?: (s: I_session) => DefinedTicket[]
+    queue?: (s: I_session) => (QueueItem)[],
   }) {
 
     let [session, definition, actionGetter] =
@@ -37,16 +39,32 @@ export default class SessionMutation {
 
   }
 
+  registerTicket = (ref: QueueItem): void => {
+
+    if (isLayerActionsRef(ref)) this.registerLayerTickets(ref);
+
+    else this.registerOrdinaryTicket(ref);
+
+  }
 
 
-  registerTicket = (ticket: DefinedTicket): void => {
+  registerOrdinaryTicket = (actionKey: ActionKey): void => {
 
-      let category = ticket.instructionGroup as InstructionGroup
-      this.session.state.tickets[category].add(ticket);
+    let ticket = Actions[actionKey]
+    let category = ticket.instructionGroup as InstructionGroup
+    this.session.state.tickets[category].add(ticket);
+
+  }
+
+  registerLayerTickets = ([instruction, layers]: [LayerActionKey, DisplayLayer[]]): void => {
+
+    let ticket = layerUpdateAction(instruction, layers);
+    let category = ticket.instructionGroup as InstructionGroup
+    this.session.state.tickets[category].add(ticket);
 
   }
 
 
 
-
 }
+

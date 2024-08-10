@@ -1,137 +1,67 @@
 'use client'
+
 import { useState } from 'react';
 
-import { default as Canvas } from './canvas';
-import { default as Controls } from './controls';
-import { default as IFSApp } from '@IFS/app';
-
 import { I_session } from '@IFS/types/state'
-import { defaultDisplay } from '@IFS/resources/presets/displayPresets'
-import { FunctionSystems } from '@IFS/resources/presets/FSPresets'
+import { I_displayConfig, I_functionSystem } from '@IFS/types/configuration';
 
-import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import * as Actions from "@IFS/resources/tickets"
+import { default as AppEngine } from '@IFS/app';
+import { default as EventHandlers } from './display/eventHandlers';
+
+import { default as Canvas } from './display/canvas';
+import { default as Info } from './info';
+import { default as ExtendedControls } from './controls/extendedControls';
+import { default as QuickControls } from './controls/quickControls';
+import { default as NavControls } from './controls/navControls';
+import { default as ReadOut } from './readOut/panel';
 
 
-export default function App() {
 
-  let preset = { display: defaultDisplay, FS: FunctionSystems.heighwayDragon }
 
-  const [session, updateSession] = useState<I_session>({
+
+
+// the top level entry point component for the IFS app
+
+export default function App({ preset }: {
+  preset: {
+    display: I_displayConfig,
+    FS: I_functionSystem
+  }
+}) {
+
+  let [session, updateSession] = useState<I_session>({
     settings: preset,
-    state: IFSApp.getInitialState(preset) 
+    state: AppEngine.getInitialState(preset) 
   });
 
-  const appEngine = IFSApp.constructWithState(session);
+  const UIContext = { session: session, updateSession: updateSession };
+
+  const app = AppEngine.constructWithState(session);
 
   const setupApp = (displayContainer: HTMLDivElement) => {
 
-    appEngine.setupDisplay(displayContainer);
-
+    app.setupDisplay(displayContainer);
     let canvas = document.getElementById("hoverOverlayCanvas")! as HTMLCanvasElement;
-
-    // MOUSE MOVE EVENT
-
-    canvas.addEventListener('mousemove', (e: MouseEvent) => {
-
-      updateSession(new SessionMutation({ using: session, do: s => {
-
-        let rect = canvas.getBoundingClientRect();
-        s.state.mouse.pos = [
-          (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-          (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
-        ]
-        return s;
-
-      }, queue: s => {
-
-        let tickets = [Actions.handleMouseMoveEvent];
-        if (s.state.tacit.mutatingFS) tickets = [...tickets, Actions.showHoverTarget]
-        if (s.state.tacit.draggingRig) tickets = [...tickets, Actions.reloadRig]
-        return tickets;
-
-      }}).result());
-
-    }, false);
-
-
-    // MOUSE DOWN EVENT
-
-    canvas!.addEventListener('mousedown', (_: MouseEvent): void => {
-
-      updateSession(new SessionMutation({ using: session, do: s => {
-
-        s.state.mouse.down = s.state.mouse.pos;
-        return s;
-
-      }, queue: _ => [
-
-        Actions.handleMouseDownEvent
-
-      ]}).result());
-
-    }, false);
-
-
-    // MOUSE UP EVENT
-
-    canvas!.addEventListener('mouseup', (_: MouseEvent): void => {
-
-      updateSession(new SessionMutation({ using: session, do: s => {
-
-        s.state.mouse.down = null;
-        s.state.tacit.draggingRig = null;
-        s.state.tacit.mutatingFS = false;
-        s.state.mouse.interactionPrimed = false;
-
-        return s;
-
-      }}).result());
-
-    }, false);
-
-
-    // MOUSE SCROLL EVENT
-
-    canvas!.addEventListener('wheel', (e: WheelEvent): void => {
-      if (e.deltaY != 0 && e.ctrlKey) {
-
-        e.preventDefault(); e.stopPropagation()
-
-        updateSession(new SessionMutation({ using: session, do: s => {
-
-          let normalizeFn = (x: number) => - (1/((x/5)+5)) + .2;
-          let multiplier = (_ => {
-            if (e.deltaY > 0) return 1 + normalizeFn(e.deltaY);
-            else return 1 - normalizeFn(-e.deltaY);
-          })()
-          let newDisplayRadius = s.settings.display.domain.displayRadius * multiplier;
-          s.settings.display.domain.displayRadius = newDisplayRadius;
-          return s;
-
-        }, queue: _ => [
-
-          Actions.reloadRig
-
-        ]}).result());
-
-      }}, false);
-
-    appEngine.start();
+    EventHandlers.forEach(handlerInit => { handlerInit(canvas, session, updateSession) });
+    app.start();
 
   }
 
   return (
-    <div>
-      <Canvas
-        setupFn={setupApp}
-        session={session}
-        updateSession={updateSession}/>
+    <>
+      <Canvas setupFn={setupApp}/>
       <br/>
-      <Controls
-        session={session}
-        updateSession={updateSession}/>
-    </div>
+      <p>FS:</p> <pre>$CURRENT</pre>
+      { // <NavControls ctx={UIContext}/>
+      }
+      <QuickControls ctx={UIContext}/>
+      { // <ExtendedControls ctx={UIContext}/>
+      }
+      { // <ReadOut/>
+      }
+      { // <Info/>
+      }
+    </>
   )
 
 }

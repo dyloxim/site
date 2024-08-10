@@ -8,6 +8,7 @@ import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as Util } from "@IFS/execution/util";
 
 import * as Actions from "@IFS/resources/tickets"
+import { QueueItem } from "@IFS/types/tickets";
 
 export default class MouseProcessor {
 
@@ -107,11 +108,11 @@ export default class MouseProcessor {
       return s;
 
     }, queue: _ => [
-      Actions.layerUpdate("erase", ["controlPointsOverlay", "hoverOverlay", "selectionOverlay"]),
-      Actions.reviewControlPointsConfig
-    ]
 
-    }).result();
+      "REVIEW:controlPoints",
+      ["ERASE", ["controlPointsOverlay", "hoverOverlay", "selectionOverlay"]]
+      
+    ]}).result();
 
   }
 
@@ -127,10 +128,10 @@ export default class MouseProcessor {
 
       }, queue: _ => [
 
-          Actions.layerUpdate("erase", ["hoverOverlay"]),
-          Actions.reviewControlPointsConfig
+        "REVIEW:controlPoints",
+        ["ERASE", ["hoverOverlay"]]
 
-        ]}).result();
+      ]}).result();
 
 
     } else {
@@ -184,23 +185,20 @@ export default class MouseProcessor {
          *
          */
 
-        if (oldTarget == null) {
+        let queue: QueueItem[] = []; if (oldTarget == null) queue = [
 
-          return [Actions.showHoverTarget];
+          "DO:showHoverTarget"
 
-        } else if (newTarget == null) {
+        ]; else if (newTarget == null) queue = [
 
-          return [Actions.layerUpdate("erase", ["hoverOverlay"])]
+          ["ERASE", ["hoverOverlay"]]
 
-        } else {
+        ]; else queue = [
 
-          return [
-            Actions.layerUpdate("erase", ["hoverOverlay"]),
-            Actions.showHoverTarget
-          ]
-          
+          "DO:showHoverTarget",
+          ["ERASE", ["hoverOverlay"]]
 
-        }
+        ]; return queue;
 
 
       }}).result()
@@ -221,7 +219,7 @@ export default class MouseProcessor {
       s.state.selected = [i];
       return s;
 
-    }, queue: _ => [Actions.reloadSecondaryEntities]
+    }, queue: _ => ["RELOAD:secondaryEntities"]
 
     }).result();
 
@@ -237,9 +235,7 @@ export default class MouseProcessor {
 
       return s;
 
-    }, queue: _ => [
-
-      Actions.layerUpdate("erase", ["selectionOverlay", "hoverOverlay"]),
+    }, queue: _ => [["ERASE", ["selectionOverlay", "hoverOverlay"]],
 
     ]}).result();
 
@@ -257,7 +253,9 @@ export default class MouseProcessor {
         s.settings.display.domain.origin = newDisplayOrigin;
         return s;
 
-      }, queue: _ => [Actions.reloadRig]}).result();
+      }, queue: _ => ["RELOAD:rig"]
+
+      }).result();
     }
 
   }

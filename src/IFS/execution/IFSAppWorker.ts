@@ -1,26 +1,28 @@
 import { default as FunctionSystem } from "@IFS/functionSystem"
 import { default as Rig } from "@IFS/display/rig"
 import { default as Color } from "@IFS/display/util/color"
-import { default as Util } from "@IFS/execution/util"
-
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 
-import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-
 import { DisplayLayer } from "@IFS/types/specifications";
-import { BasicLayerTicket } from "@IFS/types/tickets";
-
-import * as Actions from "@IFS/resources/tickets"
-import * as Globals from "@IFS/resources/globalConstants"
-
+import { BasicLayerTicket, ActionKey, LayerActionsRef } from "@IFS/types/tickets";
 import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
 import { I_affine } from "@IFS/types/mathematical"
 
+import { layerUpdateAction } from "@IFS/resources/tickets"
+import * as Globals from "@IFS/resources/globalConstants"
+
+import { default as Util } from "@IFS/execution/util"
+import { default as SessionMutation } from "@IFS/execution/sessionMutation"
+
+
+
 export default class IFSAppWorker {
 
-  // ordinary routines
 
+
+  
   static movePiece: AppStateProcessor = (app) => {
+
     // deprecate current position
     let lastTurn = app.session.state.program.thisTurn
 
@@ -37,7 +39,6 @@ export default class IFSAppWorker {
 
     }}).result();
 
-    // register new point on workpiece
   }
 
   static maybeMarkLastPath: AppStateProcessor = (app): void => {
@@ -93,8 +94,10 @@ export default class IFSAppWorker {
   // reloading from settings
 
   static reconstructRig: TicketProcessor = app => {
+
     app.display.imageComposer.reconstructAll(app.session.settings.display);
     IFSAppWorker.loadRigFromSettings(app);
+
   }
 
   static loadRigFromSettings: TicketProcessor = app => {
@@ -107,8 +110,8 @@ export default class IFSAppWorker {
     app.session = new SessionMutation({ using: app.session,
 
       queue: _ => [
-        Actions.reviewControlPointsConfig,
-        Actions.reloadFS,
+        "REVIEW:controlPoints",
+        "RELOAD:FS"
       ]
 
     }).result();
@@ -139,14 +142,13 @@ export default class IFSAppWorker {
       },
 
       queue: _ => [
-        Actions.layerUpdate("erase",
-          ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
-        ),
-        Actions.reviewControlPointsConfig,
-        Actions.reloadSecondaryEntities
-      ]
 
-    }).result();
+        "REVIEW:controlPoints", "RELOAD:secondaryEntities",
+        ["ERASE",
+          ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
+        ]
+
+      ]}).result();
   }
 
   static drawAxis: TicketProcessor = app => {
@@ -193,11 +195,15 @@ export default class IFSAppWorker {
     if (app.session.state.options.controlPointsShown) {
 
       app.session = new SessionMutation({ using: app.session,
+
         queue: s => {
-          let actions = [Actions.reloadControlPoints]
-          if (s.state.selected.length == 1) 
-            actions = [...actions, Actions.reloadSelectionOverlay]
+
+          let actions: ActionKey[] = ["RELOAD:controlPoints"]
+
+          if (s.state.selected.length == 1) actions = [...actions, "RELOAD:selectionOverlay"]
+
           return actions;
+
         }}).result();
     }
   }
@@ -234,12 +240,9 @@ export default class IFSAppWorker {
       s.settings.FS.transforms = newTransforms;
       return s
 
-    }, queue: _ => [
+    }, queue: _ => ["RELOAD:rig", "RELOAD:FS"]
 
-      Actions.reloadRig,
-      Actions.reloadFS
-
-    ]}).result()
+    }).result()
 
   }
 

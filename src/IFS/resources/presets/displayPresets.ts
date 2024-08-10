@@ -22,7 +22,7 @@ export const defaultDisplay: I_displayConfig = {
   overlays: {
     boundingBoxes: false,
     path: {
-      showLast: true,
+      showLast: false,
       persist: false,
     }
   }
