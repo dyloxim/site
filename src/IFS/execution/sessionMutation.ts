@@ -30,7 +30,7 @@ export default class SessionMutation {
 
 
   
-  result = (): I_session => {
+  eval = (): I_session => {
 
     this.session = this.mutation(this.session);
     this.requests.forEach(t => { this.registerTicket(t) });

@@ -145,7 +145,7 @@ export default class Util {
 
       return s;
 
-    }}).result()
+    }}).eval()
 
     return proximalEntity;
   }

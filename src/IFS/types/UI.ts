@@ -3,7 +3,7 @@ import { I_session } from "@IFS/types/state";
 
 export interface I_UIContext {
   session: I_session,
-  updateSession: (session: I_session) => void
+  updateSession: React.Dispatch<React.SetStateAction<I_session>>
 }
 
 export interface I_rangeInput {
@@ -30,6 +30,7 @@ export interface I_checkBox {
 
 export interface I_toggleInput {
   key: string,
+  mainLabel: string,
   onLabel: string,
   offLabel: string,
   initial: boolean,

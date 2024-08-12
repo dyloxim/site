@@ -75,7 +75,7 @@ export default class MouseProcessor {
 
       return s;
 
-    }}).result();
+    }}).eval();
 
   }
 
@@ -94,8 +94,6 @@ export default class MouseProcessor {
 
   static handleBGClickEvent: AppStateProcessor = app => {
 
-    console.log("bg clicked");
-
     if (app.session.state.selected.length > 0) {
 
       MouseProcessor.clearSelection(app);
@@ -112,7 +110,7 @@ export default class MouseProcessor {
       "REVIEW:controlPoints",
       ["ERASE", ["controlPointsOverlay", "hoverOverlay", "selectionOverlay"]]
       
-    ]}).result();
+    ]}).eval();
 
   }
 
@@ -131,7 +129,7 @@ export default class MouseProcessor {
         "REVIEW:controlPoints",
         ["ERASE", ["hoverOverlay"]]
 
-      ]}).result();
+      ]}).eval();
 
 
     } else {
@@ -141,7 +139,7 @@ export default class MouseProcessor {
         let initialDragPos = app.session.settings.display.domain.origin;
         s.state.tacit.draggingRig = initialDragPos;
 
-        return s;}, queue: _ => []}).result();
+        return s;}, queue: _ => []}).eval();
 
     }
   }
@@ -201,7 +199,7 @@ export default class MouseProcessor {
         ]; return queue;
 
 
-      }}).result()
+      }}).eval()
 
     }
 
@@ -221,7 +219,7 @@ export default class MouseProcessor {
 
     }, queue: _ => ["RELOAD:secondaryEntities"]
 
-    }).result();
+    }).eval();
 
   }
 
@@ -237,7 +235,7 @@ export default class MouseProcessor {
 
     }, queue: _ => [["ERASE", ["selectionOverlay", "hoverOverlay"]],
 
-    ]}).result();
+    ]}).eval();
 
   }
 
@@ -255,7 +253,7 @@ export default class MouseProcessor {
 
       }, queue: _ => ["RELOAD:rig"]
 
-      }).result();
+      }).eval();
     }
 
   }

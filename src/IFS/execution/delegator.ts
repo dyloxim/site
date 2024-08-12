@@ -5,7 +5,6 @@ import { default as IFSAppWorker } from "@IFS/execution/IFSAppWorker"
 import { default as MouseProcessor } from "@IFS/execution/mouseProcessor";
 
 
-
 export default class Delegator {
 
   // public entry points
@@ -15,6 +14,7 @@ export default class Delegator {
   }
 
   static handleTurn: AppStateProcessor = (app) => {
+
 
     Delegator.dispatchTicketProcessors(app);
 
@@ -34,11 +34,9 @@ export default class Delegator {
       });
 
       IFSAppWorker.maybeRefreshPathOverlay(app);
+      app.display.imageComposer.layers.figure.commit();
 
     }
-
-
-    app.display.imageComposer.layers.figure.commit();
 
   }
 

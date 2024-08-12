@@ -1,7 +1,7 @@
 'use client'
-import App from './_components/app'
-import { defaultDisplay } from '@IFS/resources/presets/displayPresets'
-import { FunctionSystems } from '@IFS/resources/presets/FSPresets'
+import App from '@IFS/UI/page/app';
+import { defaultDisplay } from '@IFS/resources/presets/displayPresets';
+import { FunctionSystems } from '@IFS/resources/presets/FSPresets';
 
 export default function IFSPage() {
 
@@ -10,5 +10,7 @@ export default function IFSPage() {
     FS: FunctionSystems.heighwayDragon
   }
 
-  return (<App preset={preset} />)
+  return (
+    <App preset={preset} />
+  )
 }

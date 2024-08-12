@@ -38,7 +38,7 @@ export const defaultState: I_sessionState = {
     animationRate: 1,
     running: true,
     controlPointsShown: false,
-    path: null,
+    path: "None",
     color: false,
   },
 
@@ -59,7 +59,7 @@ export const defaultState: I_sessionState = {
 
   tacit: {
     mutatingFS: false,
-    draggingRig: null
+    draggingRig: null,
   }
 
 }

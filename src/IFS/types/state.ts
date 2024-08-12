@@ -63,7 +63,7 @@ export interface I_sessionState {
   options: {
     running: boolean,
     color: boolean,
-    path: null | "recent" | "persist"
+    path: 'None' | 'Fleeting' | 'Persistent',
     animationRate: number,
     controlPointsShown: boolean,
     preset: NamedFSPreset | "custom",
@@ -71,7 +71,7 @@ export interface I_sessionState {
 
   tacit: {
     mutatingFS: boolean,
-    draggingRig: number[] | null
+    draggingRig: number[] | null,
   }
 
   tickets: {

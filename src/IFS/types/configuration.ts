@@ -26,6 +26,7 @@ export interface I_displayConfig {
   },
   rendering: {
     upscaleFactor: number,
+    devicePixelRatio: number
   },
   animation: {
     rate: number,

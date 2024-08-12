@@ -27,9 +27,7 @@ export default class DisplayApperatus {
   ) {
 
     this.config = config;
-
     this.imageComposer = new ImageComposer(this.config, displayContainer);
-
     this.rig = new Rig(this.config, this.imageComposer.getPrintArea());
 
   }

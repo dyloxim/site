@@ -69,6 +69,46 @@ export const SelectableEntityCategories = [
  */
 
 
+export const DefinedTickets = [
+
+  ["HANDLE",
+    
+    
+      "MouseMoveEvent",
+      "MouseDownEvent",
+      "showHoverTarget",
+      "revertRigToInitial",
+      "normaliseControlPoints",
+      "reloadSelectionOverlay"
+    ],
+
+  ["RELOAD",
+
+    [
+      "rig", "FS", "controlPoints", "selectionOverlay"
+    ]],
+
+  ["REBUILd",
+
+    [
+      "rig"
+    ]],
+
+  ["REVIEW",
+
+    [
+      "controlPoints"
+    ]],
+
+  ["DO",
+
+    [
+      "showHoverTarget",
+      "revertRigToInitial",
+      "normaliseControlPoints",
+    ]],
+
+];
 
 
 

@@ -47,6 +47,7 @@ export default class App {
       this.settings.FS.referenceRegion,
       this.settings.display.domain
     );
+    this.settings.display.rendering.devicePixelRatio = document.defaultView!.devicePixelRatio;
     this.display = new DisplayApperatus(this.settings.display, displayContainer);
   }
 

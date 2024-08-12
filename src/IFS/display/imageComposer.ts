@@ -17,27 +17,22 @@ export default class ImageComposer {
     config: I_displayConfig,
     displayContainer: HTMLDivElement
   ) {
-
     // remove any canvases remaining from previous generations
     displayContainer.innerHTML = '';
 
     // initialize canvases
-
     this.borderRect = new Rect(
       Number(displayContainer.style.width.replace(/([0-9]+)px/, '$1')),
       Number(displayContainer.style.height.replace(/([0-9]+)px/, '$1'))
     )
-    this.printArea = this.borderRect.scale(config.rendering.upscaleFactor)
-      .nearestWholeNumberDimensions();
+
+    this.printArea = this.borderRect.scale(config.rendering.upscaleFactor).nearestWholeNumberDimensions();
 
     let newLayers: Record<string, PrintLayer> = {};
-
     DefinedDisplayLayers.forEach((name, i) => {
 
       let canvas = this.getConfiguredCanvas(displayContainer, name + "Canvas", i+1)
-
       displayContainer.appendChild(canvas);
-
       newLayers[name] = new PrintLayer(name, canvas, this.printArea);
 
     })

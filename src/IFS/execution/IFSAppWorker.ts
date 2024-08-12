@@ -4,12 +4,10 @@ import { default as Color } from "@IFS/display/util/color"
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 
 import { DisplayLayer } from "@IFS/types/specifications";
-import { BasicLayerTicket, ActionKey, LayerActionsRef } from "@IFS/types/tickets";
+import { BasicLayerTicket, ActionKey } from "@IFS/types/tickets";
 import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
 import { I_affine } from "@IFS/types/mathematical"
 
-import { layerUpdateAction } from "@IFS/resources/tickets"
-import * as Globals from "@IFS/resources/globalConstants"
 
 import { default as Util } from "@IFS/execution/util"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
@@ -37,14 +35,12 @@ export default class IFSAppWorker {
         s.state.program.thisTurn = { choice: choice, position: newPosition };
         return s;
 
-    }}).result();
+    }}).eval();
 
   }
 
   static maybeMarkLastPath: AppStateProcessor = (app): void => {
-    if (app.session.state.options.path
-      && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
-    ) {
+    if (app.session.state.options.path !== "None") {
       app.display.draftLine(
         app.display?.imageComposer.layers.pathOverlay,
         app.session.state.program.thisTurn.position,
@@ -63,15 +59,13 @@ export default class IFSAppWorker {
   }
 
   static maybeRefreshPathOverlay: AppStateProcessor = (app): void => {
-    if (app.session.state.options.path
-      && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
-    ) app.display.updatePathOverlay();
+    if (app.session.state.options.path !== "None")
+      app.display.updatePathOverlay();
   }
 
   static maybeErasePastPaths: AppStateProcessor = (app): void => {
-    if (app.session.state.options.path == "recent"
-      && !(app.session.state.options.animationRate > Globals.pathDrawThreshold )
-    ) app.display.clearPathOverlay();
+    if (app.session.state.options.path == "Fleeting")
+      app.display.clearPathOverlay();
   }
 
 
@@ -114,7 +108,7 @@ export default class IFSAppWorker {
         "RELOAD:FS"
       ]
 
-    }).result();
+    }).eval();
 
   }
 
@@ -148,7 +142,7 @@ export default class IFSAppWorker {
           ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
         ]
 
-      ]}).result();
+      ]}).eval();
   }
 
   static drawAxis: TicketProcessor = app => {
@@ -179,7 +173,7 @@ export default class IFSAppWorker {
         s.state.selectableEntities.primaryControlPoints = points
         return s;
 
-      }}).result();
+      }}).eval();
 
     app.FS.controlPoints.map(K => K.origin).forEach((p, i) => {
       let color = app.session.settings.display.color.palette.colors[i]
@@ -204,7 +198,7 @@ export default class IFSAppWorker {
 
           return actions;
 
-        }}).result();
+        }}).eval();
     }
   }
 
@@ -242,7 +236,7 @@ export default class IFSAppWorker {
 
     }, queue: _ => ["RELOAD:rig", "RELOAD:FS"]
 
-    }).result()
+    }).eval()
 
   }
 

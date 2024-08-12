@@ -44,7 +44,7 @@ export default class FSMutator {
 
       }, queue: _ => [["ERASE", ["selectionOverlay"]], "DO:drawSelectionOverlay"]
 
-      }).result();
+      }).eval();
 
     }
   }
@@ -72,7 +72,7 @@ export default class FSMutator {
 
     }, queue: _ => ["RELOAD:FS"]
 
-    }) .result()
+    }) .eval()
 
   }
 
@@ -105,7 +105,7 @@ export default class FSMutator {
 
     }, queue: _ => ["RELOAD:FS"]
 
-    }).result()
+    }).eval()
 
   }
 
