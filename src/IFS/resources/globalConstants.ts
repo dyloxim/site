@@ -139,4 +139,4 @@ export const incrementUnit = 7/8;
 
 export const pathDrawThreshold = 10000;
 
-export const decisionTimeoutThreshold = 150;
+export const decisionTimeoutThreshold = 120;

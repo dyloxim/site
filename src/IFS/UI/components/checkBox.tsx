@@ -1,13 +1,22 @@
 import { I_checkBox } from "@IFS/types/UI"
 import { I_session } from "@IFS/types/state";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
+
+
 
 export default function IFSUIButton({session, spec}: {
   session: I_session,
   spec: I_checkBox
 }) {
 
+  const {ctx} = useContext(SharedUIState);
+
   const [val, setVal] = useState<boolean>(spec.initial);
+
+  useEffect(() => {
+    setVal(session.state.options.color);
+  }, [ctx]);
 
   return (
     <span style={{ whiteSpace: "nowrap"}}>

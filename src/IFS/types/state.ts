@@ -60,6 +60,8 @@ export interface I_sessionState {
     //   point location
     controlPointOffset: number[] | null
 
+    touchDist: number,
+
   },
 
   selectableEntities: {

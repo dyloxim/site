@@ -9,7 +9,7 @@ const AxisOption = ({session}: {session: I_session}) => {
   const spec: I_checkBox = {
     key: "color",
     label: "Toggle Color",
-    initial: session.settings.display.color.multi,
+    initial: session.state.options.color,
     effect: s => { return new SessionMutation({ using: s, do: s => {
 
       // s.settings.display.axis = !s.settings.display.axis;

@@ -8,27 +8,27 @@ const setupMouseMoveHandler = (
   session: I_session,
 ) => {
 
-    canvas.addEventListener('mousemove', (e: MouseEvent) => {
+  canvas.addEventListener('mousemove', (e: MouseEvent) => {
 
-      new SessionMutation({ using: session, do: s => {
+    new SessionMutation({ using: session, do: s => {
 
-        let rect = canvas.getBoundingClientRect();
-        s.state.mouse.pos = [
-          (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-          (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
-        ]
-        return s;
+      let rect = canvas.getBoundingClientRect();
+      s.state.mouse.pos = [
+        (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+        (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+      ]
+      return s;
 
-      }, queue: s => {
+    }, queue: s => {
 
-        let queue: QueueItem[] = ["HANDLE:mouseMoveEvent"];
-        if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
-        if (s.state.tacit.draggingRig) queue = [...queue, "RELOAD:rig"]
-        return queue;
+      let queue: QueueItem[] = ["HANDLE:mouseMoveEvent"];
+      if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
+      if (s.state.tacit.draggingRig) queue = [...queue, "RELOAD:rig"]
+      return queue;
 
-      }}).eval();
+    }}).eval();
 
-    }, false);
+  }, false);
 }
 
 export default setupMouseMoveHandler;

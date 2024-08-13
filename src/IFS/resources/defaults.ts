@@ -29,6 +29,7 @@ export const defaultState: I_sessionState = {
     interactionCandidate: null,
     interactionPrimed: false,
     controlPointOffset: null,
+    touchDist: 0
   },
 
   selected: [],
@@ -39,7 +40,7 @@ export const defaultState: I_sessionState = {
     running: true,
     controlPointsShown: false,
     path: "None",
-    color: false,
+    color: true,
   },
 
   selectableEntities: {

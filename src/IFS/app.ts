@@ -38,7 +38,6 @@ export default class App {
     let state = baseState;
     state.program.thisTurn.position = settings.FS.firstPoint;
     state.program.lastTurn.position = settings.FS.firstPoint;
-    state.options.color = settings.display.color.multi;
     return state;
   }
 

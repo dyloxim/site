@@ -20,7 +20,6 @@ export interface I_displayConfig {
     displayRadius: number
   },
   color: {
-    multi: boolean,
     base: Color,
     palette: Palette
   },

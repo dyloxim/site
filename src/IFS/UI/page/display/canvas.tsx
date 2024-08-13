@@ -33,8 +33,6 @@ const Canvas = ({ setupFn, app }: {
       setupFn(displayContainerRef.current!)
     })
 
-    console.log("setting up display container");
-
     // DefinedDisplayLayers.forEach(layerKey => {
     //   let canvas = 
     //     document.getElementById(`${layerKey}Canvas`)! as HTMLCanvasElement;
@@ -55,8 +53,6 @@ const Canvas = ({ setupFn, app }: {
         id="displayContainer"
         style={{
           position: "relative",
-          width: "0px",
-          height: "0px",
           border: "solid #2d2d2f 1px"
         }}>
       </div>
