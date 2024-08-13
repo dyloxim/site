@@ -11,10 +11,24 @@ import { I_affine } from "@IFS/types/mathematical"
 
 import { default as Util } from "@IFS/execution/util"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
+import { I_applicationState } from "@IFS/types/state";
+import { DefinedDisplayLayers } from '@IFS/resources/globalConstants';
 
 
 
 export default class IFSAppWorker {
+
+  static ensureDisplayAttached = (app: I_applicationState) => {
+    if (!app.display.imageComposer.layers.figure.material.parentElement) {
+      let container = document.getElementById("displayContainer")!;
+      container.innerHTML = '';
+      DefinedDisplayLayers.forEach(layerKey => {
+        let layer = app.display.imageComposer.layers[layerKey]
+        container.appendChild(layer.material!);
+      })
+      app.display.imageComposer.layers.pathOverlay.clear();
+    }
+  }
 
 
 

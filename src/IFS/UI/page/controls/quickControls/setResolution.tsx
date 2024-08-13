@@ -7,7 +7,7 @@ import { I_session } from "@IFS/types/state";
 const ResolutionControl = ({session}: {session: I_session}) => {
 
   const [max, setMax] = useState<number>(1);
-  let min = .05
+  let min = .1
 
   const ease = (input: number): number => {
     return Math.max(min, Math.pow(input/max, 1.5) * max);

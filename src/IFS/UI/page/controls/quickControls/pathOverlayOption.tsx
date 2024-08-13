@@ -3,48 +3,41 @@ import {default as Button } from "@IFS/UI/components/button";
 import { I_buttonInput } from "@IFS/types/UI";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import * as Globals from "@IFS/resources/globalConstants"
-import { useState, useEffect } from "react";
+import { useContext } from "react";
 import { I_session } from "@IFS/types/state";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { PathOptions } from "@IFS/resources/globalConstants"
 
 
 const PathOverlayControls = ({session}: {session: I_session}) => {
 
-  const [selection, setSelection] = useState<
-    string | null
-  >(session.state.options.path);
+  const {ctx, setCtx} = useContext(SharedUIState);
 
-  const specs: I_buttonInput[] = [
-
-    { key: 'None' },
-    { key: 'Fleeting' },
-    { key: 'Persistent' },
-
-  ].map(option => {
+  const specs: I_buttonInput[] = PathOptions.map(option => {
 
     return {
 
-      key: option.key,
-      label: option.key,
+      key: option,
+      label: option,
       effect: s => { return new SessionMutation({ using: s, do: s => {
 
 
-        const newVal = (
-          s.state.options.animationRate < Globals.pathDrawThreshold ?
-            option.key : 'None'
-        ) as 'None' | 'Fleeting' | 'Persistent';
-        setSelection(newVal);
+        const newVal =
+          (
+            s.state.options.animationRate < Globals.pathDrawThreshold ?
+              option
+              :
+              'None'
+          )
         s.state.options.path = newVal;
+        setCtx({ path: newVal });
         return s;
 
-      }, queue: _ => option.key !== "None" ? [] : [["ERASE", ["pathOverlay"]]]
+      }, queue: _ => [["ERASE", ["pathOverlay"]]]
 
       })}} as I_buttonInput
 
   });
-
-  useEffect(() => {
-    setSelection(() => session.state.options.path);
-  }, [session.state.options.path])
 
   return (
     <span style={{whiteSpace: "nowrap"}}>
@@ -52,7 +45,7 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
       Path: {specs.map(spec => (
         <Button
           session={session}
-          classes={selection == spec.key ? "active" : "inactive"}
+          classes={ctx.path == spec.key ? "active" : "inactive"}
           key={spec.key}
           spec={spec}/>
         ))}

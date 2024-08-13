@@ -25,7 +25,6 @@ export default class PrintLayer {
   }
 
   mark = (index: number, color: Color) => {
-
     this.draft.data[index + 0] = color.r;
     this.draft.data[index + 1] = color.g;
     this.draft.data[index + 2] = color.b;

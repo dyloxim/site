@@ -26,7 +26,8 @@ export default class ImageComposer {
       Number(displayContainer.style.height.replace(/([0-9]+)px/, '$1'))
     )
 
-    this.printArea = this.borderRect.scale(config.rendering.upscaleFactor).nearestWholeNumberDimensions();
+    this.printArea = this.borderRect.scale(config.rendering.upscaleFactor)
+      .nearestWholeNumberDimensions();
 
     let newLayers: Record<string, PrintLayer> = {};
     DefinedDisplayLayers.forEach((name, i) => {

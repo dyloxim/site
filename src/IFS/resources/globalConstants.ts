@@ -112,6 +112,20 @@ export const DefinedTickets = [
 
 
 
+
+
+
+/*
+ * Option Values
+ * -------------
+ */
+
+export const PathOptions = ["None", "Fleeting", "Persistent"]
+
+
+
+
+
 /*
  * Default drawn UI entity parameters
  * ----------------------------------

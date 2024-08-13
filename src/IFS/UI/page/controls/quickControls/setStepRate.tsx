@@ -3,8 +3,14 @@ import Range from "@IFS/UI/components/range";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { pathDrawThreshold } from "@IFS/resources/globalConstants";
 import { I_session } from "@IFS/types/state";
+import { useContext } from "react";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
+
+
 
 export default function AnimationRate({session}: {session: I_session}) {
+
+  const {setCtx} = useContext(SharedUIState);
 
   const [min, max] = [0, 100000]
 
@@ -25,8 +31,9 @@ export default function AnimationRate({session}: {session: I_session}) {
       const input = Number(e.target.value);
       const eased = ease(input);
       s.state.options.animationRate = eased;
-      if (eased > pathDrawThreshold ) {
+      if (eased > pathDrawThreshold && s.state.options.path != "None") {
         s.state.options.path = "None";
+        setCtx({ path: "None" });
       }
       return s
 

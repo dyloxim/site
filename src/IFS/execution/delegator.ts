@@ -15,6 +15,7 @@ export default class Delegator {
 
   static handleTurn: AppStateProcessor = (app) => {
 
+    IFSAppWorker.ensureDisplayAttached(app);
 
     Delegator.dispatchTicketProcessors(app);
 
