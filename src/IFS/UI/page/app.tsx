@@ -51,19 +51,14 @@ export default function App({ preset }: {
     <>
       <Canvas setupFn={setupApp} app={app}/>
       <br/>
-      {
-        // <NavControls ctx={UIContext}/>
+      {// <NavControls ctx={UIContext}/>
       }
       <SharedUIState.Provider value={{ctx, setCtx}}>
         <QuickControls session={session}/>
-        {
-          // <ExtendedControls ctx={UIContext}/>
+        {// <ExtendedControls ctx={UIContext}/>
         }
-        {
-          // <ReadOut/>
-        }
-        {
-          // <Info/>
+        <ReadOut session={session}/>
+        {// <Info/>
         }
       </SharedUIState.Provider>
     </>
