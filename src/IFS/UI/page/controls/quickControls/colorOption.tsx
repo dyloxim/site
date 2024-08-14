@@ -30,11 +30,6 @@ const ColorToggle = ({session}: {session: I_session}) => {
       ]})}
   }
 
-  useEffect(() => {
-    console.log("uuuhh", session.state.options.color);
-  }, [ctx])
-    
-
   return (<> <CheckBox session={session} spec={spec}/> </>)
 }
 

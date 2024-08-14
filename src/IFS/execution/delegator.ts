@@ -10,8 +10,12 @@ export default class Delegator {
   // public entry points
 
   static doFirstDraw: AppStateProcessor = (app) => {
+
     Delegator.dispatchTicketProcessors(app);
+
   }
+
+
 
   static handleTurn: AppStateProcessor = (app) => {
 
@@ -43,20 +47,23 @@ export default class Delegator {
 
   private static dispatchTicketProcessors: AppStateProcessor = (app) => {
 
-    InstructionGroups.forEach(instructionGroup => {
+    if (!app.session.state.tacit.pendingRerender) {
 
-      let ticketGroup = app.session.state.tickets[instructionGroup]
+      InstructionGroups.forEach(instructionGroup => {
 
-      while (ticketGroup.size !== 0) {
+        let ticketGroup = app.session.state.tickets[instructionGroup]
 
-        ticketGroup.forEach(ticket =>
-          {
-            if (ticket.log) console.log(`processing ticket: ${ticket.instruction}`) 
-            ticket.processor(app, ticket); ticketGroup.delete(ticket);
-          }
-        );
+        while (ticketGroup.size !== 0) {
 
-      }});
+          ticketGroup.forEach(ticket =>
+            {
+              if (ticket.log) console.log(`processing ticket: ${ticket.instruction}`) 
+              ticket.processor(app, ticket); ticketGroup.delete(ticket);
+            }
+          );
+
+        }});
+    }
   }
 
 }

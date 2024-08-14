@@ -6,11 +6,13 @@ import { default as FunctionSystem } from "@IFS/functionSystem"
 import { default as Display } from "@IFS/display/displayApperatus"
 import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction"
 import { PathOptions } from "@IFS/resources/globalConstants"
+import { I_transform } from "@IFS/types/mathematical"
 
 export type PathOption = typeof PathOptions[number];
 
 export interface I_sharedState {
-  path: PathOption
+  path: PathOption,
+  FS: I_transform[]
 }
 
 export interface I_sessionState {
@@ -34,7 +36,8 @@ export interface I_sessionState {
   },
 
   // list of indicies indicating transforms currently in the active selection
-  selected: number[];
+  selected: number[],
+  inputSelected: [number, string, number | [number, number]] | null,
 
   mouse: {
     // pixel pos
@@ -80,6 +83,7 @@ export interface I_sessionState {
   tacit: {
     mutatingFS: boolean,
     draggingRig: number[] | null,
+    pendingRerender: boolean
   }
 
   tickets: {

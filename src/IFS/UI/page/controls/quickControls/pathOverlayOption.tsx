@@ -30,7 +30,7 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
               'None'
           )
         s.state.options.path = newVal;
-        setCtx({ path: newVal });
+        setCtx({...ctx, path: newVal });
         return s;
 
       }, queue: _ => [["ERASE", ["pathOverlay"]]]

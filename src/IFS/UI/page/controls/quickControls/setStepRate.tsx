@@ -10,7 +10,7 @@ import { SharedUIState } from "@IFS/UI/SharedUIState";
 
 export default function AnimationRate({session}: {session: I_session}) {
 
-  const {setCtx} = useContext(SharedUIState);
+  const {ctx, setCtx} = useContext(SharedUIState);
 
   const [min, max] = [0, 100000]
 
@@ -33,7 +33,7 @@ export default function AnimationRate({session}: {session: I_session}) {
       s.state.options.animationRate = eased;
       if (eased > pathDrawThreshold && s.state.options.path != "None") {
         s.state.options.path = "None";
-        setCtx({ path: "None" });
+        setCtx({...ctx, path: "None" });
       }
       return s
 

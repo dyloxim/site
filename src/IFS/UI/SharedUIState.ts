@@ -1,7 +1,10 @@
 import { createContext } from "react";
 import { I_sharedState } from "@IFS/types/state";
 
-export const initialSharedState: I_sharedState = { path: "None" }
+export const initialSharedState: I_sharedState = {
+  path: "None",
+  FS: []
+}
 
 export const SharedUIState = createContext<{
   ctx: I_sharedState,

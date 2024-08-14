@@ -211,7 +211,6 @@ export default class DisplayApperatus {
   updatePathOverlay = () => this.imageComposer.layers.pathOverlay.commit()
   updateControlPointsOverlay = () => {
     this.imageComposer.layers.controlPointsOverlay.commit()
-    console.log("drawing control points", this.imageComposer.layers.controlPointsOverlay);
   }
   updateSelectionOverlay = () => this.imageComposer.layers.selectionOverlay.commit()
 

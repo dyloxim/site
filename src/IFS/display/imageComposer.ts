@@ -18,7 +18,8 @@ export default class ImageComposer {
     displayContainer: HTMLDivElement
   ) {
     // remove any canvases remaining from previous generations
-    displayContainer.innerHTML = '';
+    var last;
+    while (last = displayContainer.lastChild) displayContainer.removeChild(last);
 
     // initialize canvases
     this.borderRect = new Rect(
@@ -45,6 +46,7 @@ export default class ImageComposer {
   getConfiguredCanvas = (displayContainer: HTMLDivElement, name: string, zIndex: number) => {
     let canvas = document.createElement('canvas');
     canvas.id = name;
+    canvas.className = "canvas";
     canvas.style.imageRendering = "pixelated";
     canvas.style.position = "absolute";
     canvas.style.left = "0";

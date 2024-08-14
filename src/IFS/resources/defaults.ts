@@ -33,6 +33,7 @@ export const defaultState: I_sessionState = {
   },
 
   selected: [],
+  inputSelected: null,
 
   options: {
     preset:"custom",
@@ -61,6 +62,7 @@ export const defaultState: I_sessionState = {
   tacit: {
     mutatingFS: false,
     draggingRig: null,
+    pendingRerender: false
   }
 
 }

@@ -5,10 +5,21 @@ const Panel = ({session}: {session: I_session}) => {
 
   return (
     <>
+      <br/>
+      <hr/>
       <pre>Transforms:</pre>
-      {session.settings.FS.transforms.map((f, i) => {
-        return (<Function key={i} f={f}/>)
-      })}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: "2em"
+        }}>
+        {session.settings.FS.transforms.map((f, i) => {
+          return (<Function session={session} key={i} k={i}/>)
+        })}
+      </div>
+      <br/>
     </>
   );
 }

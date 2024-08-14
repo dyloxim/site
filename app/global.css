@@ -7,3 +7,29 @@
   background-color: #bbb;
   color: #111;
 }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.mat {
+  background-image: linear-gradient(white, white),
+                    linear-gradient(white, white),
+                    linear-gradient(white, white),
+                    linear-gradient(white, white);
+
+  background-repeat: no-repeat;
+  background-size: 5px 1px;
+  background-position: top left, top right, bottom left, bottom right;
+  padding-left: 10px;
+  padding-right: 6px;
+
+  border: solid white;
+  border-width: 0 1px;
+}
