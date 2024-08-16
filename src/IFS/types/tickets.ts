@@ -59,6 +59,7 @@ type DoActionObject =
       | "normaliseControlPoints"
       | "drawSelectionOverlay"
       | "clearSelection"
+      | "calibrateDisplay"
 
 
 

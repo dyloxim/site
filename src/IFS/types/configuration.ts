@@ -4,6 +4,7 @@ import Palette from "@IFS/display/util/palette";
 
 export interface I_functionSystem {
   name: string,
+  key: string,
   transforms: I_transform[],
   weights: number[] | 'uniform',
   referenceRegion: {

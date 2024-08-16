@@ -1,20 +1,13 @@
 import { I_numberInput } from "@IFS/types/UI";
-import { I_session } from "@IFS/types/state";
 import { useState } from "react";
-// import { useContext } from "react";
-// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { useContext } from "react";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
 
 
+export default function IFSUINumber({spec}: {spec: I_numberInput}) {
 
-
-export default function IFSUINumber({session, spec}: {
-  session: I_session,
-  spec: I_numberInput,
-}) {
-
-  //const {ctx, setCtx} = useContext(SharedUIState);
-
-  const [val, setVal] = useState<number>(spec.initial);
+  const {session, updateSession} = useContext(SharedUIState);
+  const [val, setVal] = useState<string>(`${spec.initial}`);
 
   return (
 
@@ -25,18 +18,18 @@ export default function IFSUINumber({session, spec}: {
       <input
         id={spec.key}
         style={{
-          width: "50px",
+          width: "42px",
           backgroundColor: "transparent",
           border: "none",
           color: "white"
         }}
         step={0.05}
         type="number"
-        value={val.toPrecision(4)}
+        value={val}
         name={spec.key}
         onChange={e => {
-          setVal(Number(e.target.value))
-          spec.effect(e, session).eval()
+          setVal(e.target.value);
+          updateSession({...spec.effect(e, session).eval()});
         }}/>
 
     </span>

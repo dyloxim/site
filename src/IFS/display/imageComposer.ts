@@ -17,9 +17,6 @@ export default class ImageComposer {
     config: I_displayConfig,
     displayContainer: HTMLDivElement
   ) {
-    // remove any canvases remaining from previous generations
-    var last;
-    while (last = displayContainer.lastChild) displayContainer.removeChild(last);
 
     // initialize canvases
     this.borderRect = new Rect(
@@ -67,6 +64,19 @@ export default class ImageComposer {
     this.printArea = this.borderRect.scale(config.rendering.upscaleFactor)
       .nearestWholeNumberDimensions();
     this.applyToAllLayers((layer: PrintLayer) => layer.reconstruct(this.printArea));
+  }
+
+  rebuildAll = (config: I_displayConfig): void => {
+    let container = document.getElementById("displayContainer")! as HTMLDivElement;
+    this.applyToAllLayers((layer: PrintLayer) => {
+      layer.material.style.width = container.style.width;
+      layer.material.style.height = container.style.height;
+    });
+    this.borderRect = new Rect(
+      Number(container.style.width.replace(/([0-9]+)px/, '$1')),
+      Number(container.style.height.replace(/([0-9]+)px/, '$1'))
+    )
+    this.reconstructAll(config);
   }
 
   clearAll = (): void => {

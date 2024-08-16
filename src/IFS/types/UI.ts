@@ -46,11 +46,13 @@ export interface I_numberInput {
 
 export interface I_selectInput {
   initial: any,
-  mainKey: string,
-  mainLabel: string,
-  effect: (option: string, s: I_session) => SessionMutation,
-  options: {
-    key: string,
-    label: string,
-  }[]
+  key: string,
+  label: string,
+  options: I_optionInput[]
+}
+
+export interface I_optionInput {
+  key: string,
+  label: string,
+  effect: (s: I_session) => SessionMutation
 }

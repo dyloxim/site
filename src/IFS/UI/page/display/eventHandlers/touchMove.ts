@@ -1,10 +1,13 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from '@IFS/types/state'
+import { I_session } from "@IFS/types/state";
 import { QueueItem } from "@IFS/types/tickets";
 
 const setupTouchMoveHandler = (
   canvas: HTMLCanvasElement,
-  session: I_session,
+  context: {
+    session: I_session,
+    updateSession: React.Dispatch<React.SetStateAction<I_session>>
+  }
 ) => {
 
   canvas!.addEventListener('touchmove', (e: TouchEvent): void => {
@@ -13,7 +16,7 @@ const setupTouchMoveHandler = (
 
     if (e.touches.length > 1) { // If pinch-zooming
 
-      new SessionMutation({ using: session, do: s => {
+      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
 
         let diffX = e.touches[0].clientX - e.touches[1].clientX;
         let diffY = e.touches[0].clientY - e.touches[1].clientY;
@@ -28,11 +31,11 @@ const setupTouchMoveHandler = (
 
         "RELOAD:rig"
 
-      ]}).eval();
+      ]}).eval()});
 
     } else {
 
-      new SessionMutation({ using: session, do: s => {
+      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
       
         let rect = canvas.getBoundingClientRect();
         s.state.mouse.pos = [
@@ -48,7 +51,7 @@ const setupTouchMoveHandler = (
         if (s.state.tacit.draggingRig) queue = [...queue, "RELOAD:rig"]
         return queue;
 
-      }}).eval();
+      }}).eval()});
     } 
 
     }, false);

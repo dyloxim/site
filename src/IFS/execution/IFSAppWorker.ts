@@ -11,30 +11,9 @@ import { I_affine } from "@IFS/types/mathematical"
 
 import { default as Util } from "@IFS/execution/util"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_applicationState } from "@IFS/types/state";
-import { DefinedDisplayLayers } from '@IFS/resources/globalConstants';
-
 
 
 export default class IFSAppWorker {
-
-  static ensureDisplayAttached = (app: I_applicationState) => {
-    if (!app.display.imageComposer.layers.figure.material.parentElement) {
-
-      console.log("BAD!");
-      document.querySelectorAll(".canvas").forEach(el => el.remove());
-      let container = document.getElementById("displayContainer")!;
-
-      DefinedDisplayLayers.forEach(layerKey => {
-        let layer = app.display.imageComposer.layers[layerKey]
-        container.appendChild(layer.material!);
-      })
-      app.display.imageComposer.layers.pathOverlay.clear();
-      app.session.state.tacit.pendingRerender = false;
-    }
-  }
-
-
 
   
   static movePiece: AppStateProcessor = (app) => {
@@ -66,6 +45,10 @@ export default class IFSAppWorker {
         Util.getThisTurnColor(app.session.settings, app.session.state)
       );
     }
+  }
+
+  static calibrateDisplay: TicketProcessor = (app): void => {
+    app.display.imageComposer.rebuildAll(app.session.settings.display);
   }
 
   static maybeMarkPoint: AppStateProcessor = (app): void => {
@@ -143,7 +126,7 @@ export default class IFSAppWorker {
     app.FS.transforms = newFS.transforms;
     app.FS.weights = newFS.weights;
     app.FS.controlPoints = newFS.controlPoints
-    app.session = new SessionMutation({ using: app.session, do: s => {
+    app.session = {...new SessionMutation({ using: app.session, do: s => {
 
         s.state.program.thisTurn.choice = 0;
         s.state.program.thisTurn.position = s.settings.FS.firstPoint;
@@ -160,7 +143,8 @@ export default class IFSAppWorker {
           ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
         ]
 
-      ]}).eval();
+      ]}).eval()};
+
   }
 
   static drawAxis: TicketProcessor = app => {

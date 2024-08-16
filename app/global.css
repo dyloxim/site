@@ -28,8 +28,18 @@ input[type=number] {
   background-size: 5px 1px;
   background-position: top left, top right, bottom left, bottom right;
   padding-left: 10px;
-  padding-right: 6px;
+  padding-right: 8px;
 
   border: solid white;
   border-width: 0 1px;
+}
+
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"] {
+    font-size: 16px;
+  }
 }

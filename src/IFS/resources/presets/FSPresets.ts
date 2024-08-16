@@ -3,6 +3,7 @@ import { NamedFSPreset } from "@IFS/types/specifications";
 
 export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
   barnsleyFern: {
+    key: "barnsleyFern",
     name: "Barnsley Fern",
     transforms: [
       { linear: [[0, 0], [0, 0.16]] },
@@ -19,6 +20,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0,0]
   },
   kochSnowflake: {
+    key: "kochSnowflake",
     name: "Koch Snowflake",
     transforms: [
       { linear: [[1/2, Math.sqrt(3)/6],[-Math.sqrt(3)/6, 1/2]] },
@@ -38,6 +40,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0],
   },
   kochCurve: {
+    key: "kochCurve",
     name: "Koch Curve",
     transforms: [
       { linear: [[1/3, 0],[0, 1/3]] },
@@ -54,6 +57,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0],
   },
   binaryTree: {
+    key: "binaryTree",
     name: "Binary Tree",
     transforms: [
       { linear: [[0.00, 0.00],[-0.00, 0.455]] },
@@ -69,6 +73,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0]
   },
   heighwayDragon: {
+    key: "heighwayDragon",
     name: "Heighway Dragon",
     transforms: [
       { linear: [[1/2, 1/2],[-1/2, 1/2]] },
@@ -83,6 +88,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0]
   },
   sierpinskiGasket: {
+    key: "sierpinskiGasket",
     name: "Sierpinski Gasket",
     transforms: [
       { linear: [[1/2, 0],[0, 1/2]] },
@@ -98,6 +104,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0]
   },
   sierpinskiPentagon: {
+    key: "sierpinskiPentagon",
     name: "Sierpinski Pentagon",
     transforms: [
       { linear: [[0.382, 0],[0, 0.382]] },
@@ -115,6 +122,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0]
   },
   sierpinskiCarpet: {
+    key: "sierpinskiCarpet",
     name: "Sierpinski Carpet",
     transforms: [
       { linear: [[8/9, 0],[0, 8/9]], translation: [-1, 0]},

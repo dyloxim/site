@@ -4,9 +4,8 @@ import { default as SetResolution } from "./quickControls/setResolution"
 import { default as StartStop } from "./quickControls/startStop"
 import { default as PathOverlayOption } from "./quickControls/pathOverlayOption"
 import { default as ColorOption } from "./quickControls/colorOption"
-import { I_session } from "@IFS/types/state"
 
-const QuickControls = ({session}: {session: I_session}) => {
+const QuickControls = () => {
   return (
     <>
       <div style={{
@@ -16,12 +15,12 @@ const QuickControls = ({session}: {session: I_session}) => {
         gap: ".5em"
       }}>
         <div>
-          <StartStop session={session}/>&nbsp;
-          <PresetSelect session={session}/>&nbsp;&nbsp;
+          <StartStop/>&nbsp;
+          <PresetSelect/>&nbsp;&nbsp;
         </div>
         <div>
-          <PathOverlayOption session={session}/>&nbsp;
-          <ColorOption session={session}/>&nbsp;
+          <PathOverlayOption/>&nbsp;
+          <ColorOption/>&nbsp;
         </div>
       </div>
       <br/>
@@ -32,8 +31,8 @@ const QuickControls = ({session}: {session: I_session}) => {
         gap: ".5em"
       }}>
         <div>
-          <SetStepRate session={session}/>&nbsp;
-          <SetResolution session={session}/>&nbsp;
+          <SetStepRate/>&nbsp;
+          <SetResolution/>&nbsp;
         </div>
       </div>
     </>

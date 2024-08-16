@@ -6,14 +6,8 @@ import { default as FunctionSystem } from "@IFS/functionSystem"
 import { default as Display } from "@IFS/display/displayApperatus"
 import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction"
 import { PathOptions } from "@IFS/resources/globalConstants"
-import { I_transform } from "@IFS/types/mathematical"
 
 export type PathOption = typeof PathOptions[number];
-
-export interface I_sharedState {
-  path: PathOption,
-  FS: I_transform[]
-}
 
 export interface I_sessionState {
 

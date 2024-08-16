@@ -50,6 +50,10 @@ export default class App {
     this.display = new DisplayApperatus(this.settings.display, displayContainer);
   }
 
+  calibrateDisplay = () => {
+    this.display?.imageComposer.rebuildAll(this.settings.display)
+  }
+
 
   // CORE PROCESS
 

@@ -1,3 +1,7 @@
+import { defaultDisplay } from '@IFS/resources/presets/displayPresets';
+import { default as AppEngine } from "@IFS/app";
+import { FunctionSystems } from '@IFS/resources/presets/FSPresets';
+import { I_session } from '@IFS/types/state';
 
 /*
  * Predefined layers for image composer
@@ -31,7 +35,6 @@ export const NamedFSPresets = [
   "binaryTree",
   "heighwayDragon",
 ] as const;
-
 
 
 
@@ -140,3 +143,14 @@ export const incrementUnit = 7/8;
 export const pathDrawThreshold = 10000;
 
 export const decisionTimeoutThreshold = 120;
+
+export const defaultPreset = {
+  display: defaultDisplay,
+  FS: FunctionSystems.heighwayDragon
+}
+
+
+export const defaultInitialSession: I_session = {
+  settings: defaultPreset,
+  state: AppEngine.getInitialState(defaultPreset) 
+}

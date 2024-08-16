@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 const Root = () => {
 
-  return (<Link href="/IFS">IFS App</Link>);
+  return (<Link href="/myror">IFS App</Link>);
 
 }
 

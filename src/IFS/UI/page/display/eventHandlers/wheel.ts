@@ -1,18 +1,22 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from '@IFS/types/state'
+import { I_session } from "@IFS/types/state";
 
 const setupWheelHandler = (
   canvas: HTMLCanvasElement,
-  session: I_session,
+  context: {
+    session: I_session,
+    updateSession: React.Dispatch<React.SetStateAction<I_session>>
+  }
 ) => {
 
   canvas!.addEventListener('wheel', (e: WheelEvent): void => {
+
 
     if (e.deltaY != 0 && e.ctrlKey) {
 
       e.preventDefault(); e.stopPropagation()
 
-      new SessionMutation({ using: session, do: s => {
+      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
 
         let normalizeFn = (x: number) => - (1/((x/5)+5)) + .2;
         let multiplier = (_ => {
@@ -27,7 +31,7 @@ const setupWheelHandler = (
 
         "RELOAD:rig"
 
-      ]}).eval()
+      ]}).eval()});
 
     }}, false);
 }

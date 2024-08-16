@@ -1,15 +1,17 @@
-
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from '@IFS/types/state'
+import { I_session } from "@IFS/types/state";
 
 const setupMouseDownHandler = (
   canvas: HTMLCanvasElement,
-  session: I_session,
+  context: {
+    session: I_session,
+    updateSession: React.Dispatch<React.SetStateAction<I_session>>
+  }
 ) => {
 
     canvas!.addEventListener('mousedown', (_: MouseEvent): void => {
 
-      new SessionMutation({ using: session, do: s => {
+      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
 
         s.state.mouse.down = s.state.mouse.pos;
         return s;
@@ -18,7 +20,7 @@ const setupMouseDownHandler = (
 
         "HANDLE:mouseDownEvent"
 
-      ]}).eval()
+      ]}).eval()})
 
     }, false);
 }

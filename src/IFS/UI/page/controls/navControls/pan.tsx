@@ -6,9 +6,8 @@ import { I_buttonInput } from "@IFS/types/UI"
 import * as Globals from "@IFS/resources/globalConstants";
 
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
-import { I_session } from "@IFS/types/state";
 
-export default function PanControls({session}: {session: I_session}) {
+export default function PanControls() {
 
   const panControls: I_buttonInput[] = [
 
@@ -38,6 +37,6 @@ export default function PanControls({session}: {session: I_session}) {
       })}}});
 
 
-  return (<>{panControls.map(spec => (<Button session={session} spec={spec}/>))}</>)
+  return (<>{panControls.map(spec => (<Button spec={spec}/>))}</>)
 
 }

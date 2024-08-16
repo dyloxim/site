@@ -134,6 +134,13 @@ export const Actions: ActionRegistry = {
     instruction: "unload and erase all selectable entities",
     processor: MouseProcessor.clearSelection,
     log: false
+  },
+
+  "DO:calibrateDisplay": {
+    instructionGroup: "mouse",
+    instruction: "unload and erase all selectable entities",
+    processor: IFSAppWorker.calibrateDisplay,
+    log: false
   }
 
 }

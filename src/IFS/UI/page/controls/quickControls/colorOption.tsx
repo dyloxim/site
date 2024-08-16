@@ -1,14 +1,13 @@
 import SessionMutation from "@IFS/execution/sessionMutation";
 import CheckBox from "@IFS/UI/components/checkBox";
 import { I_checkBox } from "@IFS/types/UI";
-import { I_session } from "@IFS/types/state";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { SharedUIState } from "@IFS/UI/SharedUIState";
 
 
-const ColorToggle = ({session}: {session: I_session}) => {
+const ColorToggle = () => {
 
-  const {ctx} = useContext(SharedUIState);
+  const {session} = useContext(SharedUIState);
 
   const [val, setVal] = useState<boolean>(session.state.options.color);
 
@@ -30,7 +29,7 @@ const ColorToggle = ({session}: {session: I_session}) => {
       ]})}
   }
 
-  return (<> <CheckBox session={session} spec={spec}/> </>)
+  return (<> <CheckBox spec={spec}/> </>)
 }
 
 export default ColorToggle;

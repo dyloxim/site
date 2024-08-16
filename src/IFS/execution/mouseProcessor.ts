@@ -7,7 +7,6 @@ import { default as Color } from "@IFS/display/util/color";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as Util } from "@IFS/execution/util";
 
-import * as Actions from "@IFS/resources/tickets"
 import { QueueItem } from "@IFS/types/tickets";
 
 export default class MouseProcessor {
@@ -29,7 +28,6 @@ export default class MouseProcessor {
 
       } else {
 
-        
         MouseProcessor.handleClickEvent(app);
 
       }

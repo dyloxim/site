@@ -3,9 +3,8 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 import { I_buttonInput } from "@IFS/types/UI"
 
 import * as Globals from "@IFS/resources/globalConstants";
-import { I_session } from "@IFS/types";
 
-export default function ZoomControl({session}: {session: I_session}) {
+export default function ZoomControl() {
 
   const steppers: I_buttonInput[] = [
 
@@ -27,5 +26,5 @@ export default function ZoomControl({session}: {session: I_session}) {
     }}});
       
 
-  return (<> {steppers.map(spec => (<Button session={session} spec={spec}/>))} </>)
+  return (<> {steppers.map(spec => (<Button spec={spec}/>))} </>)
 }

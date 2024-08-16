@@ -2,10 +2,12 @@ import { default as Range } from "@IFS/UI/components/range";
 import { I_rangeInput } from "@IFS/types/UI";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { useEffect, useState } from "react";
-import { I_session } from "@IFS/types/state";
+import { useContext } from "react";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
 
-const ResolutionControl = ({session}: {session: I_session}) => {
+const ResolutionControl = () => {
 
+  const {session} = useContext(SharedUIState)
   const [max, setMax] = useState<number>(1);
   let min = .1
 
@@ -15,10 +17,7 @@ const ResolutionControl = ({session}: {session: I_session}) => {
 
   useEffect(() => {
 
-    const onPageLoad = () => {
-      setMax(session.settings.display.rendering.devicePixelRatio)
-    };
-
+    const onPageLoad = () => setMax(session.settings.display.rendering.devicePixelRatio);
     if (document.readyState === 'complete') onPageLoad();
 
     else {
@@ -48,7 +47,7 @@ const ResolutionControl = ({session}: {session: I_session}) => {
 
     ]})}}
 
-  return (<> <Range session={session} spec={spec}/> </>)
+  return (<> <Range spec={spec}/> </>)
 
 }
 

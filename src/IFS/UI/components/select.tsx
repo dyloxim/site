@@ -1,19 +1,15 @@
-import { FunctionSystems } from "@IFS/resources/presets/FSPresets";
-import { NamedFSPreset } from "@IFS/types/specifications";
-import { I_session } from "@IFS/types/state";
 import { I_selectInput } from "@IFS/types/UI";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { SharedUIState } from "@IFS/UI/SharedUIState";
 
 
-const IFSUISelect = ({session, spec}: {
-  session: I_session
-  spec: I_selectInput,
-}) => {
+export default function IFSUISelect({spec}: {spec: I_selectInput}) {
 
-  const [val, setVal] = useState<string>(spec.initial);
+  const {session, updateSession} = useContext(SharedUIState);
+  const [choice, setChoice] = useState<string>(spec.initial)
 
   const valueGetter = () => {
-    const select = (document.getElementById(spec.mainKey) as HTMLSelectElement)
+    const select = (document.getElementById(spec.key) as HTMLSelectElement)
     return select.options[select.selectedIndex].id; 
   }
 
@@ -21,17 +17,16 @@ const IFSUISelect = ({session, spec}: {
 
     <span style={{ whiteSpace: "nowrap"}}>
 
-      <label htmlFor={spec.mainKey}>{spec.mainLabel}:</label>
+      <label htmlFor={spec.key}>{spec.label}:</label>
       &nbsp;
       <select
-        id={spec.mainKey}
-        name={spec.mainKey}
-        value={val}
-        onChange={async _ => {
+        id={spec.key}
+        name={spec.key}
+        value={choice}
+        onChange={_ => {
           let choiceKey = valueGetter();
-          let choiceName = FunctionSystems[choiceKey as NamedFSPreset].name
-          setVal(choiceName)
-          spec.effect(choiceKey, session).eval();
+          let option = spec.options.filter(a => a.key == choiceKey)[0];
+          setChoice(option.label);
         }}>
         {spec.options.map(option => { return (
           <option id={option.key} key={option.key}>{option.label}</option>
@@ -41,5 +36,3 @@ const IFSUISelect = ({session, spec}: {
     </span>
 
 )}
-
-export default IFSUISelect;

@@ -1,10 +1,13 @@
 import { default as Toggle } from "@IFS/UI/components/toggle";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { I_toggleInput } from "@IFS/types/UI";
-import { I_session } from "@IFS/types/state";
+import { SharedUIState } from '@IFS/UI/SharedUIState';
+import { useContext } from "react";
 
 
-const RunningToggle = ({session}: {session: I_session}) => {
+const RunningToggle = () => {
+
+  const {session} = useContext(SharedUIState)
 
   const spec: I_toggleInput = {
 
@@ -21,7 +24,7 @@ const RunningToggle = ({session}: {session: I_session}) => {
 
   }
 
-  return (<> <Toggle session={session} spec={spec}/> </>)
+  return (<> <Toggle spec={spec}/> </>)
 
 }
 

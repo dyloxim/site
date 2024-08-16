@@ -19,8 +19,6 @@ export default class Delegator {
 
   static handleTurn: AppStateProcessor = (app) => {
 
-    IFSAppWorker.ensureDisplayAttached(app);
-
     Delegator.dispatchTicketProcessors(app);
 
     if (app.session.state.mouse.actionUndecided) {
@@ -47,23 +45,21 @@ export default class Delegator {
 
   private static dispatchTicketProcessors: AppStateProcessor = (app) => {
 
-    if (!app.session.state.tacit.pendingRerender) {
+    InstructionGroups.forEach(instructionGroup => {
 
-      InstructionGroups.forEach(instructionGroup => {
+      let ticketGroup = app.session.state.tickets[instructionGroup]
 
-        let ticketGroup = app.session.state.tickets[instructionGroup]
+      while (ticketGroup.size !== 0) {
 
-        while (ticketGroup.size !== 0) {
+        ticketGroup.forEach(ticket =>
+          {
+            if (ticket.log) console.log(`processing ticket: ${ticket.instruction}.`)
+            ticket.processor(app, ticket); ticketGroup.delete(ticket);
+          }
+        );
 
-          ticketGroup.forEach(ticket =>
-            {
-              if (ticket.log) console.log(`processing ticket: ${ticket.instruction}`) 
-              ticket.processor(app, ticket); ticketGroup.delete(ticket);
-            }
-          );
-
-        }});
-    }
+      }});
+    
   }
 
 }
