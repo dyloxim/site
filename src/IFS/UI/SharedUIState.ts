@@ -7,7 +7,8 @@ export const Ctx = createContext<{
   setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
 }>({
   ctx: {
-    FS: []
+    FS: [],
+    path: "None"
   },
   setCtx: () => defaultInitialSession
 })

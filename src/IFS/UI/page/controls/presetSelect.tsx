@@ -13,7 +13,7 @@ import { I_session } from "@IFS/types/state";
 
 const PresetControls = ({session}: {session: I_session}) => {
 
-  const {setCtx} = useContext(Ctx)
+  const {ctx, setCtx} = useContext(Ctx)
 
   const spec: I_selectInput = {
 
@@ -29,7 +29,7 @@ const PresetControls = ({session}: {session: I_session}) => {
         effect: s => { return new SessionMutation({ using: s, do: s => {
 
           s.settings.FS = preset;
-          setCtx({ FS: preset.transforms })
+          setCtx({...ctx, FS: preset.transforms })
           return s;
 
         }, queue: _ => [

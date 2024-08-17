@@ -14,9 +14,11 @@ const Panel = ({session}: {session: I_session}) => {
   );
 
   useEffect(() => {
-    setTransforms(session.settings.FS.transforms);
-    if (session.state.inputSelected) {
-      document.getElementById(`${session.state.inputSelected}`)!.focus()
+    if(session.state.options.path == ctx.path) {
+      setTransforms(session.settings.FS.transforms);
+      if (session.state.inputSelected) {
+        document.getElementById(`${session.state.inputSelected}`)!.focus()
+      }
     }
   }, [ctx])
 

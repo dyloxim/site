@@ -121,9 +121,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
-  sierpinskiCarpet: {
-    key: "sierpinskiCarpet",
-    name: "Sierpinski Carpet",
+  colorSpace: {
+    key: "colorSpace",
+    name: "Color Space",
     transforms: [
       { linear: [[8/9, 0],[0, 8/9]], translation: [-1, 0]},
       { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, Math.sqrt(3)]},

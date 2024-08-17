@@ -1,7 +1,7 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupTouchEndHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupTouchEndHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('touchend', (e: TouchEvent): void => {
 

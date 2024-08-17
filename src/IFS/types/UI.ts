@@ -1,11 +1,12 @@
 import SessionMutation from "@IFS/execution/sessionMutation";
-import { I_session } from "@IFS/types/state";
+import { I_session, PathOption } from "@IFS/types/state";
 import { I_displayConfig, I_functionSystem } from "./configuration";
 import { default as AppEngine } from "@IFS/app";
 import { I_transform } from "./mathematical";
 
 export interface I_UIContext {
-  FS: I_transform[]
+  FS: I_transform[],
+  path: PathOption
 }
 
 export interface I_rangeInput {
@@ -67,7 +68,10 @@ export type SetupInputs = {
     display: I_displayConfig,
     FS: I_functionSystem
   },
-  contextUpdater: React.Dispatch<React.SetStateAction<I_UIContext>>,
+  Ctx: {
+    ctx: I_UIContext,
+    setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
+  },
   resizeFn: (div: HTMLDivElement, session: I_session) => void
 }
 
@@ -76,5 +80,8 @@ export type SetupFn = (inputs: SetupInputs) => void;
 export type EventResponseSetup = (
   canvas: HTMLCanvasElement,
   session: I_session,
-  setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>,
+  Ctx: {
+    ctx: I_UIContext,
+    setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
+  }
 ) => void;

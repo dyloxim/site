@@ -28,7 +28,7 @@ export const DefinedDisplayLayers = [
 export const NamedFSPresets = [
   "barnsleyFern",
   "sierpinskiGasket",
-  "sierpinskiCarpet",
+  "colorSpace",
   "sierpinskiPentagon",
   "kochSnowflake",
   "kochCurve",

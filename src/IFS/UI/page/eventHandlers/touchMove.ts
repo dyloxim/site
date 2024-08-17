@@ -2,7 +2,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 import { QueueItem } from "@IFS/types/tickets";
 
-const setupTouchMoveHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('touchmove', (e: TouchEvent): void => {
 
@@ -18,13 +18,14 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, setCtx) => {
         let touchDiff = newTouchDist - s.state.mouse.touchDist
         let oldRad = s.settings.display.domain.displayRadius;
         let newDisplayRadius = (oldRad - ((touchDiff/3000) * oldRad));
+        s.state.inputSelected = null;
         s.settings.display.domain.displayRadius = newDisplayRadius;
         return s;
 
       }, queue: _ => [
 
         "RELOAD:rig",
-        ["ERASE", ["figure"]]
+        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]
 
       ]}).eval();
 
@@ -45,7 +46,7 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, setCtx) => {
         if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
         if (s.state.tacit.draggingRig) queue = [...queue,
           "RELOAD:rig",
-          ["ERASE", ["figure"]]]
+          ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]]
         return queue;
 
       }}).eval();

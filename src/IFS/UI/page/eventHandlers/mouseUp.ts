@@ -1,7 +1,7 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupMouseUpHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupMouseUpHandler: EventResponseSetup = (canvas, session, {ctx, setCtx}) => {
 
   canvas!.addEventListener('mouseup', (_: MouseEvent): void => {
 
@@ -12,7 +12,7 @@ const setupMouseUpHandler: EventResponseSetup = (canvas, session, setCtx) => {
       s.state.tacit.mutatingFS = false;
       s.state.mouse.interactionPrimed = false;
       s.state.inputSelected = null;
-      setCtx({ FS: s.settings.FS.transforms });
+      setCtx({...ctx, FS: s.settings.FS.transforms });
 
       return s;
 

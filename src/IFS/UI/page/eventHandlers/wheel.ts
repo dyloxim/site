@@ -2,7 +2,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 
 
-const setupWheelHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupWheelHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('wheel', (e: WheelEvent): void => {
 

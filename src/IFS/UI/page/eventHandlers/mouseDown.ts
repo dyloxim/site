@@ -1,7 +1,7 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupMouseDownHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupMouseDownHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('mousedown', (_: MouseEvent): void => {
 
