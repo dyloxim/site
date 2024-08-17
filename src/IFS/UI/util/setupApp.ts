@@ -9,7 +9,7 @@ const setupApp: SetupFn = (inputs) => {
     inputs.container.style.width = `${document.body.clientWidth}px`;
     inputs.container.style.height = `${window.innerHeight - 180}px`;
     inputs.app.setupDisplay(inputs.container);
-    setupCanvasEvents(inputs.session, inputs.contextUpdater);
+    setupCanvasEvents(inputs.session, inputs.Ctx);
     inputs.app.start();
   }
 }

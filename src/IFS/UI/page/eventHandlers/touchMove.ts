@@ -2,7 +2,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 import { QueueItem } from "@IFS/types/tickets";
 
-const setupTouchMoveHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('touchmove', (e: TouchEvent): void => {
 

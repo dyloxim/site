@@ -1,7 +1,7 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupTouchStartHandler: EventResponseSetup = (canvas, session, setCtx) => {
+const setupTouchStartHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   canvas!.addEventListener('touchstart', (e: TouchEvent): void => {
 

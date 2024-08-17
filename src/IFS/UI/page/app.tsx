@@ -29,7 +29,7 @@ export default function App({ preset }: {
     state: AppEngine.getInitialState(preset) 
   }
   let app: AppEngine = AppEngine.constructWithState(session);  
-  const [ctx, setCtx] = useState<I_UIContext>({ FS: [] })
+  const [ctx, setCtx] = useState<I_UIContext>({ FS: [], path: "None" })
 
   let onLoad = () => {
     let loader = getPageLoader({
@@ -37,7 +37,7 @@ export default function App({ preset }: {
       container: container.current!,
       session: session,
       preset: preset,
-      contextUpdater: setCtx,
+      Ctx: {ctx, setCtx},
       resizeFn: resizeFn
     });
     loader();

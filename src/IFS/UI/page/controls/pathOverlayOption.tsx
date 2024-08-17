@@ -4,14 +4,14 @@ import { I_buttonInput } from "@IFS/types/UI";
 import { I_session, PathOption } from "@IFS/types/state";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { pathDrawThreshold } from "@IFS/resources/globalConstants"
-import { useContext, useState } from "react";
-// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { useContext, useEffect, useState } from "react";
+import { Ctx } from "@IFS/UI/SharedUIState";
 import { PathOptions } from "@IFS/resources/globalConstants"
 
 
 const PathOverlayControls = ({session}: {session: I_session}) => {
 
-  // const {context} = useContext(SharedUIState);
+  const {ctx, setCtx} = useContext(Ctx)
   const [choice, setChoice] = useState<PathOption>(session.state.options.path)
 
   const specs: I_buttonInput[] = PathOptions.map(option => { return {
@@ -30,6 +30,11 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
       }, queue: _ => [["ERASE", ["pathOverlay"]]]})}};
 
   });
+
+  useEffect(() => {
+    console.log("hih");
+    setChoice(ctx.path);
+  }, [ctx]);
 
   return (
     <span style={{whiteSpace: "nowrap"}}>
