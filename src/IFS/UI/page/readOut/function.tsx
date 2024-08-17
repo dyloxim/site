@@ -3,9 +3,10 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { I_affine, I_linear, I_transform } from "@IFS/types/mathematical"
 import { default as NumberInput } from "@IFS/UI/components/number";
 import { v4 } from "uuid";
+import { I_session } from "@IFS/types/state";
 
 
-const Function = ({f, k}: {f: I_transform, k: number}) => {
+const Function = ({f, k, session}: {f: I_transform, k: number, session: I_session}) => {
 
   let linear = (f as I_linear).linear;
   let translation = (f as I_affine).translation ? (f as I_affine).translation : [0,0]
@@ -23,7 +24,7 @@ const Function = ({f, k}: {f: I_transform, k: number}) => {
       key: `${id}`,
       label: '',
       initial: coeff,
-      effect: (e, s) => { return new SessionMutation({ using: {...s}, do: s => {
+      effect: (e, s) => { return new SessionMutation({ using: s, do: s => {
 
         if (isLinearId(id)) {
 
@@ -35,7 +36,6 @@ const Function = ({f, k}: {f: I_transform, k: number}) => {
         } else {
 
           translation[id[2]] = Number(e.target.value);
-          console.log(translation);
           s.settings.FS.transforms[id[0]] = {linear: linear, translation: translation};
           s.state.selected = [];
           s.state.inputSelected = id;
@@ -89,7 +89,9 @@ const Function = ({f, k}: {f: I_transform, k: number}) => {
                     return (
                       <NumberInput
                         key={v4()}
-                        spec={getSpec(coeff, [k, "linear", [i, j]])}/>
+                        spec={getSpec(coeff, [k, "linear", [i, j]])}
+                        session={session}
+                      />
                     );
                   })}
                 </div>
@@ -112,7 +114,9 @@ const Function = ({f, k}: {f: I_transform, k: number}) => {
               return (
                 <NumberInput
                   key={v4()} 
-                  spec={getSpec(coeff, [k, "translation", i])}/>
+                  spec={getSpec(coeff, [k, "translation", i])}
+                  session={session}
+                />
               )})}
           </div>
         </div>

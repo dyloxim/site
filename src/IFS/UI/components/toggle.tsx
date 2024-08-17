@@ -1,10 +1,11 @@
 import { useState, useContext } from "react";
 import { I_toggleInput } from "@IFS/types/UI"
-import { SharedUIState } from "@IFS/UI/SharedUIState";
+// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { I_session } from "@IFS/types/state";
 
-export default function IFSUIToggle({spec}: {spec: I_toggleInput}) {
+export default function IFSUIToggle({spec, session}: {spec: I_toggleInput, session: I_session}) {
 
-  const {session, updateSession} = useContext(SharedUIState);
+  // const {context, updateContext} = useContext(SharedUIState);
   const [val, setVal] = useState<boolean>(spec.initial);
 
   return (
@@ -12,12 +13,12 @@ export default function IFSUIToggle({spec}: {spec: I_toggleInput}) {
     <span style={{ whiteSpace: "nowrap"}}>
       <label htmlFor={spec.key}>{spec.mainLabel}</label>
       &nbsp;
-        <button
+      <button
         name={spec.key}
         onClick={_ => {
-        setVal(!val);
-          updateSession({...spec.effect(session).eval()});
-      }}>
+          setVal(!val);
+          spec.effect(session).eval();
+        }}>
 
         {val ? spec.onLabel : spec.offLabel}
 

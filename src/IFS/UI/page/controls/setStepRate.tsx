@@ -2,11 +2,12 @@ import { I_rangeInput } from "@IFS/types/UI";
 import Range from "@IFS/UI/components/range";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { pathDrawThreshold } from "@IFS/resources/globalConstants";
+import { I_session } from "@IFS/types/state";
 
 
-export default function AnimationRate() {
+const AnimationRate = ({session}: {session: I_session}) => {
 
-  const [min, max] = [1, 100000]
+  const [min, max] = [1, 200000]
 
   const ease = (input: number): number => {
 
@@ -36,5 +37,7 @@ export default function AnimationRate() {
   }
   
 
-  return (<> <Range spec={spec}/> </>)
+  return (<> <Range spec={spec} session={session}/> </>)
 }
+
+export default AnimationRate;

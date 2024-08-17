@@ -106,7 +106,6 @@ export default class IFSAppWorker {
 
       queue: _ => [
         "REVIEW:controlPoints",
-        "RELOAD:FS"
       ]
 
     }).eval();
@@ -139,6 +138,7 @@ export default class IFSAppWorker {
       queue: _ => [
 
         "REVIEW:controlPoints", "RELOAD:secondaryEntities",
+        "RELOAD:rig",
         ["ERASE",
           ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
         ]

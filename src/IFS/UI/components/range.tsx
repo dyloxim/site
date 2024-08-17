@@ -1,11 +1,12 @@
 import { I_rangeInput } from "@IFS/types/UI";
 import { useState, useContext } from "react";
-import { SharedUIState } from "@IFS/UI/SharedUIState";
+// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { I_session } from "@IFS/types/state";
 
 
-export default function IFSUIRange({spec}: {spec: I_rangeInput}) {
+export default function IFSUIRange({spec, session}: {spec: I_rangeInput, session: I_session}) {
 
-  const {session, updateSession} = useContext(SharedUIState);
+  // const {context, updateContext} = useContext(SharedUIState);
   const [val, setVal] = useState<number>(spec.initial);
 
   return (
@@ -24,7 +25,7 @@ export default function IFSUIRange({spec}: {spec: I_rangeInput}) {
         name={spec.key}
         onChange={(e) => {
           setVal(Number(e.target.value))
-          updateSession({...spec.effect(e, session).eval()});
+          spec.effect(e, session).eval();
         }}/>
 
     </span>

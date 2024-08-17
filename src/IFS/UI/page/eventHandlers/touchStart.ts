@@ -1,13 +1,7 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from "@IFS/types/state";
+import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupTouchStartHandler = (
-  canvas: HTMLCanvasElement,
-  context: {
-    session: I_session,
-    updateSession: React.Dispatch<React.SetStateAction<I_session>>
-  }
-) => {
+const setupTouchStartHandler: EventResponseSetup = (canvas, session, setCtx) => {
 
   canvas!.addEventListener('touchstart', (e: TouchEvent): void => {
 
@@ -15,7 +9,7 @@ const setupTouchStartHandler = (
 
     if (e.touches.length > 1) { // if multiple touches (pinch zooming)
 
-      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
+      new SessionMutation({ using: session, do: s => {
 
         let diffX = e.touches[0].clientX - e.touches[1].clientX;
         let diffY = e.touches[0].clientY - e.touches[1].clientY;
@@ -23,11 +17,11 @@ const setupTouchStartHandler = (
         s.state.mouse.touchDist = touchDist;
         return s;
 
-      }}).eval()});
+      }}).eval();
 
     } else {
 
-      context.updateSession({...new SessionMutation({ using: context.session, do: s => {
+      new SessionMutation({ using: session, do: s => {
 
         let rect = canvas.getBoundingClientRect();
         s.state.mouse.pos = [
@@ -41,7 +35,7 @@ const setupTouchStartHandler = (
 
         "HANDLE:mouseDownEvent"
 
-      ]}).eval()})
+      ]}).eval();
 
     }
     

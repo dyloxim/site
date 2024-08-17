@@ -1,19 +1,13 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from "@IFS/types/state";
+import { EventResponseSetup } from "@IFS/types/UI";
 
-const setupTouchEndHandler = (
-  canvas: HTMLCanvasElement,
-  context: {
-    session: I_session,
-    updateSession: React.Dispatch<React.SetStateAction<I_session>>
-  }
-) => {
+const setupTouchEndHandler: EventResponseSetup = (canvas, session, setCtx) => {
 
   canvas!.addEventListener('touchend', (e: TouchEvent): void => {
 
     e.preventDefault(); e.stopPropagation()
 
-    context.updateSession({...new SessionMutation({ using: context.session, do: s => {
+    new SessionMutation({ using: session, do: s => {
 
       s.state.mouse.down = null;
       s.state.tacit.draggingRig = null;
@@ -21,7 +15,7 @@ const setupTouchEndHandler = (
       s.state.mouse.interactionPrimed = false;
       return s;
 
-    }}).eval()});
+    }}).eval();
 
   }, false);
 

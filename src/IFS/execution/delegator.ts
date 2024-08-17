@@ -15,8 +15,6 @@ export default class Delegator {
 
   }
 
-
-
   static handleTurn: AppStateProcessor = (app) => {
 
     Delegator.dispatchTicketProcessors(app);
@@ -53,8 +51,12 @@ export default class Delegator {
 
         ticketGroup.forEach(ticket =>
           {
-            if (ticket.log) console.log(`processing ticket: ${ticket.instruction}.`)
+            if (ticket.log) {
+              console.log(`processing ticket: ${ticket.instruction}.`)
+              console.log("App before:", app)
+            }
             ticket.processor(app, ticket); ticketGroup.delete(ticket);
+            if (ticket.log) console.log("App after:", app) 
           }
         );
 

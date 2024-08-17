@@ -1,18 +1,12 @@
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
-import { I_session } from "@IFS/types/state";
+import { EventResponseSetup } from "@IFS/types/UI";
 import { QueueItem } from "@IFS/types/tickets";
 
-const setupMouseMoveHandler = (
-  canvas: HTMLCanvasElement,
-  context: {
-    session: I_session,
-    updateSession: React.Dispatch<React.SetStateAction<I_session>>
-  }
-) => {
+const setupMouseMoveHandler: EventResponseSetup = (canvas, session, setCtx) => {
 
   canvas.addEventListener('mousemove', (e: MouseEvent) => {
 
-    context.updateSession({...new SessionMutation({ using: context.session, do: s => {
+    new SessionMutation({ using: session, do: s => {
 
       let rect = canvas.getBoundingClientRect();
       s.state.mouse.pos = [
@@ -25,10 +19,12 @@ const setupMouseMoveHandler = (
 
       let queue: QueueItem[] = ["HANDLE:mouseMoveEvent"];
       if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
-      if (s.state.tacit.draggingRig) queue = [...queue, "RELOAD:rig"]
+      if (s.state.tacit.draggingRig) queue = [...queue,
+        "RELOAD:rig",
+        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]]
       return queue;
 
-    }}).eval()});
+    }}).eval();
 
   }, false);
 }

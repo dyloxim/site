@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { default as Function } from './function';
-import { SharedUIState } from '@IFS/UI/SharedUIState';
+import { Ctx } from '@IFS/UI/SharedUIState';
 import { I_transform } from "@IFS/types/mathematical";
+import { I_session } from "@IFS/types/state";
 
 
-const Panel = () => {
+const Panel = ({session}: {session: I_session}) => {
 
-  const {session} = useContext(SharedUIState);
+  const {ctx} = useContext(Ctx);
 
   const [transforms, setTransforms] = useState<I_transform[]>(
     session.settings.FS.transforms
@@ -17,7 +18,7 @@ const Panel = () => {
     if (session.state.inputSelected) {
       document.getElementById(`${session.state.inputSelected}`)!.focus()
     }
-  }, [JSON.stringify(session.settings.FS.transforms)])
+  }, [ctx])
 
   return (
     <>
@@ -32,7 +33,7 @@ const Panel = () => {
           gap: "2em"
         }}>
         {transforms.map((f, i) => {
-          return (<Function key={i} f={f} k={i}/>)
+          return (<Function key={i} f={f} k={i} session={session}/>)
         })}
       </div>
       <br/>

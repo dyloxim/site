@@ -7,18 +7,19 @@ import { NamedFSPreset } from "@IFS/types/specifications";
 import { NamedFSPresets } from "@IFS/resources/globalConstants";
 import { FunctionSystems } from "@IFS/resources/presets/FSPresets";
 import { useContext } from "react";
-import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { Ctx } from "@IFS/UI/SharedUIState";
+import { I_session } from "@IFS/types/state";
 
 
-export default function PresetControls() {
+const PresetControls = ({session}: {session: I_session}) => {
 
-  const {session} = useContext(SharedUIState)
+  const {setCtx} = useContext(Ctx)
 
   const spec: I_selectInput = {
 
     label: "Preset",
     key: "presetSelect",
-    initial: session.settings.FS.key,
+    initial: session.settings.FS.name,
 
     options: NamedFSPresets.map(optionKey => { let preset = FunctionSystems[optionKey as NamedFSPreset];
 
@@ -28,12 +29,11 @@ export default function PresetControls() {
         effect: s => { return new SessionMutation({ using: s, do: s => {
 
           s.settings.FS = preset;
-          console.log(s);
+          setCtx({ FS: preset.transforms })
           return s;
 
         }, queue: _ => [
 
-          "RELOAD:rig",
           "RELOAD:FS",
           "DO:clearSelection",
           "DO:revertRigToInitial",
@@ -43,5 +43,7 @@ export default function PresetControls() {
 
   }
 
-  return (<> <Select spec={spec}/> </>)
+  return (<> <Select spec={spec} session={session}/> </>)
 }
+
+export default PresetControls;

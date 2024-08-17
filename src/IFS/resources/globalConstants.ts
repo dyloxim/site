@@ -149,7 +149,6 @@ export const defaultPreset = {
   FS: FunctionSystems.heighwayDragon
 }
 
-
 export const defaultInitialSession: I_session = {
   settings: defaultPreset,
   state: AppEngine.getInitialState(defaultPreset) 

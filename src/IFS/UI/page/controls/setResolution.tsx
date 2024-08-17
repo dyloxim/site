@@ -3,11 +3,12 @@ import { I_rangeInput } from "@IFS/types/UI";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
-import { SharedUIState } from "@IFS/UI/SharedUIState";
+// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { I_session } from "@IFS/types/state";
 
-const ResolutionControl = () => {
+const ResolutionControl = ({session}: {session: I_session}) => {
 
-  const {session} = useContext(SharedUIState)
+  // const {context} = useContext(SharedUIState)
   const [max, setMax] = useState<number>(1);
   let min = .1
 
@@ -47,7 +48,7 @@ const ResolutionControl = () => {
 
     ]})}}
 
-  return (<> <Range spec={spec}/> </>)
+  return (<> <Range spec={spec} session={session}/> </>)
 
 }
 

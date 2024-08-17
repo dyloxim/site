@@ -1,9 +1,11 @@
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { I_session } from "@IFS/types/state";
+import { I_displayConfig, I_functionSystem } from "./configuration";
+import { default as AppEngine } from "@IFS/app";
+import { I_transform } from "./mathematical";
 
 export interface I_UIContext {
-  session: I_session,
-  updateSession: React.Dispatch<React.SetStateAction<I_session>>
+  FS: I_transform[]
 }
 
 export interface I_rangeInput {
@@ -56,3 +58,23 @@ export interface I_optionInput {
   label: string,
   effect: (s: I_session) => SessionMutation
 }
+
+export type SetupInputs = {
+  app: AppEngine,
+  container: HTMLDivElement,
+  session: I_session, 
+  preset: {
+    display: I_displayConfig,
+    FS: I_functionSystem
+  },
+  contextUpdater: React.Dispatch<React.SetStateAction<I_UIContext>>,
+  resizeFn: (div: HTMLDivElement, session: I_session) => void
+}
+
+export type SetupFn = (inputs: SetupInputs) => void;
+
+export type EventResponseSetup = (
+  canvas: HTMLCanvasElement,
+  session: I_session,
+  setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>,
+) => void;

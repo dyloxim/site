@@ -1,11 +1,13 @@
 import { createContext } from "react";
-import { I_session } from "@IFS/types/state";
 import { defaultInitialSession } from "@IFS/resources/globalConstants"
+import { I_UIContext } from "@IFS/types/UI";
 
-export const SharedUIState = createContext<{
-  session: I_session,
-  updateSession: React.Dispatch<React.SetStateAction<I_session>>
+export const Ctx = createContext<{
+  ctx: I_UIContext,
+  setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
 }>({
-  session: defaultInitialSession,
-  updateSession: () => defaultInitialSession
+  ctx: {
+    FS: []
+  },
+  setCtx: () => defaultInitialSession
 })

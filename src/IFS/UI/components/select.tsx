@@ -1,11 +1,12 @@
 import { I_selectInput } from "@IFS/types/UI";
 import { useContext, useState } from "react";
-import { SharedUIState } from "@IFS/UI/SharedUIState";
+// import { SharedUIState } from "@IFS/UI/SharedUIState";
+import { I_session } from "@IFS/types/state";
 
 
-export default function IFSUISelect({spec}: {spec: I_selectInput}) {
+export default function IFSUISelect({spec, session}: {spec: I_selectInput, session: I_session}) {
 
-  const {session, updateSession} = useContext(SharedUIState);
+  // const {context, updateContext} = useContext(SharedUIState);
   const [choice, setChoice] = useState<string>(spec.initial)
 
   const valueGetter = () => {
@@ -27,6 +28,9 @@ export default function IFSUISelect({spec}: {spec: I_selectInput}) {
           let choiceKey = valueGetter();
           let option = spec.options.filter(a => a.key == choiceKey)[0];
           setChoice(option.label);
+          console.log("in select", session)
+          option.effect(session).eval();
+          console.log("still in select", session)
         }}>
         {spec.options.map(option => { return (
           <option id={option.key} key={option.key}>{option.label}</option>
