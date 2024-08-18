@@ -4,7 +4,7 @@ import { default as Color } from "@IFS/display/util/color"
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 
 import { DisplayLayer } from "@IFS/types/specifications";
-import { BasicLayerTicket, ActionKey } from "@IFS/types/tickets";
+import { BasicLayerTicket, ActionKey, QueueItem } from "@IFS/types/tickets";
 import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
 import { I_affine } from "@IFS/types/mathematical"
 
@@ -135,15 +135,19 @@ export default class IFSAppWorker {
 
       },
 
-      queue: _ => [
+      queue: s => {
 
-        "REVIEW:controlPoints", "RELOAD:secondaryEntities",
-        "RELOAD:rig",
-        ["ERASE",
-          ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]
+        let tickets: QueueItem[] = [
+          "REVIEW:controlPoints", "RELOAD:secondaryEntities",
+          ["ERASE",
+            ["figure", "pathOverlay", "controlPointsOverlay",  "hoverOverlay"]]
         ]
 
-      ]}).eval()};
+        if (!s.state.tacit.mutatingFS) tickets = [...tickets, "RELOAD:rig"];
+
+        return tickets;
+
+      }}).eval()};
 
   }
 
