@@ -10,11 +10,11 @@ import { Ctx } from "@IFS/UI/SharedUIState";
 const AnimationRate = ({session}: {session: I_session}) => {
 
   const {ctx, setCtx} = useContext(Ctx)
-  const [min, max] = [1, 200000]
+  const [min, max] = [1, 150000]
 
   const ease = (input: number): number => {
 
-    return Math.max(1, Math.pow(input/max, 6) * max);
+    return Math.max(1, Math.pow(input/max, 5) * max);
 
   }
 

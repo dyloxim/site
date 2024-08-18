@@ -7,9 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Ctx } from '@IFS/UI/SharedUIState';
 import { default as AppEngine } from "@IFS/app";
 import getPageLoader from "@IFS/UI/util/getPageLoader";
-import resizeFn from '../util/resizeFn';
-import Controls from './controls';
-import { I_transform } from '@IFS/types/mathematical';
+import resizeFn from "@IFS/UI/util/resizeFn";
+import Controls from "./controls";
 import { I_UIContext } from '@IFS/types/UI';
 
 

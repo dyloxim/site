@@ -4,6 +4,8 @@ import { I_affine, I_linear, I_transform } from "@IFS/types/mathematical"
 import { default as NumberInput } from "@IFS/UI/components/number";
 import { v4 } from "uuid";
 import { I_session } from "@IFS/types/state";
+import Util from "@IFS/execution/util";
+import Color from "@IFS/display/util/color";
 
 
 const Function = ({f, k, session}: {f: I_transform, k: number, session: I_session}) => {
@@ -56,18 +58,22 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
     }
   }
 
+  const color = Color.multiply(session.settings.display.color.palette.colors[k], .5);
+
   return (
-    <>
       <div
         style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        gap: ".5em"
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          backgroundColor: "#232326",
+          padding: "1.2em",
+          borderBottom: "5px solid rgb("+color.r+","+color.g+","+color.b+")",
+          borderRadius: ".4em",
       }}>
-        <pre>f<sub>{k+1}</sub> = </pre>
+        <pre>f<sub>{k+1}</sub>(x) = </pre>
 
         <div className="mat">
           <div style={{
@@ -99,7 +105,8 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
           </div>
         </div>
 
-        <pre> + </pre>
+
+        <pre style={{marginLeft: ".35em"}}>x + </pre>
 
 
         <div className="mat">
@@ -121,7 +128,6 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
           </div>
         </div>
       </div>
-    </>
   )
 }
 

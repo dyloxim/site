@@ -2,6 +2,7 @@
 import App from '@IFS/UI/page/app';
 import { defaultDisplay } from '@IFS/resources/presets/displayPresets';
 import { FunctionSystems } from '@IFS/resources/presets/FSPresets';
+import Link from 'next/link';
 
 export default function IFSPage() {
 
@@ -11,6 +12,8 @@ export default function IFSPage() {
   }
 
   return (
-    <App preset={preset} />
+    <>
+      <App preset={preset} />
+    </>
   )
 }

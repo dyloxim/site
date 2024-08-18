@@ -28,10 +28,7 @@ export default function IFSUISelect({spec, session}: {spec: I_selectInput, sessi
           let choiceKey = valueGetter();
           let option = spec.options.filter(a => a.key == choiceKey)[0];
           setChoice(option.label);
-          console.log("in select", session)
-          option.effect(session).eval();
-          console.log("still in select", session)
-        }}>
+          option.effect(session).eval();}}>
         {spec.options.map(option => { return (
           <option id={option.key} key={option.key}>{option.label}</option>
         )})}

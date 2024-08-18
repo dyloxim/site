@@ -16,23 +16,23 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
 
   const specs: I_buttonInput[] = PathOptions.map(option => { return {
 
-      key: option,
-      label: option,
+    key: option,
+    label: option,
 
     effect: s => { return new SessionMutation({ using: s, do: s => {
 
-        const newVal =
-          (s.state.options.animationRate < pathDrawThreshold ? option : 'None')
+      const newVal =
+        (s.state.options.animationRate < pathDrawThreshold ? option : 'None')
 
-        setChoice(newVal); s.state.options.path = newVal;
-        return s;
+      setChoice(newVal); s.state.options.path = newVal;
+      setCtx({...ctx, path: newVal});
+      return s;
 
-      }, queue: _ => [["ERASE", ["pathOverlay"]]]})}};
+    }, queue: _ => [["ERASE", ["pathOverlay"]]]})}};
 
   });
 
   useEffect(() => {
-    console.log("hih");
     setChoice(ctx.path);
   }, [ctx]);
 

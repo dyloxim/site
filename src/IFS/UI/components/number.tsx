@@ -19,7 +19,7 @@ export default function IFSUINumber({spec, session}: {spec: I_numberInput, sessi
       <input
         id={spec.key}
         style={{
-          width: "42px",
+          width: "46px",
           backgroundColor: "transparent",
           border: "none",
           color: "white"

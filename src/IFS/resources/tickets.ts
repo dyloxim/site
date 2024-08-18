@@ -54,7 +54,7 @@ export const Actions: ActionRegistry = {
     instructionGroup: "FS",
     instruction: "Load FS from settings",
     processor: IFSAppWorker.loadFSFromSettings,
-    log: true
+    log: false
   },
 
   "RELOAD:controlPoints": {

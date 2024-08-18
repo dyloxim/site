@@ -8,11 +8,12 @@ import { I_session } from "@IFS/types/state"
 
 const Controls = ({session}: {session: I_session}) => {
   return (
-    <>
+    <div style={{paddingLeft: ".5em"}}>
       <div style={{
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
+        padding: ".5em",
         gap: ".5em"
       }}>
         <div>
@@ -29,6 +30,7 @@ const Controls = ({session}: {session: I_session}) => {
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
+        padding: ".5em",
         gap: ".5em"
       }}>
         <div>
@@ -36,7 +38,7 @@ const Controls = ({session}: {session: I_session}) => {
           <SetResolution session={session}/>&nbsp;
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

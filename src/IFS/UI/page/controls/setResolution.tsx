@@ -3,7 +3,6 @@ import { I_rangeInput } from "@IFS/types/UI";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
-// import { SharedUIState } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
 
 const ResolutionControl = ({session}: {session: I_session}) => {
@@ -16,9 +15,13 @@ const ResolutionControl = ({session}: {session: I_session}) => {
     return Math.max(min, Math.pow(input/max, 1.5) * max);
   }
 
+
+  const onPageLoad = () => {
+    setMax(session.settings.display.rendering.devicePixelRatio);
+  }
+
   useEffect(() => {
 
-    const onPageLoad = () => setMax(session.settings.display.rendering.devicePixelRatio);
     if (document.readyState === 'complete') onPageLoad();
 
     else {

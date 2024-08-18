@@ -23,23 +23,24 @@ const Panel = ({session}: {session: I_session}) => {
   }, [ctx])
 
   return (
-    <>
-      <br/>
-      <hr/>
-      <pre>Transforms:</pre>
+    <div style={{padding: ".5em", backgroundColor: "#121213", marginTop: "1em"}}>
+      <pre style={{ color: "#b2b2b4", paddingLeft: ".5em"}}>Transforms:</pre>
       <div
         style={{
           display: "flex",
           flexDirection: "row",
           flexWrap: "wrap",
-          gap: "2em"
+          gap: "1em",
+          marginRight: "1em",
+          marginLeft: "1em",
+          marginTop: "1.5em"
         }}>
         {transforms.map((f, i) => {
           return (<Function key={i} f={f} k={i} session={session}/>)
         })}
       </div>
       <br/>
-    </>
+    </div>
   );
 }
 
