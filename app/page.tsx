@@ -1,18 +1,20 @@
-import Link from 'next/link'
-import Header from "./_coreUI/header";
-import Footer from "./_coreUI/footer";
+// import Link from 'next/link'
+// import Header from "./_coreUI/header";
+// import Footer from "./_coreUI/footer";
+import { redirect } from 'next/navigation';
 
 const Root = () => {
 
-  return (
-    <>
-      <Header/>
-      <hr/>
-      <p>I am </p>
-      <Link href="/myror">IFS App</Link>
-      <Footer/>
-    </>
-  );
+  redirect("/IFS");
+
+  //  return (
+  //    <>
+  //      <Header/>
+  //      <hr/>
+  //      <Link href="/IFS">IFS App</Link>
+  //      <Footer/>
+  //    </>
+  //  );
 
 }
 
