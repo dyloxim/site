@@ -2,6 +2,7 @@ import { I_selectInput } from "@IFS/types/UI";
 import { useContext, useState } from "react";
 // import { SharedUIState } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
+import styles from "./inputs.module.css"
 
 
 export default function IFSUISelect({spec, session}: {spec: I_selectInput, session: I_session}) {
@@ -23,6 +24,7 @@ export default function IFSUISelect({spec, session}: {spec: I_selectInput, sessi
       <select
         id={spec.key}
         name={spec.key}
+        className={styles.input}
         value={choice}
         onChange={_ => {
           let choiceKey = valueGetter();

@@ -1,0 +1,15 @@
+.mat {
+  background-image: linear-gradient(white, white),
+                    linear-gradient(white, white),
+                    linear-gradient(white, white),
+                    linear-gradient(white, white);
+
+  background-repeat: no-repeat;
+  background-size: 5px 1px;
+  background-position: top left, top right, bottom left, bottom right;
+  padding-left: 2px;
+  padding-right: 7px;
+
+  border: solid white;
+  border-width: 0 1px;
+}

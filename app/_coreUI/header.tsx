@@ -11,8 +11,8 @@ const Header = () => {
       gap: ".5em"
     }}>
       <div className="reversed">
-        <Link href="/" style={{fontSize: "30px"}}>nai.dyloxim.com</Link>
-        <Link href={usePathname()} style={{fontSize: "30px"}}>{usePathname()}</Link>
+        <Link href="/" style={{fontSize: "24px"}}>nai.dyloxim.com</Link>
+        <Link href={usePathname()} style={{fontSize: "24px"}}>{usePathname()}</Link>
         
       </div>
     </div>

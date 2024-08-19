@@ -4,8 +4,8 @@ import { I_affine, I_linear, I_transform } from "@IFS/types/mathematical"
 import { default as NumberInput } from "@IFS/UI/components/number";
 import { v4 } from "uuid";
 import { I_session } from "@IFS/types/state";
-import Util from "@IFS/execution/util";
 import Color from "@IFS/display/util/color";
+import styles from "./function.module.css"
 
 
 const Function = ({f, k, session}: {f: I_transform, k: number, session: I_session}) => {
@@ -68,63 +68,75 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "flex-start",
-          backgroundColor: "#232326",
-          padding: "1.2em",
+          backgroundColor: "#151517",
+          padding: "1.0em",
+          color: "#c6c6c8",
           borderBottom: "5px solid rgb("+color.r+","+color.g+","+color.b+")",
-          borderRadius: ".4em",
       }}>
-        <pre>f<sub>{k+1}</sub>(x) = </pre>
+        <pre style={{marginTop: "-.4em", marginBottom: ".4em"}}>f<sub>{k+1}</sub>(x) = </pre>
 
-        <div className="mat">
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}>
-            {linear.map((row, i) => {
-              return (
-                <div
-                  key={v4()}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flexWrap: "wrap",
-                    gap: ".5em"
-                  }}>
-                  {row.map((coeff, j) => {
-                    return (
-                      <NumberInput
-                        key={v4()}
-                        spec={getSpec(coeff, [k, "linear", [i, j]])}
-                        session={session}
-                      />
-                    );
-                  })}
-                </div>
-              )})}
-          </div>
-        </div>
-
-
-        <pre style={{marginLeft: ".35em"}}>x + </pre>
-
-
-        <div className="mat">
+        <div>
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
+              flexDirection: "row",
               flexWrap: "wrap",
-              gap: ".5em"
+              alignItems: "center",
+              justifyContent: "flex-start",
+              borderRadius: ".4em",
             }}>
-            {translation.map((coeff, i) => {
-              return (
-                <NumberInput
-                  key={v4()} 
-                  spec={getSpec(coeff, [k, "translation", i])}
-                  session={session}
-                />
-              )})}
+            <div className={styles.mat}>
+              <div style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+              }}>
+                {linear.map((row, i) => {
+                  return (
+                    <div
+                      key={v4()}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flexWrap: "wrap",
+                        gap: ".5em"
+                      }}>
+                      {row.map((coeff, j) => {
+                        return (
+                          <NumberInput
+                            key={v4()}
+                            spec={getSpec(coeff, [k, "linear", [i, j]])}
+                            session={session}
+                          />
+                        );
+                      })}
+                    </div>
+                  )})}
+              </div>
+            </div>
+
+
+            <pre style={{marginLeft: ".35em"}}>x + </pre>
+
+
+            <div className={styles.mat}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flexWrap: "wrap",
+                  gap: ".5em"
+                }}>
+                {translation.map((coeff, i) => {
+                  return (
+                    <NumberInput
+                      key={v4()} 
+                      spec={getSpec(coeff, [k, "translation", i])}
+                      session={session}
+                    />
+                  )})}
+              </div>
+            </div>
           </div>
         </div>
       </div>

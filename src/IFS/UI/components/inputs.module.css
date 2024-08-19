@@ -1,0 +1,43 @@
+
+.input {
+  font-size: 13px;
+  font-family: monospace, monospace;
+  border: none;
+  padding-top: .15em;
+  padding-bottom: .15em;
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+
+.number::-webkit-inner-spin-button, 
+.number::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.number {
+  background-color: transparent;
+  width: 52px;
+  font-size: 16px;
+  border: none;
+  margin-left: -6px;
+  color: #c6c6c8;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.active {
+  background-color: #555;
+  color: #fff;
+}
+
+.inactive {
+  background-color: #bbb;
+  color: #111;
+}
+
+.disabled {
+  background-color: #bbb;
+  color: #999;
+}

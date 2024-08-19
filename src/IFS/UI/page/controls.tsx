@@ -8,32 +8,54 @@ import { I_session } from "@IFS/types/state"
 
 const Controls = ({session}: {session: I_session}) => {
   return (
-    <div style={{paddingLeft: ".5em"}}>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      paddingLeft: ".5em",
+      marginTop: "-.2em",
+      gap: ".5em",
+    }}>
+
       <div style={{
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        padding: ".5em",
-        gap: ".5em"
+        marginBottom: "-.5em"
       }}>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          padding: ".5em",
+          gap: ".5em"
+        }}>
           <StartStop session={session}/>&nbsp;
           <PresetSelect session={session}/>&nbsp;&nbsp;
         </div>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          padding: ".5em",
+          gap: ".5em"
+        }}>
           <PathOverlayOption session={session}/>&nbsp;
           <ColorOption session={session}/>&nbsp;
         </div>
       </div>
-      <br/>
       <div style={{
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        padding: ".5em",
         gap: ".5em"
       }}>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          padding: ".5em",
+          gap: ".5em"
+        }}>
           <SetStepRate session={session}/>&nbsp;
           <SetResolution session={session}/>&nbsp;
         </div>

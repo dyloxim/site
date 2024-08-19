@@ -8,7 +8,7 @@ const setupApp: SetupFn = (inputs) => {
     inputs.session.settings.display.rendering.devicePixelRatio = document.defaultView!.devicePixelRatio;
     inputs.session.state = AppEngine.getInitialState(inputs.preset);
     inputs.container.style.width = `${document.body.clientWidth}px`;
-    inputs.container.style.height = `${window.innerHeight - 380}px`;
+    inputs.container.style.height = `${window.innerHeight - 132}px`;
     inputs.app.setupDisplay(inputs.container);
     setupCanvasEvents(inputs.session, inputs.Ctx);
     inputs.app.start();

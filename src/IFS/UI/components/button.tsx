@@ -1,7 +1,6 @@
 import { I_buttonInput } from "@IFS/types/UI"
-import { useContext } from "react";
-// import { SharedUIState } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
+import styles from "./inputs.module.css"
 
 export default function IFSUIButton({spec, classes, session}: {
   spec: I_buttonInput,
@@ -9,12 +8,10 @@ export default function IFSUIButton({spec, classes, session}: {
   session: I_session
 }) {
 
-  // const {context, updateContext} = useContext(SharedUIState);
-
   return (
     <>
       <button
-        className={typeof classes !== 'undefined' ? classes : ""}
+        className={typeof classes !== 'undefined' ? classes + ` ${styles.input}` : `${styles.input}`}
         id={spec.key}
         onClick={_ => spec.effect(session).eval()}>
 

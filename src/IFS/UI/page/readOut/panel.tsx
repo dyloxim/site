@@ -20,7 +20,6 @@ const Panel = ({session}: {session: I_session}) => {
         result += `${(T as I_affine)[(propertyName as "linear" | "translation")]}`;
       }
     })
-    console.log(result);
     return result;
   }
 
@@ -34,8 +33,8 @@ const Panel = ({session}: {session: I_session}) => {
   }, [ctx])
 
   return (
-    <div style={{padding: ".5em", backgroundColor: "#121213", marginTop: "1em"}}>
-      <pre style={{ color: "#b2b2b4", paddingLeft: ".5em"}}>Transforms:</pre>
+    <div style={{padding: ".5em"}}>
+      <pre style={{paddingLeft: ".5em", marginTop: 0}}>Transforms:</pre>
       <div
         style={{
           display: "flex",

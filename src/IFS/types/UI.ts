@@ -6,7 +6,8 @@ import { I_transform } from "./mathematical";
 
 export interface I_UIContext {
   FS: I_transform[],
-  path: PathOption
+  path: PathOption,
+  pathDisabled: boolean,
 }
 
 export interface I_rangeInput {

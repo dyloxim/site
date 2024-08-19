@@ -8,10 +8,6 @@ import { default as Rig } from "./display/rig";
 import { defaultState as baseState } from "@IFS/resources/defaults"
 import Delegator from "./execution/delegator";
 
-
-
-
-
 export default class App {
 
   settings: I_settings;

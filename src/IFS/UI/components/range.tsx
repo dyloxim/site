@@ -2,6 +2,7 @@ import { I_rangeInput } from "@IFS/types/UI";
 import { useState, useContext } from "react";
 // import { SharedUIState } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
+import styles from "./inputs.module.css"
 
 
 export default function IFSUIRange({spec, session}: {spec: I_rangeInput, session: I_session}) {

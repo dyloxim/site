@@ -7,7 +7,7 @@ import { pathDrawThreshold } from "@IFS/resources/globalConstants"
 import { useContext, useEffect, useState } from "react";
 import { Ctx } from "@IFS/UI/SharedUIState";
 import { PathOptions } from "@IFS/resources/globalConstants"
-
+import styles from "../../components/inputs.module.css"
 
 const PathOverlayControls = ({session}: {session: I_session}) => {
 
@@ -36,12 +36,22 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
     setChoice(ctx.path);
   }, [ctx]);
 
+  const getClass = (key: string): string => {
+    let style = choice == key ?
+      styles.active
+      : ctx.pathDisabled ?
+        styles.disabled
+        : styles.inactive
+
+    return style;
+  }
+
   return (
     <span style={{whiteSpace: "nowrap"}}>
 
       Path: {specs.map(spec => (
         <Button
-          classes={choice == spec.key ? "active" : "inactive"}
+          classes={getClass(spec.key)}
           key={spec.key}
           spec={spec}
           session={session}

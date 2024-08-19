@@ -2,7 +2,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { EventResponseSetup } from "@IFS/types/UI";
 import { QueueItem } from "@IFS/types/tickets";
 
-const setupMouseMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
+const setupMouseMoveHandler: EventResponseSetup = (canvas, session, _) => {
 
   canvas.addEventListener('mousemove', (e: MouseEvent) => {
 
@@ -21,7 +21,7 @@ const setupMouseMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
       if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
       if (s.state.tacit.draggingRig) queue = [...queue,
         "RELOAD:rig",
-        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]]
+        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay", "pathOverlay"]]]
       return queue;
 
     }}).eval();

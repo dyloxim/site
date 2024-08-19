@@ -1,13 +1,11 @@
 import { I_numberInput } from "@IFS/types/UI";
 import { useState } from "react";
-// import { useContext } from "react";
-// import { SharedUIState } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
+import styles from "./inputs.module.css"
 
 
 export default function IFSUINumber({spec, session}: {spec: I_numberInput, session: I_session}) {
 
-  // const {context, updateContext} = useContext(SharedUIState);
   const [val, setVal] = useState<string>(`${spec.initial.toPrecision(4)}`);
 
   return (
@@ -18,12 +16,7 @@ export default function IFSUINumber({spec, session}: {spec: I_numberInput, sessi
       &nbsp;
       <input
         id={spec.key}
-        style={{
-          width: "46px",
-          backgroundColor: "transparent",
-          border: "none",
-          color: "white"
-        }}
+        className={`${styles.input} ${styles.number}`}
         step={0.05}
         type="number"
         value={val}

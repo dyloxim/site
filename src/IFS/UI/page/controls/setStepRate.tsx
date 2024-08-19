@@ -29,9 +29,13 @@ const AnimationRate = ({session}: {session: I_session}) => {
       const input = Number(e.target.value);
       const eased = ease(input);
       s.state.options.animationRate = eased;
-      if (eased > pathDrawThreshold && s.state.options.path != "None") {
+      if (eased > pathDrawThreshold && ctx.pathDisabled == false) {
         s.state.options.path = "None";
-        setCtx({...ctx, path: "None"});
+        setCtx({...ctx, path: "None", pathDisabled: true});
+      }
+      if (eased <= pathDrawThreshold && ctx.pathDisabled == true) {
+        s.state.options.path = "None";
+        setCtx({...ctx, pathDisabled: false});
       }
       return s
 
