@@ -20,13 +20,18 @@ export default function App({ preset }: {
   }
 }) {
 
-  // const {context, context} = useContext(SharedUIState)
   let session = {
     settings: preset,
     state: AppEngine.getInitialState(preset) 
   }
+
   let app: AppEngine = AppEngine.constructWithState(session);  
-  const [ctx, setCtx] = useState<I_UIContext>({ FS: [], path: "None", pathDisabled: false })
+
+  const [ctx, setCtx] = useState<I_UIContext>({
+    FS: session.settings.FS.transforms,
+    path: "None",
+    pathDisabled: false
+  })
 
 
   return (
