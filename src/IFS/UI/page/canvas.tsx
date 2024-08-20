@@ -1,7 +1,6 @@
 import { I_session } from "@IFS/types/state";
-import { default as SessionMutation } from "@IFS/execution/sessionMutation";
+import { useContext, useEffect, useRef } from "react";
 import { Ctx } from '@IFS/UI/SharedUIState';
-import { useContext, useEffect, useRef, useState } from "react";
 import getPageLoader from "../util/getPageLoader";
 import { default as AppEngine } from "@IFS/app";
 import resizeFn from "@IFS/UI/util/resizeFn";
@@ -18,38 +17,20 @@ const Canvas = ({session, app, preset}: {
 }) => {
 
   const {ctx, setCtx} = useContext(Ctx);
-  const ctxRef = useRef<I_UIContext>(ctx)
+  const ctxRef = useRef<I_UIContext>(ctx); useEffect(() => {ctxRef.current = ctx;}, [ctx])
 
   const container = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {ctxRef.current = ctx;}, [ctx])
-
-  const handleMouseUpEvent = () => {
-    new SessionMutation({ using: session, do: s => {
-
-      if (s.state.tacit.mutatingFS) setCtx({...ctxRef.current, FS: s.settings.FS.transforms });
-      s.state.mouse.down = null;
-      s.state.tacit.draggingRig = null;
-      s.state.tacit.mutatingFS = false;
-      s.state.mouse.interactionPrimed = false;
-      s.state.inputSelected = null;
-
-      return s;
-
-    }}).eval();
-  }
 
   let onLoad = () => {
-    let loader = getPageLoader({
+    getPageLoader({
       app: app, 
       container: container.current!,
       session: session,
       preset: preset,
-      Ctx: {ctx, setCtx},
+      Ctx: {ctxRef, setCtx},
       resizeFn: resizeFn
-    });
-    loader();
-    container.current!.addEventListener('mouseup', handleMouseUpEvent, false);
+    })();
   }
 
   useEffect(() => {
