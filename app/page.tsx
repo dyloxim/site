@@ -7,15 +7,6 @@ const Root = () => {
 
   redirect("/IFS");
 
-  //  return (
-  //    <>
-  //      <Header/>
-  //      <hr/>
-  //      <Link href="/IFS">IFS App</Link>
-  //      <Footer/>
-  //    </>
-  //  );
-
 }
 
 export default Root;
