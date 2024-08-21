@@ -70,7 +70,7 @@ export type SetupInputs = {
     FS: I_functionSystem
   },
   Ctx: {
-    ctx: I_UIContext,
+    ctxRef: React.MutableRefObject<I_UIContext>,
     setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
   },
   resizeFn: (div: HTMLDivElement, session: I_session) => void
@@ -82,7 +82,7 @@ export type EventResponseSetup = (
   canvas: HTMLCanvasElement,
   session: I_session,
   Ctx: {
-    ctx: I_UIContext,
+    ctxRef: React.MutableRefObject<I_UIContext>,
     setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
   }
 ) => void;

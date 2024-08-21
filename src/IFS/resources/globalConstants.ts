@@ -142,7 +142,7 @@ export const incrementUnit = 7/8;
 
 export const pathDrawThreshold = 10000;
 
-export const decisionTimeoutThreshold = 120;
+export const decisionTimeoutThreshold = 180;
 
 export const defaultPreset = {
   display: defaultDisplay,

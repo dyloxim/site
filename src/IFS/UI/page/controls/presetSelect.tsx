@@ -21,7 +21,7 @@ const PresetControls = ({session}: {session: I_session}) => {
     key: "presetSelect",
     initial: session.settings.FS.name,
 
-    options: NamedFSPresets.map(optionKey => { let preset = FunctionSystems[optionKey as NamedFSPreset];
+    options: NamedFSPresets.toSorted().map(optionKey => { let preset = FunctionSystems[optionKey as NamedFSPreset];
 
       return {
         key: preset.key,

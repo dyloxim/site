@@ -17,7 +17,7 @@ export default function IFSUISelect({spec, session}: {spec: I_selectInput, sessi
 
   return (
 
-    <span style={{ whiteSpace: "nowrap"}}>
+    <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 
       <label htmlFor={spec.key}>{spec.label}:</label>
       &nbsp;

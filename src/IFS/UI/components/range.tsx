@@ -12,7 +12,7 @@ export default function IFSUIRange({spec, session}: {spec: I_rangeInput, session
 
   return (
 
-    <span style={{ whiteSpace: "nowrap"}}>
+    <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 
       <label htmlFor={spec.key}>{spec.label}:</label>
       &nbsp;
@@ -21,6 +21,7 @@ export default function IFSUIRange({spec, session}: {spec: I_rangeInput, session
         value={val}
         min={spec.min}
         max={spec.max}
+        className={`${styles.input} ${styles.range}`}
         step={(spec.max - spec.min) / spec.steps}
         style={{verticalAlign: "middle"}}
         name={spec.key}

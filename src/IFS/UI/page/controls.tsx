@@ -16,48 +16,20 @@ const Controls = ({session}: {session: I_session}) => {
       gap: ".5em",
     }}>
 
-      <div style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        marginBottom: "-.5em"
-      }}>
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          padding: ".5em",
-          gap: ".5em"
-        }}>
+      <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginBottom: "-.5em"}}>
+        <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <StartStop session={session}/>&nbsp;
           <PresetSelect session={session}/>&nbsp;&nbsp;
         </div>
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          padding: ".5em",
-          gap: ".5em"
-        }}>
+        <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <PathOverlayOption session={session}/>&nbsp;
           <ColorOption session={session}/>&nbsp;
         </div>
       </div>
-      <div style={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: ".5em"
-      }}>
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          padding: ".5em",
-          gap: ".5em"
-        }}>
-          <SetStepRate session={session}/>&nbsp;
-          <SetResolution session={session}/>&nbsp;
+      <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", gap: ".5em"}}>
+        <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: "1em"}}>
+          <SetStepRate session={session}/>
+          <SetResolution session={session}/>
         </div>
       </div>
     </div>

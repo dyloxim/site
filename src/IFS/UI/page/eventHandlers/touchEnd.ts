@@ -19,15 +19,6 @@ const setupTouchEndHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
   }, false);
 
-
-  // document.body.addEventListener("touchend", function (e) {
-  //   if (e.target == canvas) {
-  //     e.preventDefault();
-  //   }
-  // }, false);
-
 }
 
 export default setupTouchEndHandler;
-
-// Prevent scrolling when touching the canvas

@@ -13,14 +13,14 @@ export default function IFSUIButton({spec, session}: {spec: I_checkBox, session:
   }, [session]);
 
   return (
-    <span style={{ whiteSpace: "nowrap"}}>
+    <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 
       <label htmlFor={spec.key}>{spec.label}:</label>
       &nbsp;
       <input
         name={spec.key}
         type="checkbox"
-        className={styles.input}
+        className={`${styles.input} ${styles.checkbox}`}
         onChange={_ => {
           setVal(!val);
           spec.effect(session).eval()

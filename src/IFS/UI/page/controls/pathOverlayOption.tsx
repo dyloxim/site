@@ -47,9 +47,9 @@ const PathOverlayControls = ({session}: {session: I_session}) => {
   }
 
   return (
-    <span style={{whiteSpace: "nowrap"}}>
+    <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 
-      Path: {specs.map(spec => (
+      Path:&nbsp; {specs.map(spec => (
         <Button
           classes={getClass(spec.key)}
           key={spec.key}

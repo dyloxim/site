@@ -10,7 +10,7 @@ export default function IFSUINumber({spec, session}: {spec: I_numberInput, sessi
 
   return (
 
-    <span style={{ whiteSpace: "nowrap"}}>
+    <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 
       {spec.label ? <label htmlFor={spec.key}>{spec.label}:</label> : <></>}
       &nbsp;

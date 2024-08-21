@@ -4,7 +4,6 @@ import { Ctx } from '@IFS/UI/SharedUIState';
 import { I_affine, I_transform } from "@IFS/types/mathematical";
 import { I_session } from "@IFS/types/state";
 
-
 const Panel = ({session}: {session: I_session}) => {
 
   const {ctx} = useContext(Ctx);
@@ -34,7 +33,6 @@ const Panel = ({session}: {session: I_session}) => {
 
   return (
     <div style={{padding: ".5em"}}>
-      <pre style={{paddingLeft: ".5em", marginTop: 0}}>Transforms:</pre>
       <div
         style={{
           display: "flex",

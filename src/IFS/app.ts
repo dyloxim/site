@@ -16,8 +16,6 @@ export default class App {
   FS: FunctionSystem;
   display: DisplayApperatus | undefined;
 
-  // SETUP FUNCTIONS
-
   constructor(settings: I_settings) {
     this.settings = settings;
     this.FS = new FunctionSystem(this.settings.FS);

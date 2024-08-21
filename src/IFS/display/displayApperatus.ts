@@ -169,8 +169,8 @@ export default class DisplayApperatus {
     let surroundColor = Color.multiply(this.config.color.base, .2);
     let vertSize = Util.getVertRadius(this.config);
 
-    this.draftCircle(layer, p, vertSize * 1.7, true, surroundColor)
-    this.draftCircle(layer, p, vertSize * .7, true, color)
+    this.draftCircle(layer, p, vertSize * 1.4, true, surroundColor)
+    this.draftCircle(layer, p, vertSize * .5, true, color)
 
   }
 
@@ -192,12 +192,11 @@ export default class DisplayApperatus {
     [corners[1], corners[2]].forEach((p, i) => {
         let color = i == 0 ? Colors.Red : Colors.Green;
         this.draftLine(layer, corners[0], p, color);
-        this.draftLine(layer, p, corners[3], color);
+      this.draftLine(layer, p, corners[3], Color.multiply(color,.3));
         this.draftSecondaryControlPoint(p, color);
       });
 
     this.draftPrimaryControlPoint(corners[0], color, true);
-    this.draftSecondaryControlPoint(corners[3], Colors.Black);
     
   }
 

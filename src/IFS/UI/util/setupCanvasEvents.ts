@@ -5,7 +5,7 @@ import { I_session } from '@IFS/types/state';
 const setupCanvasEvents = (
   session: I_session,
   Ctx: {
-    ctx: I_UIContext,
+    ctxRef: React.MutableRefObject<I_UIContext>,
     setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
   }
 ) => {

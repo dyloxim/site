@@ -25,7 +25,7 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
       }, queue: _ => [
 
         "RELOAD:rig",
-        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]]
+        ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]]
 
       ]}).eval();
 

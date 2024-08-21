@@ -2,6 +2,8 @@ import { I_functionSystem } from "@IFS/types/configuration";
 import { NamedFSPreset } from "@IFS/types/specifications";
 
 export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
+
+  
   barnsleyFern: {
     key: "barnsleyFern",
     name: "Barnsley Fern",
@@ -19,6 +21,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0,0]
   },
+
+
+
   kochSnowflake: {
     key: "kochSnowflake",
     name: "Koch Snowflake",
@@ -39,6 +44,10 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0],
   },
+
+
+
+
   kochCurve: {
     key: "kochCurve",
     name: "Koch Curve",
@@ -56,6 +65,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0],
   },
+
+
+
   binaryTree: {
     key: "binaryTree",
     name: "Binary Tree",
@@ -72,6 +84,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
+
+
+
   heighwayDragon: {
     key: "heighwayDragon",
     name: "Heighway Dragon",
@@ -87,6 +102,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
+
+
+
   sierpinskiGasket: {
     key: "sierpinskiGasket",
     name: "Sierpinski Gasket",
@@ -103,6 +121,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
+
+
+
   sierpinskiPentagon: {
     key: "sierpinskiPentagon",
     name: "Sierpinski Pentagon",
@@ -121,21 +142,27 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     },
     firstPoint: [0, 0]
   },
+
+
+
   colorSpace: {
     key: "colorSpace",
     name: "Color Space",
     transforms: [
-      { linear: [[8/9, 0],[0, 8/9]], translation: [-1, 0]},
-      { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, Math.sqrt(3)]},
-      { linear: [[8/9, 0],[0, 8/9]], translation: [ 1, 0]},
+      { linear: [[8/9, 0],[0, 8/9]], translation: [-1, -.6]},
+      { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, .6]},
+      { linear: [[8/9, 0],[0, 8/9]], translation: [ 1, -.6]},
     ], weights: 'uniform',
     referenceRegion: {
-      o: [-2,  -1.2],
+      o: [-2,  -1.9],
       e1: [4,0],
       e2: [0,4]
     },
     firstPoint: [0, 0]
   },
+
+
+
 }
 
 // mcWortersPentigree: {
