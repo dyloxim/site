@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000 --turbo",
     "bundle-then-dev": "npx webpack && next dev -p 3000",
-    "build": "rm node_modules/.cache && npx webpack && next build",
+    "build": "npx webpack && next build",
     "start": "next start -p 3000",
     "lint": "next lint"
   },
