@@ -29,7 +29,7 @@ const About = () => {
 
         <div className={styles.demoClipWrapper}>
           <video className={styles.demoClip} controls>
-            <source src="/media/IFS/IFSdemo.webm" type="video/webm"/>
+            <source src="/media/ifs/ifs_demo.webm" type="video/webm"/>
           </video>
         </div>
 
