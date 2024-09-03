@@ -62,6 +62,8 @@ export default class MouseProcessor {
 
   static handleMouseDownEvent: AppStateProcessor = app => {
 
+    MouseProcessor.processProximities(app);
+
     app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.actionUndecided = Date.now();

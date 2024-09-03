@@ -25,5 +25,8 @@ export const defaultDisplay: I_displayConfig = {
       showLast: false,
       persist: false,
     }
+  },
+  tacit: {
+    isMobile: false
   }
 }

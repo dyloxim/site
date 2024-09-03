@@ -74,6 +74,9 @@ export default class Util {
   static getVertRadius = (config: I_displayConfig): number => {
 
     return config.domain.displayRadius * Globals.vertRadiusDisplayRatio
+      * (
+        config.tacit.isMobile ? 2 : 1
+      )
 
   }
   
@@ -87,7 +90,10 @@ export default class Util {
 
   static getSelectionRadius = (settings: I_settings): number => {
 
-    return settings.display.domain.displayRadius * Globals.selectionRadiusDisplayRatio;
+    return settings.display.domain.displayRadius * Globals.selectionRadiusDisplayRatio
+      * (
+        settings.display.tacit.isMobile ? 3 : 1
+      )
 
   }
 
@@ -159,6 +165,7 @@ export default class Util {
 
   }
 
+  
   static getControlPointOffset = (app: I_applicationState): null | number[] => {
 
     let candidate = app.session.state.mouse.interactionCandidate!;
@@ -270,7 +277,7 @@ export default class Util {
     let mousePixelPos = app.session.state.mouse.pos;
     let positionDifference = Vec.dist(app.display.rig.reverseProject(mousePixelPos), entityPos)
     let displayRadius = app.session.settings.display.domain.displayRadius;
-    return (positionDifference < Globals.selectionRadiusDisplayRatio * displayRadius);
+    return (positionDifference < Util.getSelectionRadius(app.session.settings) * displayRadius);
 
   }
 

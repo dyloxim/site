@@ -43,10 +43,13 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
       }, queue: s => {
 
         let queue: QueueItem[] = ["HANDLE:mouseMoveEvent"];
+
         if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
+
         if (s.state.tacit.draggingRig) queue = [...queue,
           "RELOAD:rig",
           ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]]
+
         return queue;
 
       }}).eval();

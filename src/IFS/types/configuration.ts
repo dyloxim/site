@@ -37,6 +37,9 @@ export interface I_displayConfig {
       showLast: boolean,
       persist: boolean,
     }
+  },
+  tacit: {
+    isMobile: boolean
   }
 }
 
