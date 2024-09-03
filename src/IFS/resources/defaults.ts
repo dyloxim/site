@@ -29,7 +29,8 @@ export const defaultState: I_sessionState = {
     interactionCandidate: null,
     interactionPrimed: false,
     controlPointOffset: null,
-    touchDist: 0
+    touchDist: 0,
+    displayRescaleInitialRadius: null,
   },
 
   selected: [],

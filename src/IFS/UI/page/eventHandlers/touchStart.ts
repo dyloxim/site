@@ -15,6 +15,7 @@ const setupTouchStartHandler: EventResponseSetup = (canvas, session, Ctx) => {
         let diffY = e.touches[0].clientY - e.touches[1].clientY;
         let touchDist = Math.sqrt(diffX * diffX + diffY * diffY);
         s.state.mouse.touchDist = touchDist;
+        s.state.mouse.displayRescaleInitialRadius! = s.settings.display.domain.displayRadius;
         return s;
 
       }}).eval();

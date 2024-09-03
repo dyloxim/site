@@ -40,6 +40,7 @@ export interface I_sessionState {
     down: number[] | null,
 
 
+
     // if action is being decided (mouse is down but time has not yet elapsed
     //   to determine whether to simply update the active selection, or whether to begin
     //   a drag interaction) then set this property to the time at which the ambiguity was
@@ -55,9 +56,11 @@ export interface I_sessionState {
 
     // vector describing offset between mousedown location and selection candidate control
     //   point location
-    controlPointOffset: number[] | null
+    controlPointOffset: number[] | null,
 
+    // variables used when rescaling display with touch display pinch gesture
     touchDist: number,
+    displayRescaleInitialRadius: number | null
 
   },
 

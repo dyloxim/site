@@ -16,8 +16,8 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
         let diffY = e.touches[0].clientY - e.touches[1].clientY;
         let newTouchDist = Math.sqrt(diffX * diffX + diffY * diffY);
         let touchDiff = newTouchDist - s.state.mouse.touchDist
-        let oldRad = s.settings.display.domain.displayRadius;
-        let newDisplayRadius = (oldRad - ((touchDiff/3000) * oldRad));
+        let oldRad = s.state.mouse.displayRescaleInitialRadius!;
+        let newDisplayRadius = (oldRad - ((touchDiff/300) * oldRad));
         s.state.inputSelected = null;
         s.settings.display.domain.displayRadius = newDisplayRadius;
         return s;
