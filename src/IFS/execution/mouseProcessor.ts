@@ -24,7 +24,7 @@ export default class MouseProcessor {
 
       if (app.session.state.mouse.down) {
 
-        MouseProcessor.beginDragInteraction(app);
+        if (app.session.state.mouse.interactionPrimed) MouseProcessor.beginFSMutation(app);
 
       } else {
 
@@ -64,18 +64,22 @@ export default class MouseProcessor {
 
     MouseProcessor.processProximities(app);
 
+
     app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.actionUndecided = Date.now();
       s.state.mouse.controlPointOffset = Util.getControlPointOffset(app)
-
-      if (s.state.mouse.controlPointOffset != null) {
+      if (app.session.state.mouse.controlPointOffset != null) {
         s.state.mouse.interactionPrimed = true;
       }
 
       return s;
 
     }}).eval();
+
+    if (app.session.state.mouse.controlPointOffset == null) {
+      MouseProcessor.beginRigDragInteraction(app);
+    }
 
   }
 
@@ -114,34 +118,32 @@ export default class MouseProcessor {
 
   }
 
-  static beginDragInteraction: AppStateProcessor = app => {
+  static beginRigDragInteraction: AppStateProcessor = app => {
 
-    if (app.session.state.mouse.interactionPrimed) {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
-      app.session = new SessionMutation({ using: app.session, do: s => {
+      let initialDragPos = app.session.settings.display.domain.origin;
+      s.state.tacit.draggingRig = initialDragPos;
 
-        s.state.tacit.mutatingFS = true;
-        s.state.selected = [s.state.mouse.interactionCandidate!.id[0]]
-        return s;
+      return s;
 
-      }, queue: _ => [
+    }}).eval();
 
-        "REVIEW:controlPoints",
-        ["ERASE", ["hoverOverlay"]]
+  }
 
-      ]}).eval();
+  static beginFSMutation: AppStateProcessor = app => {
+    app.session = new SessionMutation({ using: app.session, do: s => {
 
+      s.state.tacit.mutatingFS = true;
+      s.state.selected = [s.state.mouse.interactionCandidate!.id[0]]
+      return s;
 
-    } else {
+    }, queue: _ => [
 
-      app.session = new SessionMutation({ using: app.session, do: s => {
+      "REVIEW:controlPoints",
+      ["ERASE", ["hoverOverlay"]]
 
-        let initialDragPos = app.session.settings.display.domain.origin;
-        s.state.tacit.draggingRig = initialDragPos;
-
-        return s;}, queue: _ => []}).eval();
-
-    }
+    ]}).eval();
   }
 
 
