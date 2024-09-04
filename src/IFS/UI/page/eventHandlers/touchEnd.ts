@@ -9,10 +9,13 @@ const setupTouchEndHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
     new SessionMutation({ using: session, do: s => {
 
+      if (s.state.tacit.mutatingFS) Ctx.setCtx({...Ctx.ctxRef.current, FS: s.settings.FS.transforms });
       s.state.mouse.down = null;
       s.state.tacit.draggingRig = null;
       s.state.tacit.mutatingFS = false;
       s.state.mouse.interactionPrimed = false;
+      s.state.inputSelected = null;
+
       return s;
 
     }}).eval();
