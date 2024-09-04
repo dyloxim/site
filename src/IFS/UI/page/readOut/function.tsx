@@ -49,7 +49,7 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
 
       }, queue: _ => [
 
-        ["ERASE", ["figure", "pathOverlay"]],
+        ["ERASE", ["figure", "pathOverlay", "selectionOverlay"]],
         "REVIEW:controlPoints",
         "RELOAD:FS",
 
