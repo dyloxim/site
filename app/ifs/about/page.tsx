@@ -33,7 +33,7 @@ const About = () => {
           </div>
 
           <p>
-            Works best on desktop. Click the background to show the control points and change the image by dragging these points around. Scale the display area with the pinch-to-zoom gesture or with CTRL-[mouse wheel].
+            Tap the background to show the control points, and change the image by dragging these points around. Scale the display area with the pinch-to-zoom gesture or with CTRL-[mouse wheel], and move around the image by dragging the background.
           </p>
 
           <br/>
