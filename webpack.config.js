@@ -24,7 +24,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'public/webpack/'),
     globalObject: 'this',
-    filename: 'IFS.bundle.js',
+    filename: 'ifs.bundle.js',
     library: {
       type: 'umd'
     },

@@ -19,7 +19,7 @@ export default function IFSPage() {
       <div style={{padding: "1em"}}>
         <Link href="IFS/about">🖇 About</Link>
       </div>
-      <Script src="/webpack/IFS.bundle.js"/>
+      <Script src="/webpack/ifs.bundle.js"/>
     </>
   )
 }
