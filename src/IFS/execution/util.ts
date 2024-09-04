@@ -5,7 +5,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 import { default as Mat } from "@IFS/math/linearAlgebra/lin2x2"
 
 import { I_displayConfig, I_functionSystem, I_settings } from "@IFS/types/configuration";
-import { I_applicationState, I_sessionState } from "@IFS/types/state";
+import { I_applicationState, I_session, I_sessionState } from "@IFS/types/state";
 import { I_affine, I_transform } from "@IFS/types/mathematical";
 
 import * as Globals from "@IFS/resources/globalConstants"
@@ -53,12 +53,7 @@ export default class Util {
 
   }
 
-  
 
-
-
-
-  
 
 
   
@@ -90,7 +85,7 @@ export default class Util {
 
   static getSelectionRadius = (settings: I_settings): number => {
 
-    return settings.display.domain.displayRadius * Globals.selectionRadiusDisplayRatio
+    return Globals.selectionRadiusDisplayRatio
       * (
         settings.display.tacit.isMobile ? 3 : 1
       )

@@ -53,6 +53,8 @@ export default class App {
 
   start = (): void => {
 
+    this.state.animation.frameTimes.previous = document.timeline.currentTime as number;
+
     Delegator.doFirstDraw({
       session: { settings: this.settings, state: this.state },
       FS: this.FS,

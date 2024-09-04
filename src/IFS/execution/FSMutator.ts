@@ -92,23 +92,24 @@ export default class FSMutator {
     let newLinear = app.FS.controlPoints[i].basis;
     newLinear[j] = Vec.minus(newPos, app.FS.controlPoints[i].origin);
 
+    let newTransforms = app.session.settings.FS.transforms;
+
+    newTransforms[i] = {
+      linear: newLinear,
+      translation: app.FS.controlPoints[i].origin
+    } 
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
       s.state.mouse.interactionCandidate!.pos = newPos;
-      s.settings.FS.transforms[i] = {
-
-        linear: newLinear,
-        translation: app.FS.controlPoints[i].origin
-
-      }; return s;
+      s.settings.FS.transforms = newTransforms;
+      return s;
 
     }, queue: _ => ["RELOAD:FS"]
 
     }).eval()
 
   }
-
 
 
 }

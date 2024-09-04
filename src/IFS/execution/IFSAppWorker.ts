@@ -28,9 +28,9 @@ export default class IFSAppWorker {
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
-        s.state.program.lastTurn = lastTurn;
-        s.state.program.thisTurn = { choice: choice, position: newPosition };
-        return s;
+      s.state.program.lastTurn = lastTurn;
+      s.state.program.thisTurn = { choice: choice, position: newPosition };
+      return s;
 
     }}).eval();
 
