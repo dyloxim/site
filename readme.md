@@ -1,3 +1,5 @@
 # dyloxim.com
 
-Personal site currently hosting a single application: <a href="dyloxim.com/IFS">IFS viewer</a>.
+A site built with nextjs currently serving a single resource: 
+
+* <a href="dyloxim.com/IFS">IFS image generation tool</a>
