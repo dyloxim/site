@@ -40,7 +40,7 @@ const About = () => {
           <h3>
             Code
           </h3>
-          <p><a href="https://github.com/dyloxim/site/tree/main/src/IFS">View source</a></p>
+          <p><a href="https://github.com/dyloxim/site">View source</a></p>
 
           <br/>
           <h3>Related resources</h3>
