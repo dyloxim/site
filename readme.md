@@ -1,5 +1,5 @@
 # dyloxim.com
 
-A site built with nextjs currently serving a single resource: 
+Nextjs site serving the following resources: 
 
-* <a href="dyloxim.com/IFS">IFS image generation tool</a>
+* IFS image generation tool — <a href="dyloxim.com/IFS">Visit Page</a> · <a href="https://github.com/dyloxim/site/tree/main/src/IFS">View Source</a>
