@@ -14,12 +14,13 @@ const Controls = ({session}: {session: I_session}) => {
       paddingLeft: ".5em",
       marginTop: "-.2em",
       gap: ".5em",
+      marginBotton: "5em",
     }}>
 
       <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginBottom: "-.5em"}}>
         <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <StartStop session={session}/>&nbsp;
-          <PresetSelect session={session}/>&nbsp;&nbsp;
+          <PresetSelect session={session}/>&nbsp;
         </div>
         <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <PathOverlayOption session={session}/>&nbsp;

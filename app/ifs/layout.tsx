@@ -1,7 +1,5 @@
 import Script from 'next/script'
 import type { Metadata } from "next";
-import Header from 'app/_coreUI/header';
-import Footer from 'app/_coreUI/footer';
 import { usePathname } from 'next/navigation'
 
 export const metadata: Metadata = {
@@ -9,14 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode;}>) {
-  return (
-    <>
-
-      
-      <Header/>
-      {children}
-      <Footer/>
-
-    </>
-  );
+  return (<> {children} </>);
 }
