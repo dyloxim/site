@@ -14,7 +14,7 @@ const Controls = ({session}: {session: I_session}) => {
       paddingLeft: ".5em",
       marginTop: "-.2em",
       gap: ".5em",
-      marginBotton: "5em",
+      marginBottom: "1.5em",
     }}>
 
       <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", marginBottom: "-.5em"}}>
