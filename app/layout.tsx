@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import 'normalize.css'
-import './reset.css'
+import 'normalize.css';
+import './reset.css';
 import './global.css';
 import Header from 'app/_coreUI/header';
 import Footer from 'app/_coreUI/footer';

@@ -17,7 +17,7 @@ export default function IFSPage() {
       <App preset={preset} />
       <hr style={{backgroundColor: "black", borderColor: "#333"}}/>
       <div style={{padding: "1em"}}>
-        <Link href="IFS/about">🖇 About</Link>
+        <Link href="ifs/about">🖇 About</Link>
       </div>
       <Script src="/webpack/ifs.bundle.js"/>
     </>
