@@ -8,10 +8,6 @@ export default function IFSUIButton({spec, session}: {spec: I_checkBox, session:
 
   const [val, setVal] = useState<boolean>(spec.initial);
 
-  useEffect(() => {
-    setVal(session.state.options.color);
-  }, [session]);
-
   return (
     <span style={{ whiteSpace: "nowrap", display: "flex", alignItems: "center"}}>
 

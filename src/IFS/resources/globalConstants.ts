@@ -146,10 +146,11 @@ export const decisionTimeoutThreshold = 180;
 
 export const defaultPreset = {
   display: defaultDisplay,
-  FS: FunctionSystems.heighwayDragon
+  FS: FunctionSystems.heighwayDragon,
+  getRandom: () => 0
 }
 
 export const defaultInitialSession: I_session = {
   settings: defaultPreset,
-  state: AppEngine.getInitialState(defaultPreset) 
+  state: AppEngine.getInitialState(defaultPreset),
 }

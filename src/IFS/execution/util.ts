@@ -2,11 +2,9 @@ import { default as Color } from "@IFS/display/util/color";
 import { default as Display } from "@IFS/display/displayApperatus";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation";
-import { default as Mat } from "@IFS/math/linearAlgebra/lin2x2"
 
-import { I_displayConfig, I_functionSystem, I_settings } from "@IFS/types/configuration";
-import { I_applicationState, I_session, I_sessionState } from "@IFS/types/state";
-import { I_affine, I_transform } from "@IFS/types/mathematical";
+import { I_displayConfig, I_settings } from "@IFS/types/configuration";
+import { I_applicationState, I_sessionState } from "@IFS/types/state";
 
 import * as Globals from "@IFS/resources/globalConstants"
 import { I_selectableEntityMetaData, SelectableEntityCategory } from "@IFS/types/interaction";
@@ -17,12 +15,10 @@ export default class Util {
   // IFS process related
   // .............................................................................
 
-
-
   // calculations ---------------------------------------------------------------
 
 
-  static getWeightedRandomChoice = (weights: number[]): number => {
+  static getWeightedRandomChoice = (weights: number[], randomFn: () => number): number => {
 
     let probabilitySum = weights[0]
     let regions = weights.slice();
@@ -30,7 +26,7 @@ export default class Util {
       probabilitySum += weights[i]
       regions[i] = probabilitySum;
     }
-    let dart = Math.random()
+    let dart = randomFn()
     let choice = 0
     for (let i = 0; i < weights.length; i++) {
       if (regions[i] > dart) { choice = i; break; }
@@ -41,6 +37,24 @@ export default class Util {
 
 
   // convenience ----------------------------------------------------------------
+
+  static getRandomSeed = (): number => {
+    return (Math.random()*2**32)>>>0;
+  }
+
+  static xoshiro128ss = (a: number, b: number, c: number, d: number): () => number => {
+    return function() {
+      let t = b << 9, r = b * 5;
+      r = (r << 7 | r >>> 25) * 9;
+      c ^= a;
+      d ^= b;
+      b ^= c;
+      a ^= d;
+      c ^= t;
+      d = d << 11 | d >>> 21;
+      return (r >>> 0) / 4294967296;
+    }
+  }
   
 
   static getThisTurnColor = (settings: I_settings, state: I_sessionState): Color => {

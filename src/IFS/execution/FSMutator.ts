@@ -6,6 +6,7 @@ import { I_applicationState } from "@IFS/types/state";
 
 import * as Actions from "@IFS/resources/tickets"
 import Util from "./util";
+import IFSAppWorker from "./IFSAppWorker";
 
 export default class FSMutator {
 
@@ -67,7 +68,8 @@ export default class FSMutator {
         linear:  app.FS.controlPoints[i].basis,
         translation: newPos
       };
-      
+
+      IFSAppWorker.resetCurrentRandomSeed(s)
       return s;
 
     }, queue: _ => ["RELOAD:FS"]
@@ -103,6 +105,7 @@ export default class FSMutator {
 
       s.state.mouse.interactionCandidate!.pos = newPos;
       s.settings.FS.transforms = newTransforms;
+      IFSAppWorker.resetCurrentRandomSeed(s)
       return s;
 
     }, queue: _ => ["RELOAD:FS"]

@@ -5,7 +5,7 @@ import deviceIsMobileOrTablet from "./deviceIsMobileOrTablet";
 
 const setupApp: SetupFn = (inputs) => {
   if (!inputs.container.firstChild) {
-    inputs.session.settings = inputs.preset;
+    inputs.session.settings.getRandom = inputs.preset.getRandom;
     inputs.session.settings.display.rendering.devicePixelRatio = document.defaultView!.devicePixelRatio;
     inputs.session.state = AppEngine.getInitialState(inputs.preset);
     inputs.container.style.width = `${document.body.clientWidth}px`;

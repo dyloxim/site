@@ -9,7 +9,8 @@ export default function IFSPage() {
 
   let preset = {
     display: defaultDisplay,
-    FS: FunctionSystems.colorSpace
+    FS: FunctionSystems.colorSpace,
+    getRandom: () => 0
   }
 
   return (

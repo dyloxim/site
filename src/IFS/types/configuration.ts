@@ -46,4 +46,5 @@ export interface I_displayConfig {
 export interface I_settings {
   FS: I_functionSystem,
   display: I_displayConfig,
+  getRandom: () => number,
 }

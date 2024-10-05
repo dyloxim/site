@@ -11,7 +11,9 @@ export const defaultState: I_sessionState = {
     lastTurn: {
       position: [0,0],
       choice: -1,
-    }
+    },
+    randomSeed: (Math.random()*2**32)>>>0
+
   },
 
   animation: {
@@ -43,6 +45,7 @@ export const defaultState: I_sessionState = {
     controlPointsShown: false,
     path: "None",
     color: true,
+    trace: false,
   },
 
   selectableEntities: {

@@ -11,6 +11,7 @@ import { I_affine } from "@IFS/types/mathematical"
 
 import { default as Util } from "@IFS/execution/util"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
+import { I_session } from "@IFS/types/state";
 
 
 export default class IFSAppWorker {
@@ -22,7 +23,7 @@ export default class IFSAppWorker {
     let lastTurn = app.session.state.program.thisTurn
 
     // choose new function and get position of current point under transformation
-    let choice = Util.getWeightedRandomChoice(app.FS.weights)
+    let choice = Util.getWeightedRandomChoice(app.FS.weights, app.session.settings.getRandom)
     let newPosition = app.FS.transforms[choice]
       .apply(app.session.state.program.thisTurn.position)
 
@@ -39,12 +40,26 @@ export default class IFSAppWorker {
   static maybeMarkLastPath: AppStateProcessor = (app): void => {
     if (app.session.state.options.path !== "None") {
       app.display.draftLine(
-        app.display?.imageComposer.layers.pathOverlay,
+        app.display?.imageComposer.layers[app.session.state.options.trace ? "figure" : "pathOverlay"],
         app.session.state.program.thisTurn.position,
         app.session.state.program.lastTurn.position,
         Util.getThisTurnColor(app.session.settings, app.session.state)
       );
     }
+  }
+
+
+  static setNewRandomSeed: AppStateProcessor = (app): void => {
+    let seed = Util.getRandomSeed();
+    app.session.settings.getRandom = Util.xoshiro128ss(seed, seed, seed, seed)
+    app.session.state.program.randomSeed = seed;
+  }
+
+
+  static resetCurrentRandomSeed = (s: I_session): void => {
+
+    let seed = s.state.program.randomSeed;
+    s.settings.getRandom = Util.xoshiro128ss(seed, seed, seed, seed);
   }
 
   static calibrateDisplay: TicketProcessor = (app): void => {
@@ -79,7 +94,11 @@ export default class IFSAppWorker {
 
   static processLayerTicket: TicketProcessor = (app, ticket) => {
     (ticket as BasicLayerTicket).consumer.forEach(layer => {
-      app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
+      if (layer == "figure" || layer == "pathOverlay") {
+        if (app.session.state.options.trace == false) {
+          app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
+        }
+      } else app.display.imageComposer.layers[(layer as DisplayLayer)].clear()
     });
   }
 

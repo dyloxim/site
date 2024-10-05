@@ -48,7 +48,7 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
 
         if (s.state.tacit.draggingRig) queue = [...queue,
           "RELOAD:rig",
-          ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay"]]]
+          ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay"]]]
 
         return queue;
 

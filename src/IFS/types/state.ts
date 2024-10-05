@@ -19,7 +19,8 @@ export interface I_sessionState {
     lastTurn: {
       position: number[],
       choice: number,
-    }
+    },
+    randomSeed: number
   },
 
   animation: {
@@ -75,6 +76,7 @@ export interface I_sessionState {
     animationRate: number,
     controlPointsShown: boolean,
     preset: NamedFSPreset | "custom",
+    trace: boolean
   },
 
   tacit: {

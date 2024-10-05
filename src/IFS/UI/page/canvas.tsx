@@ -12,7 +12,8 @@ const Canvas = ({session, app, preset}: {
   app: AppEngine,
   preset: {
     display: I_displayConfig,
-    FS: I_functionSystem
+    FS: I_functionSystem,
+    getRandom: () => number
   }
 }) => {
 

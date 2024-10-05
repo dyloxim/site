@@ -66,6 +66,7 @@ export type SetupInputs = {
   container: HTMLDivElement,
   session: I_session, 
   preset: {
+    getRandom: () => number;
     display: I_displayConfig,
     FS: I_functionSystem
   },

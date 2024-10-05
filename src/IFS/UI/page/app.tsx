@@ -17,6 +17,7 @@ export default function App({ preset }: {
   preset: {
     display: I_displayConfig,
     FS: I_functionSystem
+    getRandom: () => number,
   }
 }) {
 
