@@ -1,6 +1,7 @@
 import { default as setupMouseMoveHandler } from './mouseMove'
 import { default as setupMouseDownHandler } from './mouseDown'
 import { default as setupMouseUpHandler } from './mouseUp'
+import { default as setupMouseOutHandler } from './mouseOut'
 import { default as setupWheelHandler } from './wheel'
 
 import { default as setupTouchStartHandler } from './touchStart'
@@ -12,6 +13,7 @@ const handlers = [
   setupMouseMoveHandler,
   setupMouseDownHandler,
   setupMouseUpHandler,
+  setupMouseOutHandler,
   setupWheelHandler,
   setupTouchStartHandler,
   setupTouchEndHandler,

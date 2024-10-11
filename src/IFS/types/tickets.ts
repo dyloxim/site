@@ -35,6 +35,7 @@ export type LayerActionKey = "ERASE" | "DRAW"
 type HandleActionObject = 
       "mouseMoveEvent"
       | "mouseDownEvent"
+      | "mouseOutEvent"
 
 
 type ReloadActionObject =

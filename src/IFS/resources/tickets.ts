@@ -42,6 +42,13 @@ export const Actions: ActionRegistry = {
     processor: MouseProcessor.handleMouseDownEvent,
     log: false
   },
+
+  "HANDLE:mouseOutEvent": {
+    instructionGroup: "mouse",
+    instruction: "Handle mouse down event",
+    processor: MouseProcessor.handleOutEvent,
+    log: false
+  },
   
   "RELOAD:rig": {
       instructionGroup: "rig",

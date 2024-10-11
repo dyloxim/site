@@ -26,7 +26,6 @@ const Controls = ({session}: {session: I_session}) => {
         <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <PathOverlayOption session={session}/>&nbsp;
           <ColorOption session={session}/>&nbsp;
-          <TraceOption session={session}/>&nbsp;
         </div>
       </div>
       <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", gap: ".5em"}}>

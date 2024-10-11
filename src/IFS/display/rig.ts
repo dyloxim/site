@@ -120,11 +120,19 @@ export default class Rig {
   };
 
   projectLength = (length: number): number => {
-    return Math.round(length * this.pixPerUnit);
+    return length * this.pixPerUnit;
   }
 
   reverseProject = (p: number[]): number[] => {
     return Vec.add(Vec.scale([p[0], -p[1]], 1/this.pixPerUnit), this.domain.topLeft);
+  }
+
+  reverseProjectLength = (length: number): number => {
+    return length * (1/this.pixPerUnit);
+  }
+
+  roundToNearestWholePixelLength = (length: number): number => {
+    return Math.max(Math.round(length * this.pixPerUnit),1) * (1/this.pixPerUnit);
   }
 
 }

@@ -107,16 +107,22 @@ export default class DisplayApperatus {
     print: PrintLayer,
     centre: number[],
     taxiRadius: number,
-    vertSize: number,
+    fill: boolean,
     color: Color) => {
-    let verts = [
-      Vec.add(centre, [-taxiRadius, -taxiRadius]),
-      Vec.add(centre, [-taxiRadius, +taxiRadius]),
-      Vec.add(centre, [+taxiRadius, +taxiRadius]),
-      Vec.add(centre, [+taxiRadius, -taxiRadius]),
-    ]
-    this.draftPolygon(print, verts, vertSize, color);
-  }
+
+      taxiRadius = this.rig.roundToNearestWholePixelLength(taxiRadius)
+
+      let [p,q,r,s] = [
+        Vec.add(centre, [-taxiRadius, -taxiRadius]),
+        Vec.add(centre, [-taxiRadius, +taxiRadius]),
+        Vec.add(centre, [+taxiRadius, +taxiRadius]),
+        Vec.add(centre, [+taxiRadius, -taxiRadius]),
+      ]
+
+      if (fill) this.draftSolidParallelogram(print, p, q, s, color);
+      else this.draftPolygon(print, [p,q,r,s], null, color);
+     
+    }
 
 
 
@@ -127,57 +133,48 @@ export default class DisplayApperatus {
   draftHoverCue = (p: number[], mainColor: Color, targetType: SelectableEntityCategory) => {
 
     let layer = this.imageComposer.layers.hoverOverlay;
-    let surroundColor = Color.multiply(this.config.color.base, .6);
-    let vertSize = Util.getVertRadius(this.config);
+    let outer = new Color(180, 180, 180, 150);
+    let inner =  Color.multiplySolid(mainColor, .15);
+    let vertSize = this.rig.roundToNearestWholePixelLength(
+      (targetType == "primaryControlPoints")
+        ? Util.getVertRadius(this.config)
+        : .7 * Util.getVertRadius(this.config)
+    );
 
-    switch (targetType) {
+    let border1 = this.rig.roundToNearestWholePixelLength(
+        Math.max(
+          vertSize * 1.1,
+          vertSize + 2 * (1/this.rig.pixPerUnit),
+        )
+      );
 
-      case "primaryControlPoints":
-        this.draftCircle(layer, p, vertSize * 2, true, surroundColor)
-        this.draftCircle(layer, p, vertSize, true, mainColor)
-        break;
-
-      case "secondaryControlPoints":
-        this.draftCircle(layer, p, vertSize * 1.7, true, surroundColor)
-        this.draftCircle(layer, p, vertSize * .7, true, mainColor)
-        break;
-
-    }
-
-  }
-
-  draftPrimaryControlPoint = (p: number[], color: Color, highlight: boolean) => {
-
-    let layer = (_ => {
-      if (highlight) return this.imageComposer.layers.selectionOverlay;
-      else return this.imageComposer.layers.controlPointsOverlay;
-    })()
-
-    let surroundColor = Color.multiply(this.config.color.base, highlight? .5 : .2);
-    let vertSize = Util.getVertRadius(this.config);
-
-    this.draftCircle(layer, p, vertSize * 2, true, surroundColor)
-    this.draftCircle(layer, p, vertSize, true, color)
+    this.draftCentreSquare(layer, p, border1, true, outer)
+    this.draftCentreSquare(layer, p, vertSize, true, inner)
 
   }
 
 
-  draftSecondaryControlPoint = (p: number[], color: Color) => {
+  draftPrimaryControlPoint = (layer: PrintLayer, p: number[], active: boolean, color: Color) => {
 
-    let layer = this.imageComposer.layers.selectionOverlay;
+    let grey = new Color(51, 51, 51, 120);
 
-    let surroundColor = Color.multiply(this.config.color.base, .2);
     let vertSize = Util.getVertRadius(this.config);
+    vertSize = this.rig.roundToNearestWholePixelLength(vertSize);
 
-    this.draftCircle(layer, p, vertSize * 1.4, true, surroundColor)
-    this.draftCircle(layer, p, vertSize * .5, true, color)
+    let border1 = this.rig.roundToNearestWholePixelLength(
+      Math.max(
+        vertSize * 1.1,
+        vertSize + 2 * (1/this.rig.pixPerUnit)
+      )
+    )
 
+    this.draftCentreSquare(layer, p, border1, true, grey)
+    this.draftCentreSquare(layer, p, vertSize, true, color)
   }
-
 
   draftSelectionOverlay = (K: { origin: number[], basis: number[][] }, color: Color) => {
 
-    let layer = this.imageComposer.layers.selectionOverlay
+    let selectionLayer = this.imageComposer.layers.selectionOverlay;
     let bgFillColor = Color.multiply(this.config.color.base, .12);
 
     let corners = [
@@ -187,16 +184,29 @@ export default class DisplayApperatus {
       Vec.sum(K.origin, K.basis[0], K.basis[1])
     ]
 
-    this.draftSolidParallelogram(layer, corners[0], corners[1], corners[2], bgFillColor);
+    // the translucent parolellogram
+    this.draftSolidParallelogram(selectionLayer, corners[0], corners[1], corners[2], bgFillColor);
+
+    let vertSize = Util.getVertRadius(this.config);
+    let smallVertSize = this.rig.roundToNearestWholePixelLength(vertSize * .7)
+    let smallVertBorder = this.rig.roundToNearestWholePixelLength(Math.max(
+      smallVertSize * 1.1,
+      smallVertSize + 2 * (1/this.rig.pixPerUnit)
+    ));
+    vertSize = this.rig.roundToNearestWholePixelLength(vertSize);
 
     [corners[1], corners[2]].forEach((p, i) => {
-        let color = i == 0 ? Colors.Red : Colors.Green;
-        this.draftLine(layer, corners[0], p, color);
-      this.draftLine(layer, p, corners[3], Color.multiply(color,.3));
-        this.draftSecondaryControlPoint(p, color);
-      });
+      this.draftCentreSquare(selectionLayer, p, smallVertBorder, true, bgFillColor)
+    });
+    
+    [corners[1], corners[2]].forEach((p, i) => {
+      let color = i == 0 ? Colors.Red : Colors.Green;
+      this.draftLine(selectionLayer, corners[0], p, color);
+      this.draftCentreSquare(selectionLayer, p, smallVertSize, true, color)
+    });
 
-    this.draftPrimaryControlPoint(corners[0], color, true);
+
+    this.draftCentreSquare(selectionLayer, corners[0], vertSize, true, color)
     
   }
 

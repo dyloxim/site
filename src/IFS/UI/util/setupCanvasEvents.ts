@@ -9,7 +9,7 @@ const setupCanvasEvents = (
     setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
   }
 ) => {
-  let canvas = document.getElementById("hoverOverlayCanvas")! as HTMLCanvasElement;
+  let canvas = (document.getElementById("displayContainer")!.lastChild as HTMLCanvasElement);
   EventHandlers.forEach(handlerInit => { handlerInit(canvas, session, Ctx) });
 }
 

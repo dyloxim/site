@@ -6,6 +6,7 @@ import { default as SessionMutation } from "@IFS/execution/sessionMutation";
 import { default as Color } from "@IFS/display/util/color";
 import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
 import { default as Util } from "@IFS/execution/util";
+import * as Colors from "@IFS/resources/colors"
 
 import { QueueItem } from "@IFS/types/tickets";
 
@@ -47,6 +48,19 @@ export default class MouseProcessor {
 
   static handleMoveEvent: AppStateProcessor = app => {
 
+    let layer = app.display.imageComposer.layers.mouseSpotlightOverlay;
+    layer.clear()
+
+    if (!app.session.state.mouse.interactionCandidate) {
+
+      let vertSize = 1.8 * Util.getVertRadius(app.session.settings.display);
+      let grey = new Color(15, 15, 15, 100)
+      let pos = app.display.rig.reverseProject(app.session.state.mouse.pos);
+
+      app.display.draftCircle(layer, pos, vertSize, true, grey)
+      layer.commit()
+    }
+
     if (app.session.state.options.controlPointsShown) {
 
       if (app.session.state.tacit.mutatingFS) FSMutator.mutateFS(app);
@@ -56,6 +70,9 @@ export default class MouseProcessor {
     }
 
     if (app.session.state.tacit.draggingRig) MouseProcessor.translateRig(app);
+
+    
+    
 
   }
 
@@ -81,6 +98,11 @@ export default class MouseProcessor {
       MouseProcessor.beginRigDragInteraction(app);
     }
 
+  }
+
+  static handleOutEvent: AppStateProcessor = app => {
+    let layer = app.display.imageComposer.layers.mouseSpotlightOverlay;
+    layer.clear()
   }
 
 
@@ -280,7 +302,13 @@ export default class MouseProcessor {
 
     if (target !== null) {
 
-      let color = Color.multiply(Util.getTargetColor(app, target), .8);
+      let color: Color;
+      if (target.type == "primaryControlPoints") {
+        color = Color.multiply(Util.getTargetColor(app, target), .8);
+      } else {
+        color = target.id[1] == 0 ? Colors.Red : Colors.Green;
+      }
+      
 
       app.display.draftHoverCue(target.pos, color, target.type);
       app.display.imageComposer.layers.hoverOverlay.commit()

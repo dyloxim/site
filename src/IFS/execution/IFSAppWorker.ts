@@ -202,7 +202,8 @@ export default class IFSAppWorker {
 
     app.FS.controlPoints.map(K => K.origin).forEach((p, i) => {
       let color = app.session.settings.display.color.palette.colors[i]
-      app.display.draftPrimaryControlPoint(p, color, false);
+      let layer = app.display.imageComposer.layers.controlPointsOverlay;
+      app.display.draftPrimaryControlPoint(layer, p, false, color);
     })
 
     app.display.updateControlPointsOverlay();
