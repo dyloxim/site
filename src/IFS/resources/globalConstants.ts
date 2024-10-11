@@ -27,14 +27,14 @@ export const DefinedDisplayLayers = [
  */
 
 export const NamedFSPresets = [
-  "barnsleyFern",
-  "sierpinskiGasket",
-  "colorSpace",
-  "sierpinskiPentagon",
-  "kochSnowflake",
-  "kochCurve",
-  "binaryTree",
-  "heighwayDragon",
+  "a_heighwayDragon",
+  "b_binaryTree",
+  "b_colorSpace",
+  "b_sierpinskiGasket",
+  "c_barnsleyFern",
+  "c_kochCurve",
+  "d_sierpinskiPentagon",
+  "f_kochSnowflake",
 ] as const;
 
 
@@ -147,7 +147,7 @@ export const decisionTimeoutThreshold = 180;
 
 export const defaultPreset = {
   display: defaultDisplay,
-  FS: FunctionSystems.heighwayDragon,
+  FS: FunctionSystems.a_heighwayDragon,
   getRandom: () => 0
 }
 

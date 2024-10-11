@@ -3,10 +3,79 @@ import { NamedFSPreset } from "@IFS/types/specifications";
 
 export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
 
+  a_heighwayDragon: {
+    key: "heighwayDragon",
+    name: "Heighway Dragon [2]",
+    transforms: [
+      { linear: [[1/2, 1/2],[-1/2, 1/2]] },
+      { linear: [[-1/2, 1/2],[-1/2, -1/2]], translation: [1,0]},
+    ],
+    weights: 'uniform',
+    referenceRegion: {
+      o: [-0.33, -.33],
+      e1: [1.50,0],
+      e2: [0,1.0]
+    },
+    firstPoint: [0, 0]
+  },
   
-  barnsleyFern: {
+
+  b_binaryTree: {
+    key: "binaryTree",
+    name: "Binary Tree [3]",
+    transforms: [
+      { linear: [[0.00, 0.00],[-0.00, 0.455]] },
+      { linear: [[0.42, 0.42],[-0.42, 0.42]], translation: [ 0.0, 0.4]},
+      { linear: [[0.42,-0.42],[ 0.42, 0.42]], translation: [ 0.0, 0.4]},
+    ],
+    weights: [1/5,2/5,2/5],
+    referenceRegion: {
+      o: [-0.49, 0],
+      e1: [0.98,0],
+      e2: [0,0.88]
+    },
+    firstPoint: [0, 0]
+  },
+
+
+  b_colorSpace: {
+    key: "colorSpace",
+    name: "Color Space [3]",
+    transforms: [
+      { linear: [[8/9, 0],[0, 8/9]], translation: [-1, -.6]},
+      { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, .6]},
+      { linear: [[8/9, 0],[0, 8/9]], translation: [ 1, -.6]},
+    ], weights: 'uniform',
+    referenceRegion: {
+      o: [-2,  -1.9],
+      e1: [4,0],
+      e2: [0,4]
+    },
+    firstPoint: [0, 0]
+  },
+
+
+  b_sierpinskiGasket: {
+    key: "sierpinskiGasket",
+    name: "Sierpinski Gasket [3]",
+    transforms: [
+      { linear: [[1/2, 0],[0, 1/2]] },
+      { linear: [[ 1/2, 0],[0,  1/2]], translation: [1/2,0]},
+      { linear: [[ 1/2, 0],[0,  1/2]], translation: [1/4,Math.sqrt(3)/4]},
+    ],
+    weights: 'uniform',
+    referenceRegion: {
+      o: [0, 0],
+      e1: [0.98,0],
+      e2: [0,0.88]
+    },
+    firstPoint: [0, 0]
+  },
+
+
+  c_barnsleyFern: {
     key: "barnsleyFern",
-    name: "Barnsley Fern",
+    name: "Barnsley Fern [4]",
     transforms: [
       { linear: [[0, 0], [0, 0.16]] },
       { linear: [[0.85, -0.04], [0.04, 0.85]], translation: [0, 1.6] },
@@ -23,34 +92,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
   },
 
 
-
-  kochSnowflake: {
-    key: "kochSnowflake",
-    name: "Koch Snowflake",
-    transforms: [
-      { linear: [[1/2, Math.sqrt(3)/6],[-Math.sqrt(3)/6, 1/2]] },
-      { linear: [[1/3, 0],[0, 1/3]], translation: [ 1/Math.sqrt(3), 1/3]},
-      { linear: [[1/3, 0],[0, 1/3]], translation: [ 0, 2/3]},
-      { linear: [[1/3, 0],[0, 1/3]], translation: [-1/Math.sqrt(3), 1/3]},
-      { linear: [[1/3, 0],[0, 1/3]], translation: [-1/Math.sqrt(3),-1/3]},
-      { linear: [[1/3, 0],[0, 1/3]], translation: [ 0,-2/3]},
-      { linear: [[1/3, 0],[0, 1/3]], translation: [ 1/Math.sqrt(3),-1/3]},
-    ],
-    weights: 'uniform',
-    referenceRegion: {
-      o: [-Math.sqrt(3)/2,-1],
-      e1: [Math.sqrt(3),0],
-      e2: [0,2]
-    },
-    firstPoint: [0, 0],
-  },
-
-
-
-
-  kochCurve: {
+  c_kochCurve: {
     key: "kochCurve",
-    name: "Koch Curve",
+    name: "Koch Curve [4]",
     transforms: [
       { linear: [[1/3, 0],[0, 1/3]] },
       { linear: [[1/6, Math.sqrt(3)/6],[-Math.sqrt(3)/6, 1/6]], translation: [1/3, 0] },
@@ -67,66 +111,9 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
   },
 
 
-
-  binaryTree: {
-    key: "binaryTree",
-    name: "Binary Tree",
-    transforms: [
-      { linear: [[0.00, 0.00],[-0.00, 0.455]] },
-      { linear: [[0.42, 0.42],[-0.42, 0.42]], translation: [ 0.0, 0.4]},
-      { linear: [[0.42,-0.42],[ 0.42, 0.42]], translation: [ 0.0, 0.4]},
-    ],
-    weights: [1/5,2/5,2/5],
-    referenceRegion: {
-      o: [-0.49, 0],
-      e1: [0.98,0],
-      e2: [0,0.88]
-    },
-    firstPoint: [0, 0]
-  },
-
-
-
-  heighwayDragon: {
-    key: "heighwayDragon",
-    name: "Heighway Dragon",
-    transforms: [
-      { linear: [[1/2, 1/2],[-1/2, 1/2]] },
-      { linear: [[-1/2, 1/2],[-1/2, -1/2]], translation: [1,0]},
-    ],
-    weights: 'uniform',
-    referenceRegion: {
-      o: [-0.33, -.33],
-      e1: [1.50,0],
-      e2: [0,1.0]
-    },
-    firstPoint: [0, 0]
-  },
-
-
-
-  sierpinskiGasket: {
-    key: "sierpinskiGasket",
-    name: "Sierpinski Gasket",
-    transforms: [
-      { linear: [[1/2, 0],[0, 1/2]] },
-      { linear: [[ 1/2, 0],[0,  1/2]], translation: [1/2,0]},
-      { linear: [[ 1/2, 0],[0,  1/2]], translation: [1/4,Math.sqrt(3)/4]},
-    ],
-    weights: 'uniform',
-    referenceRegion: {
-      o: [0, 0],
-      e1: [0.98,0],
-      e2: [0,0.88]
-    },
-    firstPoint: [0, 0]
-  },
-
-
-
-  sierpinskiPentagon: {
+  d_sierpinskiPentagon: {
     key: "sierpinskiPentagon",
-    name: "Sierpinski Pentagon",
+    name: "Sierpinski Pentagon [5]",
     transforms: [
       { linear: [[0.382, 0],[0, 0.382]] },
       { linear: [[0.382, 0],[0, 0.382]], translation: [0.618,0]},
@@ -144,21 +131,25 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
   },
 
 
-
-  colorSpace: {
-    key: "colorSpace",
-    name: "Color Space",
+  f_kochSnowflake: {
+    key: "kochSnowflake",
+    name: "Koch Snowflake [7]",
     transforms: [
-      { linear: [[8/9, 0],[0, 8/9]], translation: [-1, -.6]},
-      { linear: [[-8/9, 0],[0, -8/9]], translation: [ 0, .6]},
-      { linear: [[8/9, 0],[0, 8/9]], translation: [ 1, -.6]},
-    ], weights: 'uniform',
+      { linear: [[1/2, Math.sqrt(3)/6],[-Math.sqrt(3)/6, 1/2]] },
+      { linear: [[1/3, 0],[0, 1/3]], translation: [ 1/Math.sqrt(3), 1/3]},
+      { linear: [[1/3, 0],[0, 1/3]], translation: [ 0, 2/3]},
+      { linear: [[1/3, 0],[0, 1/3]], translation: [-1/Math.sqrt(3), 1/3]},
+      { linear: [[1/3, 0],[0, 1/3]], translation: [-1/Math.sqrt(3),-1/3]},
+      { linear: [[1/3, 0],[0, 1/3]], translation: [ 0,-2/3]},
+      { linear: [[1/3, 0],[0, 1/3]], translation: [ 1/Math.sqrt(3),-1/3]},
+    ],
+    weights: 'uniform',
     referenceRegion: {
-      o: [-2,  -1.9],
-      e1: [4,0],
-      e2: [0,4]
+      o: [-Math.sqrt(3)/2,-1],
+      e1: [Math.sqrt(3),0],
+      e2: [0,2]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
   },
 
 
