@@ -9,6 +9,7 @@ import { FunctionSystems } from "@IFS/resources/presets/FSPresets";
 import { useContext } from "react";
 import { Ctx } from "@IFS/UI/SharedUIState";
 import { I_session } from "@IFS/types/state";
+import { QueueItem } from "@IFS/types/tickets";
 
 
 const PresetControls = ({session}: {session: I_session}) => {
@@ -32,13 +33,21 @@ const PresetControls = ({session}: {session: I_session}) => {
           setCtx({...ctx, FS: preset.transforms })
           return s;
 
-        }, queue: _ => [
+    }, queue: s => {
 
+      let queue: QueueItem[] = [
           "RELOAD:FS",
           "DO:clearSelection",
           "DO:revertRigToInitial",
+    ]
 
-        ]})}
+
+      if (s.state.options.axis) queue = [...queue, "DO:drawAxis"]
+
+      return queue;
+
+    }})}
+
       }})
 
   }

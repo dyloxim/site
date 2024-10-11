@@ -22,12 +22,17 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
         s.settings.display.domain.displayRadius = newDisplayRadius;
         return s;
 
-      }, queue: _ => [
+      }, queue: s => {
 
-        "RELOAD:rig",
-        ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]]
+        let queue: QueueItem[] = ["HANDLE:mouseMoveEvent"];
+        queue = ["RELOAD:rig",
+          ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay", "hoverOverlay"]]]
 
-      ]}).eval();
+        if (s.state.options.axis) queue = [...queue, "DO:drawAxis"]
+
+        return queue;
+
+      }}).eval();
 
     } else {
 
@@ -49,6 +54,8 @@ const setupTouchMoveHandler: EventResponseSetup = (canvas, session, Ctx) => {
         if (s.state.tacit.draggingRig) queue = [...queue,
           "RELOAD:rig",
           ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay", "selectionOverlay"]]]
+
+        if (s.state.options.axis) queue = [...queue, "DO:drawAxis"]
 
         return queue;
 

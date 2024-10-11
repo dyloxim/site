@@ -2,8 +2,8 @@ import { default as Range } from "@IFS/UI/components/range";
 import { I_rangeInput } from "@IFS/types/UI";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { useEffect, useState } from "react";
-import { useContext } from "react";
 import { I_session } from "@IFS/types/state";
+import { QueueItem } from "@IFS/types/tickets";
 
 const ResolutionControl = ({session}: {session: I_session}) => {
 
@@ -44,12 +44,19 @@ const ResolutionControl = ({session}: {session: I_session}) => {
       s.settings.display.rendering.upscaleFactor = ease(input);
       return s;
 
-    }, queue: _ => [
+    }, queue: s => {
 
+      let queue: QueueItem[] = [
       "REBUILD:rig",
       "REVIEW:controlPoints"
+    ]
 
-    ]})}}
+
+      if (s.state.options.axis) queue = [...queue, "DO:drawAxis"]
+
+      return queue;
+
+    }})}}
 
   return (<> <Range spec={spec} session={session}/> </>)
 

@@ -61,6 +61,7 @@ type DoActionObject =
       | "drawSelectionOverlay"
       | "clearSelection"
       | "calibrateDisplay"
+      | "drawAxis"
 
 
 

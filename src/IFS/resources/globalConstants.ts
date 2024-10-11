@@ -9,10 +9,10 @@ import { I_session } from '@IFS/types/state';
  */
 
 export const DefinedDisplayLayers = [
-  "grid",
   "figure",
   "pathOverlay",
   "mouseSpotlightOverlay",
+  "grid",
   "controlPointsOverlay",
   "selectionOverlay",
   "hoverOverlay",

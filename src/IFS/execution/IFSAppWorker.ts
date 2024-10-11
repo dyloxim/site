@@ -173,11 +173,11 @@ export default class IFSAppWorker {
   static drawAxis: TicketProcessor = app => {
     app.display.clearGrid()
     let layer = app.display.imageComposer.layers.grid
-    let axisColor = Color.multiply(app.session.settings.display.color.base, .3);
+    let axisColor = new Color(80, 80, 80, 200);
     let domain = app.display.rig.domain
     app.display.draftLine(layer, [domain.centre[0]-domain.width/2, 0], [domain.centre[0]+domain.width/2, 0], axisColor)
     app.display.draftLine(layer, [0,domain.centre[1]-domain.height/2], [0, domain.centre[1]+domain.height/2], axisColor)
-
+    app.display.imageComposer.layers.grid.commit();
   }
 
   static loadControlPointsFromSettings: TicketProcessor = app => {

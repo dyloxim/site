@@ -46,6 +46,7 @@ export const defaultState: I_sessionState = {
     path: "None",
     color: true,
     trace: false,
+    axis: false,
   },
 
   selectableEntities: {

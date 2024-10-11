@@ -21,7 +21,9 @@ const setupMouseMoveHandler: EventResponseSetup = (canvas, session, _) => {
       if (s.state.tacit.mutatingFS) queue = [...queue, "DO:showHoverTarget"]
       if (s.state.tacit.draggingRig) queue = [...queue,
         "RELOAD:rig",
-        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay", "pathOverlay"]]]
+        ["ERASE", ["figure", "controlPointsOverlay", "selectionOverlay", "pathOverlay"]]
+      ];
+      if (s.state.options.axis) queue = [...queue, "DO:drawAxis"]
       return queue;
 
     }}).eval();

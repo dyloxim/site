@@ -76,7 +76,8 @@ export interface I_sessionState {
     animationRate: number,
     controlPointsShown: boolean,
     preset: NamedFSPreset | "custom",
-    trace: boolean
+    trace: boolean,
+    axis: boolean
   },
 
   tacit: {

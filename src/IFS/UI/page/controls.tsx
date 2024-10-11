@@ -4,7 +4,7 @@ import { default as SetResolution } from "./controls/setResolution"
 import { default as StartStop } from "./controls/startStop"
 import { default as PathOverlayOption } from "./controls/pathOverlayOption"
 import { default as ColorOption } from "./controls/colorOption"
-import { default as TraceOption } from "./controls/traceOption"
+import { default as AxisOption } from "./controls/axisOption"
 import { I_session } from "@IFS/types/state"
 
 const Controls = ({session}: {session: I_session}) => {
@@ -26,6 +26,7 @@ const Controls = ({session}: {session: I_session}) => {
         <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", padding: ".5em", gap: ".5em"}}>
           <PathOverlayOption session={session}/>&nbsp;
           <ColorOption session={session}/>&nbsp;
+          <AxisOption session={session}/>&nbsp;
         </div>
       </div>
       <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap", gap: ".5em"}}>

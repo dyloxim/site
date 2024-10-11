@@ -114,6 +114,13 @@ export const Actions: ActionRegistry = {
       log: false
     },
 
+  "DO:drawAxis": {
+      instructionGroup: "layerDraw",
+      instruction: "draw axis",
+      processor: IFSAppWorker.drawAxis,
+      log: false
+    },
+
   "DO:revertRigToInitial": {
     instructionGroup: "rig",
     instruction: "revert rig to initial",
