@@ -1,6 +1,7 @@
 import { I_functionSystem } from "@IFS/types/configuration";
 import { NamedFSPreset } from "@IFS/types/specifications";
 import * as Palettes from "@IFS/resources/palettes";
+import * as Colors from "@IFS/resources/colors";
 
 export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
 
@@ -18,7 +19,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,1.0]
     },
     firstPoint: [0, 0],
-    palette: Palettes.BnW
+    colors: {
+      bg: Colors.Grey,
+      base: Colors.White,
+      palette: Palettes.BnW,
+    }
   },
   
 
@@ -37,7 +42,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,0.88]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 
@@ -55,7 +64,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,4]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Primary
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Primary
+    }
   },
 
 
@@ -74,7 +87,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,0.88]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 
@@ -94,7 +111,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,10.05]
     },
     firstPoint: [0,0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 
@@ -114,7 +135,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0, Math.sqrt(3)/6]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 
@@ -135,7 +160,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,1.545]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 
@@ -158,7 +187,11 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,2]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    colors: {
+      bg: Colors.Black,
+      base: Colors.White,
+      palette: Palettes.Pigments
+    }
   },
 
 }

@@ -45,6 +45,8 @@ export default class App {
     );
     this.settings.display.rendering.devicePixelRatio = document.defaultView!.devicePixelRatio;
     this.display = new DisplayApperatus(this.settings.display, displayContainer);
+    this.display.imageComposer.displayContainer
+      .style.backgroundColor = this.settings.FS.colors.bg.toRGBAString();
   }
 
   calibrateDisplay = () => {

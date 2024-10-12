@@ -300,7 +300,7 @@ export default class MouseProcessor {
 
     let i = app.session.state.selected[0];
     let K = app.FS.controlPoints[i]
-    let color = app.session.settings.FS.palette.colors[i];
+    let color = app.session.settings.FS.colors.palette.colors[i];
 
     app.display.draftSelectionOverlay(K, color);
 

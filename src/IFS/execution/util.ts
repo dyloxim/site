@@ -61,7 +61,7 @@ export default class Util {
 
     if (state.options.color) {
 
-      return settings.FS.palette.colors[state.program.thisTurn.choice];
+      return settings.FS.colors.palette.colors[state.program.thisTurn.choice];
 
     } else return settings.display.color.base;
 
@@ -218,7 +218,7 @@ export default class Util {
   
   static getTargetColor(app: I_applicationState, target: I_selectableEntityMetaData): Color {
 
-    return Util.getPalette(app)[target.id[0]];
+    return Util.getPalette(app.session.settings)[target.id[0]];
 
   }
 
@@ -309,9 +309,16 @@ export default class Util {
   // .............................................................................
 
 
-  static getPalette(app: I_applicationState) {
+  static getPalette(settings: I_settings) {
 
-    return app.session.settings.FS.palette.colors;
+    return settings.FS.colors.palette.colors;
+
+  }
+
+  static getColor(settings: I_settings, k: number) {
+
+    let palette = this.getPalette(settings);
+    return palette[k % (palette.length - 1)];
 
   }
 

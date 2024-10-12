@@ -13,7 +13,11 @@ export interface I_functionSystem {
     e2: number[]
   },
   firstPoint: number[],
-  palette: Palette
+  colors: {
+    palette: Palette,
+    base: Color,
+    bg: Color
+  }
 }
 
 export interface I_displayConfig {

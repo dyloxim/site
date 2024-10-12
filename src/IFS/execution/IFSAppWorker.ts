@@ -132,6 +132,8 @@ export default class IFSAppWorker {
   }
 
   static revertRigToInitial: TicketProcessor = (app, _) => {
+    app.display.imageComposer.displayContainer
+      .style.backgroundColor = app.session.settings.FS.colors.bg.toRGBAString();
     app.display.config.domain = Rig.handlePossibleImpliedDisplayRegion(
       app.session.settings.FS.referenceRegion,
       app.session.settings.display.domain, true
@@ -202,7 +204,7 @@ export default class IFSAppWorker {
 
     app.FS.controlPoints.map(K => K.origin).toReversed().forEach((p, i) => {
       let j = app.session.settings.FS.transforms.length - 1 - i;
-      let color = app.session.settings.FS.palette.colors[j]
+      let color = app.session.settings.FS.colors.palette.colors[j]
       let layer = app.display.imageComposer.layers.controlPointsOverlay;
       app.display.draftPrimaryControlPoint(layer, p, false, color);
     })

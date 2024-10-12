@@ -10,6 +10,7 @@ export default class ImageComposer {
   layers: Record<DisplayLayer, PrintLayer>;
   borderRect: Rect;
   printArea: Rect;
+  displayContainer: HTMLDivElement;
 
   getPrintArea = () => this.printArea
 
@@ -17,6 +18,8 @@ export default class ImageComposer {
     config: I_displayConfig,
     displayContainer: HTMLDivElement
   ) {
+
+    this.displayContainer = displayContainer;
 
     // initialize canvases
     this.borderRect = new Rect(

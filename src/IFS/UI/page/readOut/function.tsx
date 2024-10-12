@@ -6,6 +6,7 @@ import { v4 } from "uuid";
 import { I_session } from "@IFS/types/state";
 import Color from "@IFS/display/util/color";
 import styles from "./function.module.css"
+import Util from "@IFS/execution/util";
 
 
 const Function = ({f, k, session}: {f: I_transform, k: number, session: I_session}) => {
@@ -58,7 +59,7 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
     }
   }
 
-  const color = Color.multiply(session.settings.FS.palette.colors[k], .5);
+  const color = Color.multiply(Util.getColor(session.settings, k), .5);
 
   return (
       <div
