@@ -18,7 +18,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,1.0]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Pigments
+    palette: Palettes.BnW
   },
   
 
@@ -37,7 +37,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,0.88]
     },
     firstPoint: [0, 0],
-    palette: Palettes.Primary
+    palette: Palettes.Pigments
   },
 
 
@@ -84,8 +84,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     transforms: [
       { linear: [[0, 0], [0, 0.16]] },
       { linear: [[0.85, -0.04], [0.04, 0.85]], translation: [0, 1.6] },
+      { linear: [[-0.15, 0.26], [0.28, 0.24]], translation: [0, 0.44] },
       { linear: [[0.2, 0.23], [-0.26, 0.22]], translation: [0, 1.6] },
-      { linear: [[-0.15, 0.26], [0.28, 0.24]], translation: [0, 0.44] }
     ],
     weights: [0.01, 0.85, 0.07, 0.07],
     referenceRegion: {

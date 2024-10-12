@@ -16,4 +16,6 @@ export const Primary = new Palette([
   Colors.PastelYellow,
 ])
 
-export const Pigments = new Palette(Colors.PFColors);
+export const BnW = new Palette(Colors.BlackAndWhite);
+
+export const Pigments = new Palette(Colors.Natural);

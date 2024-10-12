@@ -20,10 +20,12 @@ export const PastelYellow = new Color(255, 125, 125, 255);
 
 export const NoColor = new Color(0, 0, 0, 0);
 
-
-export const PFColors = [
+export const BlackAndWhite = [
   new Color(0, 0, 0, 255), // 1 -- black
   new Color(255, 255, 255, 255), // 2 -- white
+]
+
+export const Natural = [
   new Color(226, 32, 40, 255), // 3 -- red
   new Color(48, 137, 72, 255), // 5 -- green
   new Color(18, 107, 180, 255), // 7 -- blue
