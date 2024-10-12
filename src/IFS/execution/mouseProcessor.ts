@@ -51,7 +51,7 @@ export default class MouseProcessor {
     let layer = app.display.imageComposer.layers.mouseSpotlightOverlay;
     layer.clear()
 
-    if (!app.session.state.mouse.interactionCandidate) {
+    if (!app.session.state.mouse.interactionCandidate && !app.session.settings.display.tacit.isMobile) {
 
       let vertSize = 1.8 * Util.getVertRadius(app.session.settings.display);
       let grey = new Color(15, 15, 15, 100)
