@@ -173,7 +173,7 @@ export default class IFSAppWorker {
   static drawAxis: TicketProcessor = app => {
     app.display.clearGrid()
     let layer = app.display.imageComposer.layers.grid
-    let axisColor = new Color(80, 80, 80, 200);
+    let axisColor = new Color(210, 210, 210, 200);
     let domain = app.display.rig.domain
     app.display.draftLine(layer, [domain.centre[0]-domain.width/2, 0], [domain.centre[0]+domain.width/2, 0], axisColor)
     app.display.draftLine(layer, [0,domain.centre[1]-domain.height/2], [0, domain.centre[1]+domain.height/2], axisColor)
@@ -193,15 +193,16 @@ export default class IFSAppWorker {
             isProximal: false
           }
 
-        });
+      });
 
         s.state.selectableEntities.primaryControlPoints = points
         return s;
 
       }}).eval();
 
-    app.FS.controlPoints.map(K => K.origin).forEach((p, i) => {
-      let color = app.session.settings.display.color.palette.colors[i]
+    app.FS.controlPoints.map(K => K.origin).toReversed().forEach((p, i) => {
+      let j = app.session.settings.FS.transforms.length - 1 - i;
+      let color = app.session.settings.FS.palette.colors[j]
       let layer = app.display.imageComposer.layers.controlPointsOverlay;
       app.display.draftPrimaryControlPoint(layer, p, false, color);
     })

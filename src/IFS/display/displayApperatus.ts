@@ -133,7 +133,7 @@ export default class DisplayApperatus {
   draftHoverCue = (p: number[], mainColor: Color, targetType: SelectableEntityCategory) => {
 
     let layer = this.imageComposer.layers.hoverOverlay;
-    let outer = new Color(180, 180, 180, 150);
+    let outer = new Color(210, 210, 210, 150);
     let inner =  Color.multiplySolid(mainColor, .15);
     let vertSize = this.rig.roundToNearestWholePixelLength(
       (targetType == "primaryControlPoints")
@@ -156,7 +156,7 @@ export default class DisplayApperatus {
 
   draftPrimaryControlPoint = (layer: PrintLayer, p: number[], active: boolean, color: Color) => {
 
-    let grey = new Color(51, 51, 51, 120);
+    let grey = new Color(100, 100, 100, 180);
 
     let vertSize = Util.getVertRadius(this.config);
     vertSize = this.rig.roundToNearestWholePixelLength(vertSize);
@@ -175,7 +175,7 @@ export default class DisplayApperatus {
   draftSelectionOverlay = (K: { origin: number[], basis: number[][] }, color: Color) => {
 
     let selectionLayer = this.imageComposer.layers.selectionOverlay;
-    let bgFillColor = Color.multiply(this.config.color.base, .12);
+    let bgFillColor = new Color(76, 76, 76, 80);
 
     let corners = [
       K.origin,
@@ -194,6 +194,12 @@ export default class DisplayApperatus {
       smallVertSize + 2 * (1/this.rig.pixPerUnit)
     ));
     vertSize = this.rig.roundToNearestWholePixelLength(vertSize);
+    let border1 = this.rig.roundToNearestWholePixelLength(
+      Math.max(
+        vertSize * 1.1,
+        vertSize + 2 * (1/this.rig.pixPerUnit)
+      )
+    );
 
     [corners[1], corners[2]].forEach((p, i) => {
       this.draftCentreSquare(selectionLayer, p, smallVertBorder, true, bgFillColor)
@@ -206,6 +212,7 @@ export default class DisplayApperatus {
     });
 
 
+    this.draftCentreSquare(selectionLayer, corners[0], border1, true, bgFillColor)
     this.draftCentreSquare(selectionLayer, corners[0], vertSize, true, color)
     
   }

@@ -58,7 +58,7 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
     }
   }
 
-  const color = Color.multiply(session.settings.display.color.palette.colors[k], .5);
+  const color = Color.multiply(session.settings.FS.palette.colors[k], .5);
 
   return (
       <div

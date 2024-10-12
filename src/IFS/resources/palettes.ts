@@ -15,3 +15,5 @@ export const Primary = new Palette([
   Colors.PrettyPink,
   Colors.PastelYellow,
 ])
+
+export const Pigments = new Palette(Colors.PFColors);

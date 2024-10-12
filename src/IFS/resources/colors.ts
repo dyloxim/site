@@ -19,3 +19,16 @@ export const PrettyPink   = new Color(125, 125, 255, 255);
 export const PastelYellow = new Color(255, 125, 125, 255);
 
 export const NoColor = new Color(0, 0, 0, 0);
+
+
+export const PFColors = [
+  new Color(0, 0, 0, 255), // 1 -- black
+  new Color(255, 255, 255, 255), // 2 -- white
+  new Color(226, 32, 40, 255), // 3 -- red
+  new Color(48, 137, 72, 255), // 5 -- green
+  new Color(18, 107, 180, 255), // 7 -- blue
+  new Color(255, 213, 59, 255), // 11 -- yellow
+  new Color(129, 91, 166, 255), // 13 -- purple
+  new Color(26, 171, 174, 255), // 17 -- turquoise
+  new Color(224, 52, 137, 255), // 19 -- hot pink
+]

@@ -18,11 +18,11 @@ export default function IFSUIRange({spec, session}: {spec: I_rangeInput, session
       &nbsp;
       <input
         type="range"
-        value={val}
+        value={Number(val)}
         min={spec.min}
         max={spec.max}
         className={`${styles.input} ${styles.range}`}
-        step={(spec.max - spec.min) / spec.steps}
+        step={((spec.max - spec.min) / spec.steps).toPrecision(3)}
         style={{verticalAlign: "middle"}}
         name={spec.key}
         onChange={(e) => {

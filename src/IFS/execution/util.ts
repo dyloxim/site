@@ -61,7 +61,7 @@ export default class Util {
 
     if (state.options.color) {
 
-      return settings.display.color.palette.colors[state.program.thisTurn.choice];
+      return settings.FS.palette.colors[state.program.thisTurn.choice];
 
     } else return settings.display.color.base;
 
@@ -311,7 +311,7 @@ export default class Util {
 
   static getPalette(app: I_applicationState) {
 
-    return app.session.settings.display.color.palette.colors;
+    return app.session.settings.FS.palette.colors;
 
   }
 

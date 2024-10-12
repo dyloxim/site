@@ -52,7 +52,8 @@ const Canvas = ({session, app, preset}: {
       ref={container}
       style={{
         position: "relative",
-        border: "solid #2d2d2f 1px"
+        border: "solid #bbb 1px",
+        backgroundColor: "#888"
       }}>
     </div>
   )

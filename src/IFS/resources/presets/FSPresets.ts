@@ -1,5 +1,6 @@
 import { I_functionSystem } from "@IFS/types/configuration";
 import { NamedFSPreset } from "@IFS/types/specifications";
+import * as Palettes from "@IFS/resources/palettes";
 
 export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
 
@@ -16,7 +17,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [1.50,0],
       e2: [0,1.0]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
+    palette: Palettes.Pigments
   },
   
 
@@ -34,7 +36,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [0.98,0],
       e2: [0,0.88]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
+    palette: Palettes.Primary
   },
 
 
@@ -51,7 +54,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [4,0],
       e2: [0,4]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
+    palette: Palettes.Primary
   },
 
 
@@ -69,7 +73,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [0.98,0],
       e2: [0,0.88]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
+    palette: Palettes.Pigments
   },
 
 
@@ -88,7 +93,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [4.95,0],
       e2: [0,10.05]
     },
-    firstPoint: [0,0]
+    firstPoint: [0,0],
+    palette: Palettes.Pigments
   },
 
 
@@ -108,6 +114,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0, Math.sqrt(3)/6]
     },
     firstPoint: [0, 0],
+    palette: Palettes.Pigments
   },
 
 
@@ -127,7 +134,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e1: [1.6,0],
       e2: [0,1.545]
     },
-    firstPoint: [0, 0]
+    firstPoint: [0, 0],
+    palette: Palettes.Pigments
   },
 
 
@@ -150,9 +158,8 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
       e2: [0,2]
     },
     firstPoint: [0, 0],
+    palette: Palettes.Pigments
   },
-
-
 
 }
 

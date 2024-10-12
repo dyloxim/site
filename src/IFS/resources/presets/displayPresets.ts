@@ -1,7 +1,6 @@
 import { I_displayConfig } from "@IFS/types/configuration";
 
 import * as Colors from "@IFS/resources/colors"
-import * as Palettes from "@IFS/resources/palettes"
 
 export const defaultDisplay: I_displayConfig = {
   domain: {
@@ -10,14 +9,10 @@ export const defaultDisplay: I_displayConfig = {
   },
   color: {
     base: Colors.White,
-    palette: Palettes.Primary,
   },
   rendering: {
     devicePixelRatio: 1,
-    upscaleFactor: .3,
-  },
-  animation: {
-    rate: 1,
+    upscaleFactor: .4,
   },
   overlays: {
     boundingBoxes: false,

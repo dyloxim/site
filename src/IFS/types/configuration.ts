@@ -12,7 +12,8 @@ export interface I_functionSystem {
     e1: number[],
     e2: number[]
   },
-  firstPoint: number[]
+  firstPoint: number[],
+  palette: Palette
 }
 
 export interface I_displayConfig {
@@ -22,14 +23,10 @@ export interface I_displayConfig {
   },
   color: {
     base: Color,
-    palette: Palette
   },
   rendering: {
     upscaleFactor: number,
     devicePixelRatio: number
-  },
-  animation: {
-    rate: number,
   },
   overlays: {
     boundingBoxes: boolean,

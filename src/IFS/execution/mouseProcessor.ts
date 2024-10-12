@@ -71,16 +71,12 @@ export default class MouseProcessor {
 
     if (app.session.state.tacit.draggingRig) MouseProcessor.translateRig(app);
 
-    
-    
-
   }
 
 
   static handleMouseDownEvent: AppStateProcessor = app => {
 
-    MouseProcessor.processProximities(app);
-
+    if (app.session.settings.display.tacit.isMobile) MouseProcessor.processProximities(app);
 
     app.session = new SessionMutation({ using: app.session, do: s => {
 
@@ -88,11 +84,13 @@ export default class MouseProcessor {
       s.state.mouse.controlPointOffset = Util.getControlPointOffset(app)
       if (app.session.state.mouse.controlPointOffset != null) {
         s.state.mouse.interactionPrimed = true;
+        s.state.options.controlPointsShown = true;
       }
 
       return s;
 
     }}).eval();
+
 
     if (app.session.state.mouse.controlPointOffset == null) {
       MouseProcessor.beginRigDragInteraction(app);
@@ -235,13 +233,28 @@ export default class MouseProcessor {
 
   static activateSelection: AppStateProcessor = app => {
 
+    let i = app.session.state.mouse.interactionCandidate!.id[0];
+
     app.session = new SessionMutation({ using: app.session, do: s => {
 
-      let i = app.session.state.mouse.interactionCandidate!.id[0];
-      s.state.selected = [i];
+      if (s.state.selected[0] != i) {
+        s.state.selected = [i];
+      } else {
+        s.state.selected = [];
+        s.state.selectableEntities.secondaryControlPoints = [];
+      }
       return s;
 
-    }, queue: _ => ["RELOAD:secondaryEntities"]
+    }, queue: s => s.state.selected[0] != i ? [
+      "RELOAD:controlPoints", "RELOAD:secondaryEntities"
+    ] : [
+      s.state.mouse.interactionCandidate?.type == "primaryControlPoints" ? [
+        "ERASE", ["selectionOverlay"]
+      ] : [
+        "ERASE", ["selectionOverlay", "hoverOverlay"]
+      ]
+      
+    ]
 
     }).eval();
 
@@ -287,7 +300,7 @@ export default class MouseProcessor {
 
     let i = app.session.state.selected[0];
     let K = app.FS.controlPoints[i]
-    let color = app.session.settings.display.color.palette.colors[i];
+    let color = app.session.settings.FS.palette.colors[i];
 
     app.display.draftSelectionOverlay(K, color);
 

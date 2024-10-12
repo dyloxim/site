@@ -7,7 +7,6 @@ import { default as Rig } from "./display/rig";
 
 import { defaultState as baseState } from "@IFS/resources/defaults"
 import Delegator from "./execution/delegator";
-import IFSAppWorker from "./execution/IFSAppWorker";
 import Util from "./execution/util";
 
 export default class App {

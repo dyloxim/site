@@ -40,7 +40,7 @@ export const defaultState: I_sessionState = {
 
   options: {
     preset:"custom",
-    animationRate: 1,
+    animationRate: 100,
     running: true,
     controlPointsShown: false,
     path: "None",
