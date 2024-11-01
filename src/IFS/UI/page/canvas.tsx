@@ -1,7 +1,7 @@
 import { I_session } from "@IFS/types/state";
 import { useContext, useEffect, useRef } from "react";
 import { Ctx } from '@IFS/UI/SharedUIState';
-import getPageLoader from "../util/getPageLoader";
+import setupApp from "../util/setupApp";
 import { default as AppEngine } from "@IFS/app";
 import resizeFn from "@IFS/UI/util/resizeFn";
 import { I_displayConfig, I_functionSystem } from "@IFS/types/configuration";
@@ -13,7 +13,6 @@ const Canvas = ({session, app, preset}: {
   preset: {
     display: I_displayConfig,
     FS: I_functionSystem,
-    getRandom: () => number
   }
 }) => {
 
@@ -22,14 +21,16 @@ const Canvas = ({session, app, preset}: {
 
   const container = useRef<HTMLDivElement | null>(null);
 
-
   let onLoad = () => {
-    getPageLoader({
+    setupApp({
       app: app, 
       container: container.current!,
       session: session,
       preset: preset,
-      Ctx: {ctxRef, setCtx},
+      ctx: {
+        ref: ctxRef,
+        set: setCtx
+      },
       resizeFn: resizeFn
     })();
   }

@@ -18,8 +18,9 @@ export default class Util {
   // calculations ---------------------------------------------------------------
 
 
-  static getWeightedRandomChoice = (weights: number[], randomFn: () => number): number => {
+  static getWeightedRandomChoice = (weights: number[]): number => {
 
+    let randomFn = window.xoshiro128ss;
     let probabilitySum = weights[0]
     let regions = weights.slice();
     for (let i = 1; i < weights.length; i++) {
@@ -61,9 +62,9 @@ export default class Util {
 
     if (state.options.color) {
 
-      return settings.FS.colors.palette.colors[state.program.thisTurn.choice];
+      return this.getColor(settings, state.program.thisTurn.choice);
 
-    } else return settings.display.color.base;
+    } else return settings.FS.colors.base;
 
   }
 
@@ -218,7 +219,7 @@ export default class Util {
   
   static getTargetColor(app: I_applicationState, target: I_selectableEntityMetaData): Color {
 
-    return Util.getPalette(app.session.settings)[target.id[0]];
+    return Util.getColor(app.session.settings, target.id[0]);
 
   }
 
@@ -318,7 +319,7 @@ export default class Util {
   static getColor(settings: I_settings, k: number) {
 
     let palette = this.getPalette(settings);
-    return palette[k % (palette.length - 1)];
+    return palette[k % (palette.length)];
 
   }
 

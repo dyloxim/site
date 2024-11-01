@@ -51,30 +51,58 @@ export default class FSMutator {
   }
 
 
-
   static mutateTranslationComponent: AppStateProcessor = app => {
 
-    let i = app.session.state.mouse.interactionCandidate!.id[0];
+    if (!app.session.state.tacit.pendingFSUpdate) {
 
-    let newPos = Vec.minus(
-      app.display.rig.reverseProject(app.session.state.mouse.pos),
-      app.session.state.mouse.controlPointOffset!
-    )
+      let i = app.session.state.mouse.interactionCandidate!.id[0];
 
-    app.session = new SessionMutation({ using: app.session, do: s => {
+      let newPos = Vec.minus(
+        app.display.rig.reverseProject(app.session.state.mouse.pos),
+        app.session.state.mouse.controlPointOffset!
+      )
 
-      s.state.mouse.interactionCandidate!.pos = newPos;
-      s.settings.FS.transforms[i] = {
-        linear:  app.FS.controlPoints[i].basis,
-        translation: newPos
-      };
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
-      IFSAppWorker.resetCurrentRandomSeed(s)
-      return s;
+        s.state.mouse.interactionCandidate!.pos = newPos;
+        let newTransform = {
+          linear:  [...app.FS.controlPoints[i].basis],
+          translation: newPos
+        };
 
-    }, queue: _ => ["RELOAD:FS"]
+        // duplicate current function
+        if (s.state.mouse.lastModifiers.meta) {
 
-    }) .eval()
+          let newId = s.settings.FS.transforms.length;
+          let n = s.settings.FS.weights.length - 1;
+
+          s.state.mouse.interactionCandidate = {
+            id: [newId, 0],
+            type: "primaryControlPoints",
+            pos: s.state.mouse.pos,
+            isProximal: true,
+          }
+
+          s.settings.FS.transforms = [...s.settings.FS.transforms, newTransform];
+          s.settings.FS.weights = s.settings.FS.weights == "uniform" ? "uniform"
+            : [...s.settings.FS.weights.map(a => n-1*a/n), 1/n];
+          s.state.mouse.lastModifiers.meta = false;
+          s.state.tacit.pendingFSUpdate = true;
+          s.state.selected = [newId];
+
+        } else {
+
+          s.settings.FS.transforms[i] = newTransform;
+
+        }
+
+        IFSAppWorker.resetCurrentRandomSeed(s)
+        return s;
+
+      }, queue: _ => ["RELOAD:FS"]
+
+      }) .eval()
+    }
 
   }
 

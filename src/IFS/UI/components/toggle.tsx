@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { I_toggleInput } from "@IFS/types/UI"
 import { I_session } from "@IFS/types/state";
 import styles from "./inputs.module.css"
 
-export default function IFSUIToggle({spec, session}: {spec: I_toggleInput, session: I_session}) {
+export default function IFSUIToggle({spec, session}: {
+  spec: I_toggleInput,
+  session: I_session
+}) {
 
   const [val, setVal] = useState<boolean>(spec.initial);
 
@@ -18,7 +21,7 @@ export default function IFSUIToggle({spec, session}: {spec: I_toggleInput, sessi
           spec.effect(session).eval();
         }}>
 
-        {spec.onLabel}
+        {spec.offLabel}
 
       </button>
       <button
@@ -29,7 +32,7 @@ export default function IFSUIToggle({spec, session}: {spec: I_toggleInput, sessi
           spec.effect(session).eval();
         }}>
 
-        {spec.offLabel}
+        {spec.onLabel}
 
       </button>
     </span>

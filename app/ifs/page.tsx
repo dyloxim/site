@@ -10,7 +10,6 @@ export default function IFSPage() {
   let preset = {
     display: defaultDisplay,
     FS: FunctionSystems.a_heighwayDragon,
-    getRandom: () => 0
   }
 
   return (

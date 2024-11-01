@@ -8,6 +8,7 @@ export interface I_UIContext {
   FS: I_transform[],
   path: PathOption,
   pathDisabled: boolean,
+  running: boolean,
 }
 
 export interface I_rangeInput {
@@ -61,19 +62,20 @@ export interface I_optionInput {
   effect: (s: I_session) => SessionMutation
 }
 
+export type Ctx = {
+  ref: React.MutableRefObject<I_UIContext>,
+  set: React.Dispatch<React.SetStateAction<I_UIContext>>
+}
+
 export type SetupInputs = {
   app: AppEngine,
   container: HTMLDivElement,
   session: I_session, 
   preset: {
-    getRandom: () => number;
     display: I_displayConfig,
     FS: I_functionSystem
   },
-  Ctx: {
-    ctxRef: React.MutableRefObject<I_UIContext>,
-    setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
-  },
+  ctx: Ctx,
   resizeFn: (div: HTMLDivElement, session: I_session) => void
 }
 
@@ -82,8 +84,5 @@ export type SetupFn = (inputs: SetupInputs) => void;
 export type EventResponseSetup = (
   canvas: HTMLCanvasElement,
   session: I_session,
-  Ctx: {
-    ctxRef: React.MutableRefObject<I_UIContext>,
-    setCtx: React.Dispatch<React.SetStateAction<I_UIContext>>
-  }
+  ctx: Ctx
 ) => void;

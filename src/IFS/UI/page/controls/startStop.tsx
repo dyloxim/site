@@ -1,31 +1,41 @@
 import { default as Toggle } from "@IFS/UI/components/toggle";
 import SessionMutation from "@IFS/execution/sessionMutation";
 import { I_toggleInput } from "@IFS/types/UI";
-// import { SharedUIState } from '@IFS/UI/SharedUIState';
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { I_session } from "@IFS/types/state";
+import { Ctx } from "@IFS/UI/SharedUIState";
 
 
 const RunningToggle = ({session}: {session: I_session}) => {
 
-  // const {context} = useContext(SharedUIState)
+  const {ctx, setCtx} = useContext(Ctx)
+  const [choice, setChoice] = useState<boolean>(session.state.options.running)
 
   const spec: I_toggleInput = {
 
     key: "startStopControl",
     mainLabel: "Start / Stop",
-    onLabel: "■", offLabel: "▶",
-    initial: session.state.options.running,
+    onLabel: "▶",
+    offLabel: "■",
+    initial: choice,
+
     effect: s => { return new SessionMutation({ using: s, do: s => {
 
-      s.state.options.running = !s.state.options.running;
+      const newVal = !s.state.options.running;
+
+      setChoice(newVal); s.state.options.running = newVal;
+      setCtx({...ctx, running: newVal});
       return s;
 
     }})}
 
   }
 
-  return (<> <Toggle spec={spec} session={session}/> </>)
+  useEffect(() => {
+    setChoice(ctx.running);
+  }, [ctx]);
+
+  return (<> <Toggle key={`${choice}`} spec={spec} session={session}/> </>)
 
 }
 

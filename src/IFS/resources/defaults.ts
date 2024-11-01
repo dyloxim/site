@@ -33,6 +33,12 @@ export const defaultState: I_sessionState = {
     controlPointOffset: null,
     touchDist: 0,
     displayRescaleInitialRadius: null,
+    lastModifiers: {
+      meta: false,
+      alt: false,
+      shift: false,
+      ctrl: false
+    }
   },
 
   selected: [],
@@ -40,7 +46,7 @@ export const defaultState: I_sessionState = {
 
   options: {
     preset:"custom",
-    animationRate: 100,
+    animationRate: 400,
     running: true,
     controlPointsShown: false,
     path: "None",
@@ -67,7 +73,8 @@ export const defaultState: I_sessionState = {
   tacit: {
     mutatingFS: false,
     draggingRig: null,
-    pendingRerender: false
+    pendingRerender: false,
+    pendingFSUpdate: false
   }
 
 }

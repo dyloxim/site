@@ -4,6 +4,16 @@ import './reset.css';
 import './global.css';
 import Header from 'app/_coreUI/header';
 import Footer from 'app/_coreUI/footer';
+import type { Viewport } from 'next'
+
+export const viewport: Viewport = {
+  width:' device-width',
+  height: 'device-height',
+  maximumScale: 1,
+  initialScale: 1,
+  minimumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
   title: "dyloxim.com"

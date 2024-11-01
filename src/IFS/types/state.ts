@@ -39,6 +39,12 @@ export interface I_sessionState {
     pos: number[],
     // when mouse is down, returns position of mouse at mouse down event, null otherwise
     down: number[] | null,
+    lastModifiers: {
+      shift: boolean,
+      alt: boolean,
+      ctrl: boolean,
+      meta: boolean
+    }
 
 
 
@@ -83,7 +89,8 @@ export interface I_sessionState {
   tacit: {
     mutatingFS: boolean,
     draggingRig: number[] | null,
-    pendingRerender: boolean
+    pendingRerender: boolean,
+    pendingFSUpdate: boolean
   }
 
   tickets: {

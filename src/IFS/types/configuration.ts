@@ -25,9 +25,6 @@ export interface I_displayConfig {
     origin: number[],
     displayRadius: number
   },
-  color: {
-    base: Color,
-  },
   rendering: {
     upscaleFactor: number,
     devicePixelRatio: number
@@ -47,5 +44,4 @@ export interface I_displayConfig {
 export interface I_settings {
   FS: I_functionSystem,
   display: I_displayConfig,
-  getRandom: () => number,
 }

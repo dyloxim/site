@@ -13,6 +13,9 @@ import { default as Util } from "@IFS/execution/util"
 import { default as SessionMutation } from "@IFS/execution/sessionMutation"
 import { I_session } from "@IFS/types/state";
 
+declare global {
+  interface Window { xoshiro128ss: () => number; }
+}
 
 export default class IFSAppWorker {
 
@@ -23,7 +26,7 @@ export default class IFSAppWorker {
     let lastTurn = app.session.state.program.thisTurn
 
     // choose new function and get position of current point under transformation
-    let choice = Util.getWeightedRandomChoice(app.FS.weights, app.session.settings.getRandom)
+    let choice = Util.getWeightedRandomChoice(app.FS.weights)
     let newPosition = app.FS.transforms[choice]
       .apply(app.session.state.program.thisTurn.position)
 
@@ -51,7 +54,7 @@ export default class IFSAppWorker {
 
   static setNewRandomSeed: AppStateProcessor = (app): void => {
     let seed = Util.getRandomSeed();
-    app.session.settings.getRandom = Util.xoshiro128ss(seed, seed, seed, seed)
+    window.xoshiro128ss = Util.xoshiro128ss(seed, seed, seed, seed)
     app.session.state.program.randomSeed = seed;
   }
 
@@ -59,7 +62,8 @@ export default class IFSAppWorker {
   static resetCurrentRandomSeed = (s: I_session): void => {
 
     let seed = s.state.program.randomSeed;
-    s.settings.getRandom = Util.xoshiro128ss(seed, seed, seed, seed);
+    window.xoshiro128ss = Util.xoshiro128ss(seed, seed, seed, seed);
+
   }
 
   static calibrateDisplay: TicketProcessor = (app): void => {
@@ -170,6 +174,8 @@ export default class IFSAppWorker {
 
       }}).eval()};
 
+    app.session.state.tacit.pendingFSUpdate = false;
+
   }
 
   static drawAxis: TicketProcessor = app => {
@@ -204,7 +210,7 @@ export default class IFSAppWorker {
 
     app.FS.controlPoints.map(K => K.origin).toReversed().forEach((p, i) => {
       let j = app.session.settings.FS.transforms.length - 1 - i;
-      let color = app.session.settings.FS.colors.palette.colors[j]
+      let color = Util.getColor(app.session.settings, j);
       let layer = app.display.imageComposer.layers.controlPointsOverlay;
       app.display.draftPrimaryControlPoint(layer, p, false, color);
     })

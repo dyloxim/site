@@ -1,23 +1,39 @@
-import { default as setupMouseMoveHandler } from './mouseMove'
-import { default as setupMouseDownHandler } from './mouseDown'
-import { default as setupMouseUpHandler } from './mouseUp'
-import { default as setupMouseOutHandler } from './mouseOut'
-import { default as setupWheelHandler } from './wheel'
+import { default as setupMouseMoveHandler } from './canvasEvents/mouseMove'
+import { default as setupMouseDownHandler } from './canvasEvents/mouseDown'
+import { default as setupMouseUpHandler } from './canvasEvents/mouseUp'
+import { default as setupMouseOutHandler } from './canvasEvents/mouseOut'
 
-import { default as setupTouchStartHandler } from './touchStart'
-import { default as setupTouchEndHandler } from './touchEnd'
-import { default as setupTouchMoveHandler } from './touchMove'
+import { default as setupWheelHandlerCanvas } from './canvasEvents/wheel'
+
+import { default as setupTouchStartHandler } from './canvasEvents/touchStart'
+import { default as setupTouchEndHandler } from './canvasEvents/touchEnd'
+import { default as setupTouchMoveHandler } from './canvasEvents/touchMove'
+
+import { default as setupResizeHandler } from './windowEvents/resize'
+import { default as setupKeyDownHandler } from './windowEvents/keydown'
 
 
-const handlers = [
-  setupMouseMoveHandler,
-  setupMouseDownHandler,
-  setupMouseUpHandler,
-  setupMouseOutHandler,
-  setupWheelHandler,
-  setupTouchStartHandler,
-  setupTouchEndHandler,
-  setupTouchMoveHandler
-];
+const handlers = {
+
+  canvasEvents: [
+
+    setupMouseMoveHandler,
+    setupMouseDownHandler,
+    setupMouseUpHandler,
+    setupMouseOutHandler,
+    // ... ... ... ...
+    setupWheelHandlerCanvas,
+    // ... ... ... ...
+    setupTouchStartHandler,
+    setupTouchEndHandler,
+    setupTouchMoveHandler,
+
+  ], windowEvents: [
+
+    setupResizeHandler,
+    setupKeyDownHandler,
+
+  ]
+}
 
 export default handlers;

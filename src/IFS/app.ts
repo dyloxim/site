@@ -21,8 +21,6 @@ export default class App {
     this.settings = settings;
     this.FS = new FunctionSystem(this.settings.FS);
     this.state = App.getInitialState(this.settings);
-    let seed = this.state.program.randomSeed;
-    this.settings.getRandom = Util.xoshiro128ss(seed, seed, seed, seed);
   }
 
   static constructWithState = (session: I_session): App => {
