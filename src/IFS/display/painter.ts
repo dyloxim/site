@@ -63,6 +63,8 @@ export default class Painter {
     
   }
 
+  
+
   static putSolidParallelogram(
     print: PrintLayer,
     printArea: Rect,

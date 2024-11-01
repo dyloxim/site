@@ -7,7 +7,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 }
-
 const About = () => {
   return (
     <>

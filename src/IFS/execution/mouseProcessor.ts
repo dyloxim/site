@@ -98,6 +98,7 @@ export default class MouseProcessor {
 
   }
 
+
   static handleOutEvent: AppStateProcessor = app => {
     let layer = app.display.imageComposer.layers.mouseSpotlightOverlay;
     layer.clear()
@@ -115,6 +116,7 @@ export default class MouseProcessor {
     } else MouseProcessor.activateSelection(app);
 
   }
+
 
   static handleBGClickEvent: AppStateProcessor = app => {
 
@@ -137,6 +139,7 @@ export default class MouseProcessor {
     ]}).eval();
 
   }
+
 
   static beginRigDragInteraction: AppStateProcessor = app => {
 

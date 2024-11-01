@@ -21,7 +21,7 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     firstPoint: [0, 0],
     colors: {
       bg: Colors.Grey,
-      base: Colors.White,
+      base: Colors.Black,
       palette: Palettes.BnW,
     }
   },

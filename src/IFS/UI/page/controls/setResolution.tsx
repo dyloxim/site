@@ -10,10 +10,20 @@ const ResolutionControl = ({session}: {session: I_session}) => {
   // const {context} = useContext(SharedUIState)
   const [max, setMax] = useState<number>(1);
   let min = .1
+  let easeFactor = 1.5;
 
-  const ease = (input: number): number => {
-    return Math.max(min, Math.pow(input/max, 1.5) * max);
+  const constrain = (x: number): number => {
+    return Math.max(min, Math.min(max, x));
   }
+
+  const ease = (x: number): number => {
+    return constrain(max*Math.pow(x/max, easeFactor));
+  }
+
+  const inverseEase = (x: number): number => {
+    return constrain(max*Math.pow(x/max, 1/easeFactor));
+  }
+
 
 
   const onPageLoad = () => {
