@@ -43,6 +43,7 @@ export const defaultState: I_sessionState = {
 
   selected: [],
   inputSelected: null,
+  basisSelected: null,
 
   options: {
     preset:"custom",

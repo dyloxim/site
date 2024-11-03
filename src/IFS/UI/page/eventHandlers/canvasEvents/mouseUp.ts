@@ -10,6 +10,7 @@ const handleMouseUp = (ctx: Ctx, session: I_session) => {
 
     s.state.tacit.draggingRig = null;
     s.state.tacit.mutatingFS = false;
+    s.state.basisSelected = null;
 
     s.state.mouse.down = null;
     s.state.mouse.interactionPrimed = false;

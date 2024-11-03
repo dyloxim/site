@@ -237,7 +237,7 @@ export default class Util {
       let i = target.id[0]
       let K = app.FS.controlPoints[i];
 
-      entities = K.basis .map((v, j) => {
+      entities = K.basis.map((v, j) => {
 
         return {
           id: [i, j],
@@ -245,6 +245,14 @@ export default class Util {
           pos: Vec.add(K.origin, v),
           isProximal: false
         }});
+
+      entities = [...entities, {
+          id: [i, 2],
+          type: "secondaryControlPoints" as SelectableEntityCategory,
+        pos: Vec.sum(K.origin, K.basis[0], K.basis[1]),
+          isProximal: false
+        }
+      ]
 
     } 
 

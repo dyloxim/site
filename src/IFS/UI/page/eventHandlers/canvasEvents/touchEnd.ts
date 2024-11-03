@@ -12,6 +12,7 @@ const handleTouchEnd = (ctx: Ctx, session: I_session, e: TouchEvent) => {
     s.state.mouse.down = null;
     s.state.tacit.draggingRig = null;
     s.state.tacit.mutatingFS = false;
+    s.state.basisSelected = null;
     s.state.mouse.interactionPrimed = false;
     s.state.inputSelected = null;
 

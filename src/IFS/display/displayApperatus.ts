@@ -176,6 +176,7 @@ export default class DisplayApperatus {
 
     let selectionLayer = this.imageComposer.layers.selectionOverlay;
     let bgFillColor = new Color(76, 76, 76, 80);
+    let farCornerColor = new Color(56, 56, 56, 120);
 
     let corners = [
       K.origin,
@@ -208,8 +209,12 @@ export default class DisplayApperatus {
     [corners[1], corners[2]].forEach((p, i) => {
       let color = i == 0 ? Colors.Red : Colors.Green;
       this.draftLine(selectionLayer, corners[0], p, color);
+      this.draftLine(selectionLayer, corners[3], p, farCornerColor);
       this.draftCentreSquare(selectionLayer, p, smallVertSize, true, color)
     });
+
+    this.draftCentreSquare(selectionLayer, corners[3], border1, true, bgFillColor)
+    this.draftCentreSquare(selectionLayer, corners[3], vertSize, true, farCornerColor)
 
 
     this.draftCentreSquare(selectionLayer, corners[0], border1, true, bgFillColor)

@@ -14,7 +14,6 @@ const setupEventHandlers = (session: I_session, ctx: Ctx) => {
     .forEach(handlerInit => { handlerInit(canvas, session, ctx) });
 
   window.visualViewport!.addEventListener('resize', (e: Event) => {
-    console.log("resizing visual viewport");
     e.stopPropagation();
     e.preventDefault();
   }, {

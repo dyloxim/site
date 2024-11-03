@@ -26,4 +26,12 @@ export default class Vec2 extends Vector {
     return Vec2.mod(Vec2.minus(v, w));
   }
 
+  static normalise(v: number[]) {
+    return this.scale(v, 1/this.mod(v));
+  }
+
+  static dot(v: number[], w: number[]) {
+    return v[0] * w[0] + v[1] * w[1];
+  }
+
 }
