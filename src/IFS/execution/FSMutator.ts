@@ -13,6 +13,10 @@ export default class FSMutator {
 
   static mutateFS: AppStateProcessor = (app): void => {
 
+    // sometimes both of these states are triggered erroneously.
+    // in this case, disable the other tacit state.
+    app.session.state.tacit.draggingRig = null;
+
     switch(app.session.state.mouse.interactionCandidate!.type) {
 
       case "primaryControlPoints":

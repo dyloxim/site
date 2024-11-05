@@ -4,15 +4,19 @@ import { I_session } from "@IFS/types/state";
 
 const handleResizeEvent = (canvas: HTMLCanvasElement, session: I_session) => {
 
-  let container = canvas.parentNode as HTMLDivElement;
+  if (!session.settings.display.tacit.isMobile) {
 
-  container.style.width = `${document.body.clientWidth}px`;
-  container.style.height = `${window.innerHeight - 132}px`;
+    let container = canvas.parentNode as HTMLDivElement;
 
-  new SessionMutation({ using: session, queue: _ => [
-    "DO:calibrateDisplay",
-    "RELOAD:rig"
-  ]}).eval()
+    container.style.width = `${document.body.clientWidth}px`;
+    container.style.height = `${window.innerHeight - 132}px`;
+
+    new SessionMutation({ using: session, queue: _ => [
+      "DO:calibrateDisplay",
+      "RELOAD:rig"
+    ]}).eval()
+
+  }
 
 }
 
