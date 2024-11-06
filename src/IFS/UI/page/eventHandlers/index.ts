@@ -11,6 +11,7 @@ import { default as setupTouchMoveHandler } from './canvasEvents/touchMove'
 
 import { default as setupResizeHandler } from './windowEvents/resize'
 import { default as setupKeyDownHandler } from './windowEvents/keydown'
+import { default as setupKeyUpHandler } from './windowEvents/keyup'
 
 
 const handlers = {
@@ -32,6 +33,7 @@ const handlers = {
 
     setupResizeHandler,
     setupKeyDownHandler,
+    setupKeyUpHandler,
 
   ]
 }

@@ -7,8 +7,11 @@ const setupEventHandlers = (session: I_session, ctx: Ctx) => {
   let canvas = (document.getElementById("displayContainer")!
     .lastChild as HTMLCanvasElement);
 
+  canvas.oncontextmenu = () => false;
+
   EventHandlers.canvasEvents
     .forEach(handlerInit => { handlerInit(canvas, session, ctx) });
+
 
   EventHandlers.windowEvents
     .forEach(handlerInit => { handlerInit(canvas, session, ctx) });

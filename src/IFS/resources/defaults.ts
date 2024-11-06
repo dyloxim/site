@@ -37,13 +37,14 @@ export const defaultState: I_sessionState = {
       meta: false,
       alt: false,
       shift: false,
-      ctrl: false
+      ctrl: false,
+      pendingUpdate: false
     }
   },
 
   selected: [],
   inputSelected: null,
-  basisSelected: null,
+  transformSelected: null,
 
   options: {
     preset:"custom",
@@ -74,8 +75,8 @@ export const defaultState: I_sessionState = {
   tacit: {
     mutatingFS: false,
     draggingRig: null,
-    pendingRerender: false,
-    pendingFSUpdate: false
+    pendingFSUpdate: false,
+    duplicateSelected: false
   }
 
 }

@@ -156,18 +156,23 @@ export default class MouseProcessor {
 
   
   static beginFSMutation: AppStateProcessor = app => {
-    app.session = new SessionMutation({ using: app.session, do: s => {
 
-      s.state.tacit.mutatingFS = true;
-      s.state.selected = [s.state.mouse.interactionCandidate!.id[0]]
-      return s;
+    if (app.session.state.mouse.interactionCandidate) {
 
-    }, queue: _ => [
+      app.session = new SessionMutation({ using: app.session, do: s => {
 
-      "REVIEW:controlPoints",
-      ["ERASE", ["hoverOverlay"]]
+        s.state.tacit.mutatingFS = true;
+        s.state.selected = [s.state.mouse.interactionCandidate!.id[0]]
+        return s;
 
-    ]}).eval();
+      }, queue: _ => [
+
+        "REVIEW:controlPoints",
+        ["ERASE", ["hoverOverlay"]]
+
+      ]}).eval();
+
+    }
   }
 
 

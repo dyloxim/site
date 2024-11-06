@@ -135,7 +135,7 @@ export const PathOptions = ["None", "Fleeting", "Persistent"]
  * ----------------------------------
  */
 
-export const vertRadiusDisplayRatio = 1/70;
+export const vertRadiusDisplayRatio = 1/80;
 export const selectionRadiusDisplayRatio = 1/20;
 
 export const panStepSizeDisplayRatio = 1/8;

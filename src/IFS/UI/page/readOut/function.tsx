@@ -45,7 +45,6 @@ const Function = ({f, k, session}: {f: I_transform, k: number, session: I_sessio
 
         }
         s.state.options.controlPointsShown = true;
-        s.state.tacit.pendingRerender = true;
         return s;
 
       }, queue: _ => [

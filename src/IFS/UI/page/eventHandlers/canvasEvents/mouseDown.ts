@@ -4,6 +4,11 @@ import { I_session } from "@IFS/types/state";
 
 const handleMouseDown = (session: I_session, e: MouseEvent) => {
 
+  if (e.ctrlKey) {
+    e.preventDefault();
+    e.stopPropagation()
+  }
+
   new SessionMutation({ using: session, do: s => {
 
       s.state.mouse.down = s.state.mouse.pos;
@@ -11,8 +16,9 @@ const handleMouseDown = (session: I_session, e: MouseEvent) => {
         shift: e.shiftKey,
         alt: e.altKey,
         ctrl: e.ctrlKey,
-        meta: e.metaKey
-      }
+        meta: e.metaKey,
+        pendingUpdate: true
+      };
       return s;
 
     }, queue: _ => [

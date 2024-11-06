@@ -33,7 +33,7 @@ export interface I_sessionState {
   // list of indicies indicating transforms currently in the active selection
   selected: number[],
   inputSelected: [number, string, number | [number, number]] | null,
-  basisSelected: number[][] | null
+  transformSelected: [number[], number[][]] | null
 
   mouse: {
     // pixel pos
@@ -44,7 +44,8 @@ export interface I_sessionState {
       shift: boolean,
       alt: boolean,
       ctrl: boolean,
-      meta: boolean
+      meta: boolean,
+      pendingUpdate: boolean
     }
 
 
@@ -90,8 +91,8 @@ export interface I_sessionState {
   tacit: {
     mutatingFS: number[][] | boolean,
     draggingRig: number[] | null,
-    pendingRerender: boolean,
-    pendingFSUpdate: boolean
+    pendingFSUpdate: boolean,
+    duplicateSelected: boolean
   }
 
   tickets: {

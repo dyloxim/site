@@ -4,31 +4,34 @@ import { I_session } from "@IFS/types/state";
 
 const handleBackspace = (ctx: Ctx, session: I_session) => {
 
- if (session.state.selected.length == 1 && session.settings.FS.weights.length > 1) {
+  if (session.state.selected.length == 1
+    && session.settings.FS.weights.length > 1
+  ) {
 
-   new SessionMutation({ using: session, do: s => {
+    new SessionMutation({ using: session, do: s => {
 
-     let id = s.state.selected[0];
-     let n = s.settings.FS.weights.length - 1;
+      let id = s.state.selected[0];
+      let n = s.settings.FS.weights.length - 1;
 
-     s.settings.FS.transforms.splice(s.state.selected[0], 1);
-     s.settings.FS.weights = s.settings.FS.weights == "uniform" ? "uniform"
-       : s.settings.FS.weights.toSpliced(id, 1);
-     s.state.tacit.pendingFSUpdate = true;
-     s.state.selected = [];
-     ctx.set({...ctx.ref.current, FS: s.settings.FS.transforms })
+
+      s.settings.FS.transforms.splice(s.state.selected[0], 1);
+      s.settings.FS.weights = s.settings.FS.weights == "uniform" ? "uniform"
+        : s.settings.FS.weights.toSpliced(id, 1);
+      s.state.tacit.pendingFSUpdate = true;
+      s.state.selected = [];
+      ctx.set({...ctx.ref.current, FS: s.settings.FS.transforms })
       
-     return s;
+      return s;
 
-   }, queue: _ => [
+    }, queue: _ => [
 
-     "HANDLE:mouseDownEvent",
-     "RELOAD:FS",
-     ["ERASE", ["selectionOverlay"]], "REVIEW:controlPoints"
+      "HANDLE:mouseDownEvent",
+      "RELOAD:FS",
+      ["ERASE", ["selectionOverlay"]], "REVIEW:controlPoints"
      
-   ]}).eval();
+    ]}).eval();
 
- }
+  }
 
 }
 
@@ -75,19 +78,32 @@ const handleArrowKey = (session: I_session, e: KeyboardEvent) => {
 
 const handleKeyDown = (ctx: Ctx, session: I_session, e: KeyboardEvent) => {
 
-  switch (e.key) {
+  if (!session.settings.display.tacit.isMobile) {
 
-    case "Backspace":
-      handleBackspace(ctx, session); break;
+    session.state.mouse.lastModifiers = {
+      shift: e.shiftKey,
+      alt: e.altKey,
+      ctrl: e.ctrlKey,
+      meta: e.metaKey,
+      pendingUpdate: true,
+    };
 
-    case " ":
-      handleSpace(ctx, session, e); break;
 
-    case "ArrowLeft": 
-    case "ArrowUp": 
-    case "ArrowDown": 
-    case "ArrowRight": 
-      handleArrowKey(session, e); break;
+    switch (e.key) {
+
+      case "Backspace":
+        handleBackspace(ctx, session); break;
+
+      case " ":
+        handleSpace(ctx, session, e); break;
+
+      case "ArrowLeft": 
+      case "ArrowUp": 
+      case "ArrowDown": 
+      case "ArrowRight": 
+        handleArrowKey(session, e); break;
+
+    }
 
   }
 

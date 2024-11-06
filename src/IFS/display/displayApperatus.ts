@@ -156,19 +156,27 @@ export default class DisplayApperatus {
 
   draftPrimaryControlPoint = (layer: PrintLayer, p: number[], active: boolean, color: Color) => {
 
-    let grey = new Color(100, 100, 100, 180);
+    let darkGrey = new Color(90, 90, 90, 220);
+    let lightGrey = new Color(190, 190, 190, 220);
 
     let vertSize = Util.getVertRadius(this.config);
     vertSize = this.rig.roundToNearestWholePixelLength(vertSize);
 
     let border1 = this.rig.roundToNearestWholePixelLength(
       Math.max(
+        vertSize * 1.05,
+        vertSize + 1 * (1/this.rig.pixPerUnit)
+      )
+    )
+    let border2 = this.rig.roundToNearestWholePixelLength(
+      Math.max(
         vertSize * 1.1,
         vertSize + 2 * (1/this.rig.pixPerUnit)
       )
     )
 
-    this.draftCentreSquare(layer, p, border1, true, grey)
+    this.draftCentreSquare(layer, p, border2, true, lightGrey)
+    this.draftCentreSquare(layer, p, border1, true, darkGrey)
     this.draftCentreSquare(layer, p, vertSize, true, color)
   }
 
@@ -176,7 +184,8 @@ export default class DisplayApperatus {
 
     let selectionLayer = this.imageComposer.layers.selectionOverlay;
     let bgFillColor = new Color(76, 76, 76, 80);
-    let farCornerColor = new Color(56, 56, 56, 120);
+    let bgBorderColor = new Color(66, 66, 66, 100);
+    let farCornerColor = new Color(56, 56, 56, 220);
 
     let corners = [
       K.origin,
@@ -209,12 +218,12 @@ export default class DisplayApperatus {
     [corners[1], corners[2]].forEach((p, i) => {
       let color = i == 0 ? Colors.Red : Colors.Green;
       this.draftLine(selectionLayer, corners[0], p, color);
-      this.draftLine(selectionLayer, corners[3], p, farCornerColor);
+      this.draftLine(selectionLayer, corners[3], p, bgBorderColor);
       this.draftCentreSquare(selectionLayer, p, smallVertSize, true, color)
     });
 
-    this.draftCentreSquare(selectionLayer, corners[3], border1, true, bgFillColor)
-    this.draftCentreSquare(selectionLayer, corners[3], vertSize, true, farCornerColor)
+    this.draftCentreSquare(selectionLayer, corners[3], smallVertBorder, true, bgFillColor)
+    this.draftCentreSquare(selectionLayer, corners[3], smallVertSize, true, farCornerColor)
 
 
     this.draftCentreSquare(selectionLayer, corners[0], border1, true, bgFillColor)

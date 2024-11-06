@@ -10,9 +10,12 @@ const handleTouchEnd = (ctx: Ctx, session: I_session, e: TouchEvent) => {
 
     if (s.state.tacit.mutatingFS) ctx.set({...ctx.ref.current, FS: s.settings.FS.transforms });
     s.state.mouse.down = null;
+
     s.state.tacit.draggingRig = null;
     s.state.tacit.mutatingFS = false;
-    s.state.basisSelected = null;
+    s.state.tacit.duplicateSelected = false;
+
+    s.state.transformSelected = null;
     s.state.mouse.interactionPrimed = false;
     s.state.inputSelected = null;
 
