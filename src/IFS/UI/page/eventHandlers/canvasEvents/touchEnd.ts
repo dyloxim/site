@@ -15,7 +15,7 @@ const handleTouchEnd = (ctx: Ctx, session: I_session, e: TouchEvent) => {
     s.state.tacit.mutatingFS = false;
     s.state.tacit.duplicateSelected = false;
 
-    s.state.transformSelected = null;
+    s.state.workingFS = null;
     s.state.mouse.interactionPrimed = false;
     s.state.inputSelected = null;
 

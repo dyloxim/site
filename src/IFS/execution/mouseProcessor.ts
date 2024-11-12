@@ -59,6 +59,7 @@ export default class MouseProcessor {
 
       app.display.draftCircle(layer, pos, vertSize, true, grey)
       layer.commit()
+
     }
 
     if (app.session.state.options.controlPointsShown) {

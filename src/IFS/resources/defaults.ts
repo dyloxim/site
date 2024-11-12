@@ -38,13 +38,13 @@ export const defaultState: I_sessionState = {
       alt: false,
       shift: false,
       ctrl: false,
-      pendingUpdate: false
-    }
+    },
+    pendingModifierUpdate: false
   },
 
   selected: [],
   inputSelected: null,
-  transformSelected: null,
+  workingFS: null,
 
   options: {
     preset:"custom",

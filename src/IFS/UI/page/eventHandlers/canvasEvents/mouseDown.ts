@@ -11,15 +11,15 @@ const handleMouseDown = (session: I_session, e: MouseEvent) => {
 
   new SessionMutation({ using: session, do: s => {
 
-      s.state.mouse.down = s.state.mouse.pos;
-      s.state.mouse.lastModifiers = {
-        shift: e.shiftKey,
-        alt: e.altKey,
-        ctrl: e.ctrlKey,
-        meta: e.metaKey,
-        pendingUpdate: true
-      };
-      return s;
+    s.state.mouse.down = s.state.mouse.pos;
+    s.state.mouse.lastModifiers = {
+      shift: e.shiftKey,
+      alt: e.altKey,
+      ctrl: e.ctrlKey,
+      meta: e.metaKey,
+    };
+    s.state.mouse.pendingModifierUpdate = true;
+    return s;
 
     }, queue: _ => [
 

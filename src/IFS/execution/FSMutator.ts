@@ -136,15 +136,15 @@ export default class FSMutator {
         )
 
 
-        if (!app.session.state.transformSelected) {
+        if (!app.session.state.workingFS) {
 
           // when initiating transform or when modifier has changed, 
           // store value of basis at that instance for future reference.
-          app.session.state.transformSelected = [origin, basis];
+          app.session.state.workingFS = [origin, basis];
 
         } else {
 
-          origin = app.session.state.transformSelected[0];
+          origin = app.session.state.workingFS[0];
 
           if (app.session.state.mouse.lastModifiers.alt) {
 
@@ -212,7 +212,6 @@ export default class FSMutator {
 
     if (app.session.state.mouse.interactionCandidate) {
 
-
       let [i, j] = app.session.state.mouse.interactionCandidate!.id;
 
       let newPos = Vec.minus(
@@ -234,18 +233,18 @@ export default class FSMutator {
       let origin = app.FS.controlPoints[i].origin;
       let t = Vec.minus(newPos, app.FS.controlPoints[i].origin);
 
-      if (!app.session.state.transformSelected
-        || app.session.state.mouse.lastModifiers.pendingUpdate
+      if (!app.session.state.workingFS
+        || app.session.state.mouse.pendingModifierUpdate
       ) {
 
         // when initiating transform or when modifier has changed, 
         // store value of basis at that instance for future reference.
-        app.session.state.transformSelected = [origin, basis];
-        app.session.state.mouse.lastModifiers.pendingUpdate = false;
+        app.session.state.workingFS = [origin, basis];
+        app.session.state.mouse.pendingModifierUpdate = false;
 
       } else {
 
-        basis = app.session.state.transformSelected[1];
+        basis = app.session.state.workingFS[1];
 
         if (app.session.state.mouse.lastModifiers.alt) {
 
@@ -304,17 +303,24 @@ export default class FSMutator {
 
   static mutateCombinedLinearComponents(app: I_applicationState) {
 
-    if (app.session.state.mouse.interactionCandidate) {
+    let state = app.session.state;
 
-      let i = app.session.state.mouse.interactionCandidate.id[0];
+    if (state.mouse.interactionCandidate) {
+
+      let mouseModifiers = state.mouse.lastModifiers
+      Object.entries(mouseModifiers).forEach(s => console.log(s))
+      let noModifiers = !Object.entries(mouseModifiers).map(s => s[1]).includes(true);
+
+      let i = state.mouse.interactionCandidate.id[0];
+      let basis = app.FS.controlPoints[i].basis;
       let origin = app.FS.controlPoints[i].origin;
 
       let mousePos = Vec.minus(
-        app.display.rig.reverseProject(app.session.state.mouse.pos),
-        app.session.state.mouse.controlPointOffset!
+        app.display.rig.reverseProject(state.mouse.pos),
+        state.mouse.controlPointOffset!
       )
 
-      if (app.session.state.mouse.lastModifiers.ctrl) {
+      if (mouseModifiers.ctrl) {
 
         // Action when ctrl held down
 
@@ -324,37 +330,26 @@ export default class FSMutator {
 
       } 
 
-      let basis = app.FS.controlPoints[i].basis;
 
+      let shouldStoreFSValue = !state.workingFS || state.mouse.pendingModifierUpdate;
 
-      // TODO: clean up this modifier handling logic / break up / make more clear
-
-      if (
-        !app.session.state.transformSelected
-          || app.session.state.mouse.lastModifiers.pendingUpdate
-      ) {
+      if (shouldStoreFSValue) { // write current FS to stored FS
 
         // when initiating transform or when modifier has changed, 
         // store value of basis at that instance for future reference.
-        app.session.state.transformSelected = [origin, basis];
-        app.session.state.mouse.lastModifiers.pendingUpdate = false;
+        state.workingFS = [origin, basis];
+        state.mouse.pendingModifierUpdate = false;
 
-      } else {
+      } else { // 
 
-        if (
-          !(app.session.state.mouse.lastModifiers.alt
-            || app.session.state.mouse.lastModifiers.shift)
-        ) {
-          basis = app.session.state.transformSelected[1];
-        }
+        origin = state.workingFS![0];
+        basis = state.workingFS![1];
+
 
         let t0 = Vec.minus(Vec.sum(origin, basis[0], basis[1]), origin);
         let t1 = Vec.minus(mousePos, origin);
 
-        if (
-          app.session.state.mouse.lastModifiers.alt
-            || app.session.state.mouse.lastModifiers.shift
-        ) {
+        if (noModifiers || app.session.state.mouse.lastModifiers.shift) {
 
           // action when alt pressed (and also part of the effect applied
           // when shift is pressed)
@@ -398,6 +393,7 @@ export default class FSMutator {
         )
       ].map((a,i) => a == null? basis[i] : Vec.minus(a, origin));
 
+      
       if (app.session.state.mouse.lastModifiers.shift) {
 
         // action when shift pressed

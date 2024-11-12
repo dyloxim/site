@@ -85,9 +85,8 @@ const handleKeyDown = (ctx: Ctx, session: I_session, e: KeyboardEvent) => {
       alt: e.altKey,
       ctrl: e.ctrlKey,
       meta: e.metaKey,
-      pendingUpdate: true,
     };
-
+    session.state.mouse.pendingModifierUpdate = true;
 
     switch (e.key) {
 

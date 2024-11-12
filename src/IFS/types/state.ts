@@ -33,7 +33,7 @@ export interface I_sessionState {
   // list of indicies indicating transforms currently in the active selection
   selected: number[],
   inputSelected: [number, string, number | [number, number]] | null,
-  transformSelected: [number[], number[][]] | null
+  workingFS: [number[], number[][]] | null
 
   mouse: {
     // pixel pos
@@ -45,8 +45,8 @@ export interface I_sessionState {
       alt: boolean,
       ctrl: boolean,
       meta: boolean,
-      pendingUpdate: boolean
     }
+    pendingModifierUpdate: boolean
 
 
 

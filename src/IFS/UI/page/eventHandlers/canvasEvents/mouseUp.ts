@@ -11,7 +11,7 @@ const handleMouseUp = (ctx: Ctx, session: I_session) => {
     s.state.tacit.draggingRig = null;
     s.state.tacit.mutatingFS = false;
     s.state.tacit.duplicateSelected = false;
-    s.state.transformSelected = null;
+    s.state.workingFS = null;
 
     s.state.mouse.down = null;
     s.state.mouse.interactionPrimed = false;
@@ -20,8 +20,8 @@ const handleMouseUp = (ctx: Ctx, session: I_session) => {
       alt: false,
       ctrl: false,
       meta: false,
-      pendingUpdate: false,
     }
+    s.state.mouse.pendingModifierUpdate = false;
 
     s.state.inputSelected = null;
 

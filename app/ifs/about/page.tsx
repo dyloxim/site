@@ -57,26 +57,25 @@ const About = () => {
 
           <h4>translation vector:</h4>
           <ul>
-            <li><b>ctrl</b>: snaps to grid with 0.1 increments</li>
-            <li><b>alt</b>: constrains to nearest point lying on either horizontal, vertical,
-              or diagonals centered on original translation point</li>
+            <li><b>alt</b>: constrain to nearest point lying on either horizontal, vertical,
+              or diagonal</li>
+            <li><b>ctrl</b>: snap to grid with 0.1 increments</li>
           </ul>
 
           <h4>individual basis vectors</h4>
           <ul>
-            <li><b>ctrl</b>: snaps to grid with 0.1 increments</li>
-            <li><b>alt</b>: constrains movement to span of original vector</li>
-            <li><b>shift</b>: constraining to circle with radius equal to original vector length</li>
+            <li><b>alt</b>: constrain basis to its original span</li>
+            <li><b>shift</b>: allow rotation only</li>
+            <li><b>ctrl</b>: snap to grid with 0.1 increments</li>
           </ul>
 
           <h4>combined basis vectors</h4>
           <ul>
-            <li><b>no modifier</b>: constrains each new basis to the span of the original basis</li>
-            <li><b>meta/cmd</b>: same as no modifier except also maintains ratio of original basis lengths (allows proportional scaling only)</li>
-            <li><b>ctrl</b>: the same as no modifier except snaps to grid with 0.1 increments</li>
-            <li><b>alt</b>: keeps original angle between basis and ratio of lengths,
-              but allows rotation and proportional scaling</li>
-            <li><b>shift</b>: same as alt, allows rotation, but does not allow scaling</li>
+            <li><b>no modifier</b>: keeps original angle between basis and ratio of lengths, allows rotation and proportional scaling</li>
+            <li><b>meta/cmd</b>: allow proportional scaling only</li>
+            <li><b>shift</b>: allow rotation only</li>
+            <li><b>alt</b>: constrains each basis to its original span</li>
+            <li><b>ctrl</b>: snap to grid with 0.1 increments</li>
           </ul>
 
           <br/>

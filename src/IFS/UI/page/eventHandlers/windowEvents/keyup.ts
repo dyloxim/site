@@ -11,8 +11,9 @@ const handleKeyUp = (session: I_session, e: KeyboardEvent) => {
       alt: e.altKey,
       ctrl: e.ctrlKey,
       meta: e.metaKey,
-      pendingUpdate: true
     };
+    s.state.mouse.pendingModifierUpdate = true;
+
 
     return s;
 
