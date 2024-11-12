@@ -99,16 +99,16 @@ export const FunctionSystems: Record<NamedFSPreset, I_functionSystem> = {
     key: "barnsleyFern",
     name: "Barnsley Fern [4]",
     transforms: [
-      { linear: [[0, 0], [0, 0.16]] },
-      { linear: [[0.85, -0.04], [0.04, 0.85]], translation: [0, 1.6] },
-      { linear: [[-0.15, 0.26], [0.28, 0.24]], translation: [0, 0.44] },
-      { linear: [[0.2, 0.23], [-0.26, 0.22]], translation: [0, 1.6] },
+      { linear: [[0, 0], [0, 0.16]], translation: [-0.01686, -0.3597] },
+      { linear: [[0.8500, -0.04], [0.04, 0.85]], translation: [0.01407, 0.2112] },
+      { linear: [[-0.15, 0.26], [0.28, 0.24]], translation: [0.1004, -0.2167] },
+      { linear: [[0.2, 0.23], [-0.26, 0.22]], translation: [-0.1237, -0.05424] },
     ],
     weights: [0.01, 0.85, 0.07, 0.07],
     referenceRegion: {
-      o: [-2.24,0],
-      e1: [4.95,0],
-      e2: [0,10.05]
+      o: [0.03,-0.46],
+      e1: [0,0],
+      e2: [0,1.8]
     },
     firstPoint: [0,0],
     colors: {
