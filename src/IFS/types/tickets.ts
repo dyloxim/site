@@ -62,6 +62,7 @@ type DoActionObject =
       | "clearSelection"
       | "calibrateDisplay"
       | "drawAxis"
+      | "reinitialisePointPosition"
 
 
 

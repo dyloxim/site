@@ -24,7 +24,7 @@ const ColorToggle = ({session}: {session: I_session}) => {
 
     }, queue: _ => [
 
-      "REVIEW:controlPoints",
+      "REVIEW:controlPoints", "DO:reinitialisePointPosition",
       ["ERASE", ["figure", "pathOverlay", "controlPointsOverlay"]]
 
       ]})}

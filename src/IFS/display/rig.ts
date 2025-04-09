@@ -22,8 +22,8 @@ export default class Rig {
     ensure?: boolean,
   ) => {
 
-    /*  When this function is used
-     *      --------------------------
+    /*  When is this function is used?
+     *  ------------------------------
      *
      *  at startup we want the display to centre on the produced image and we want
      *  this variable 'appropriate-region-to-view-whole-image' to be a property

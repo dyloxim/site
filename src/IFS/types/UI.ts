@@ -9,6 +9,7 @@ export interface I_UIContext {
   path: PathOption,
   pathDisabled: boolean,
   running: boolean,
+  pos: number[][],
 }
 
 export interface I_rangeInput {

@@ -1,6 +1,8 @@
 import { default as Color } from './util/color';
 import { default as Rect } from "./util/rect";
 import { default as PrintLayer } from "./printLayer";
+import { default as GeomRect } from "../math/geometry/rect";
+import { default as Line } from "../math/geometry/line";
 
 export default class Painter {
 
@@ -18,7 +20,7 @@ export default class Painter {
   }
 
   static putPixel_quantize(print: PrintLayer, printArea: Rect, pos: number[], color: Color): void {
-    let pos_Q = pos.map(a => Math.round(a));
+    let pos_Q = pos.map(a => Math.floor(a));
     this.putPixel(print, printArea, pos_Q, color);
   }
 
@@ -30,33 +32,44 @@ export default class Painter {
     color: Color
   ) {
 
-    [px, py, qx, qy] = [px, py, qx, qy].map(u => Math.floor(u));
 
-    let dx = Math.abs(qx - px);
-    let sx = (px < qx) ? 1 : -1;
-    let dy = - Math.abs(qy - py)
-    let sy = (py < qy) ? 1 : -1;
+    let cLine = new GeomRect(
+      0, 0, printArea.width, printArea.height
+    ).constrainLine(new Line([px, py], [qx, qy]));
 
-    let e = dx + dy
+    if (cLine) {
 
-    while(true) {
+      [px, py, qx, qy] = [cLine.p[0], cLine.p[1], cLine.v[0], cLine.v[1]];
 
-      this.putPixel(print, printArea, [px, py], color)
+      [px, py, qx, qy] = [px, py, qx, qy].map(u => Math.floor(u));
+
+      let dx = Math.abs(qx - px);
+      let sx = (px < qx) ? 1 : -1;
+      let dy = - Math.abs(qy - py)
+      let sy = (py < qy) ? 1 : -1;
+
+      let e = dx + dy
+
+      while(true) {
+
+        this.putPixel(print, printArea, [px, py], color)
       
-      if (px == qx && py == qy) break;
+        if (px == qx && py == qy) break;
 
-      let e_2 = 2 * e;
+        let e_2 = 2 * e;
 
-      if (e_2 >= dy) {
-        if (px == qx) break;
-        e = e + dy;
-        px = px + sx;
-      }
+        if (e_2 >= dy) {
+          if (px == qx) break;
+          e = e + dy;
+          px = px + sx;
+        }
 
-      if (e_2 <= dx) {
-        if (py == qy) break;
-        e = e + dx;
-        py = py + sy;
+        if (e_2 <= dx) {
+          if (py == qy) break;
+          e = e + dx;
+          py = py + sy;
+        }
+
       }
 
     }

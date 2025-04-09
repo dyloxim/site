@@ -1,12 +1,12 @@
-import { default as FunctionSystem } from "@IFS/functionSystem"
-import { default as Rig } from "@IFS/display/rig"
-import { default as Color } from "@IFS/display/util/color"
-import { default as Vec } from "@IFS/math/linearAlgebra/vec2"
+import { default as FunctionSystem } from "@IFS/functionSystem";
+import { default as Rig } from "@IFS/display/rig";
+import { default as Color } from "@IFS/display/util/color";
+import { default as Vec } from "@IFS/math/linearAlgebra/vec2";
 
 import { DisplayLayer } from "@IFS/types/specifications";
 import { BasicLayerTicket, ActionKey, QueueItem } from "@IFS/types/tickets";
-import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction"
-import { I_affine } from "@IFS/types/mathematical"
+import { AppStateProcessor, I_selectableEntityMetaData, TicketProcessor } from "@IFS/types/interaction";
+import { I_affine } from "@IFS/types/mathematical";
 
 
 import { default as Util } from "@IFS/execution/util"
@@ -19,8 +19,22 @@ declare global {
 
 export default class IFSAppWorker {
 
+
+  static pointMovedTooFar(p: number[], centre: number[], unit: number): boolean {
+    let d = Vec.mod(Vec.minus(p, centre));
+    let verdict = (d/unit) > 10000
+    return verdict;
+  }
   
   static movePiece: AppStateProcessor = (app) => {
+
+    if (this.pointMovedTooFar(
+      app.session.state.program.thisTurn.position,
+      app.session.settings.display.domain.origin,
+      app.session.settings.display.domain.displayRadius
+    )) {
+      this.reinitialisePointPosition(app);
+    }
 
     // deprecate current position
     let lastTurn = app.session.state.program.thisTurn
@@ -38,6 +52,10 @@ export default class IFSAppWorker {
 
     }}).eval();
 
+  }
+
+  static reinitialisePointPosition: AppStateProcessor = (app) => {
+    app.session.state.program.thisTurn.position = app.session.settings.FS.firstPoint;
   }
 
   static maybeMarkLastPath: AppStateProcessor = (app): void => {
@@ -128,7 +146,7 @@ export default class IFSAppWorker {
     app.session = new SessionMutation({ using: app.session,
 
       queue: _ => [
-        "REVIEW:controlPoints",
+        "REVIEW:controlPoints", "DO:reinitialisePointPosition"
       ]
 
     }).eval();

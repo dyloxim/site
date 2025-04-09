@@ -64,6 +64,13 @@ export const Actions: ActionRegistry = {
     log: false
   },
 
+  "DO:reinitialisePointPosition": {
+    instructionGroup: "FS",
+    instruction: "Load FS from settings",
+    processor: IFSAppWorker.reinitialisePointPosition,
+    log: false
+  },
+
   "RELOAD:controlPoints": {
     instructionGroup: "layerDraw",
     instruction: "Load FS handle overlays from settings",

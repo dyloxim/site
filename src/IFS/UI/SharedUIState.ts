@@ -10,7 +10,8 @@ export const Ctx = createContext<{
     FS: [],
     path: "None",
     pathDisabled: false,
-    running: true
+    running: true,
+    pos: [[0,0], [0,0]]
   },
   setCtx: () => defaultInitialSession
 })

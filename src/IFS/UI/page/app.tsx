@@ -44,7 +44,7 @@ export default function App({ preset }: {
     path: "None",
     pathDisabled: false,
     running: true
-  })
+  } as I_UIContext)
 
 
   return (
